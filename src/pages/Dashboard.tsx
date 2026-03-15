@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, Download, Filter, ExternalLink, Star, Mail, Phone, Instagram, Search } from "lucide-react";
+import { Copy, Check, Download, Filter, ExternalLink, Star, Mail, Phone, Instagram, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AppHeader } from "@/components/shared/AppHeader";
-import { useLeadStore } from "@/lib/lead-store";
 import { Lead } from "@/types/lead";
+import { fetchLeads, updateLeadStatusInDb } from "@/lib/lead-api";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import {
@@ -24,10 +24,37 @@ const statusConfig: Record<Lead["status"], { label: string; className: string }>
 };
 
 export default function Dashboard() {
-  const { leads, updateLeadStatus } = useLeadStore();
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  useEffect(() => {
+    loadLeads();
+  }, []);
+
+  async function loadLeads() {
+    try {
+      setLoading(true);
+      const data = await fetchLeads();
+      setLeads(data);
+    } catch (err: any) {
+      console.error("Failed to load leads:", err);
+      toast.error("Failed to load leads");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleStatusChange(id: string, status: Lead["status"]) {
+    try {
+      await updateLeadStatusInDb(id, status);
+      setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
+    } catch (err: any) {
+      toast.error("Failed to update status");
+    }
+  }
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
@@ -64,6 +91,18 @@ export default function Dashboard() {
     a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV exported!");
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AppHeader />
+        <div className="container flex flex-col items-center justify-center py-24">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="mt-4 text-sm text-muted-foreground">Loading leads...</p>
+        </div>
+      </div>
+    );
   }
 
   if (leads.length === 0) {
@@ -120,6 +159,9 @@ export default function Dashboard() {
             <Button variant="outline" size="sm" onClick={exportCSV} className="gap-1.5">
               <Download className="h-3.5 w-3.5" />
               Export
+            </Button>
+            <Button variant="outline" size="sm" onClick={loadLeads} className="gap-1.5">
+              Refresh
             </Button>
           </div>
         </div>
@@ -193,7 +235,7 @@ export default function Dashboard() {
                     <td className="px-4 py-3">
                       <Select
                         value={lead.status}
-                        onValueChange={(v) => updateLeadStatus(lead.id, v as Lead["status"])}
+                        onValueChange={(v) => handleStatusChange(lead.id, v as Lead["status"])}
                       >
                         <SelectTrigger className="h-7 w-28 border-0 p-0 text-xs shadow-none">
                           <Badge variant="outline" className={sc.className}>
