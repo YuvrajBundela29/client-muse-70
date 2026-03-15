@@ -8,13 +8,11 @@ import { Label } from "@/components/ui/label";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 import { SearchStep, SearchParams } from "@/types/lead";
-import { generateMockLeads } from "@/lib/mock-leads";
-import { useLeadStore } from "@/lib/lead-store";
+import { findLeads } from "@/lib/lead-api";
 import { toast } from "sonner";
 
 export default function Finder() {
   const navigate = useNavigate();
-  const addLeads = useLeadStore((s) => s.addLeads);
   const [step, setStep] = useState<SearchStep>("idle");
   const [params, setParams] = useState<SearchParams>({
     industry: "",
@@ -29,21 +27,28 @@ export default function Finder() {
     }
 
     setStep("searching");
-    await delay(1500);
-    setStep("scraping");
-    await delay(2000);
-    setStep("analyzing");
-    await delay(2000);
 
-    const leads = generateMockLeads(params);
-    addLeads(leads);
+    try {
+      setStep("analyzing");
+      const leads = await findLeads(params);
 
-    setStep("complete");
-    toast.success(`Found ${leads.length} leads!`);
+      if (leads.length === 0) {
+        toast.warning("No leads found. Try different search terms.");
+        setStep("idle");
+        return;
+      }
 
-    await delay(800);
-    navigate("/dashboard");
-  }, [params, addLeads, navigate]);
+      setStep("complete");
+      toast.success(`Found ${leads.length} real leads!`);
+
+      await new Promise((r) => setTimeout(r, 800));
+      navigate("/dashboard");
+    } catch (err: any) {
+      console.error("Search error:", err);
+      toast.error(err.message || "Search failed. Please try again.");
+      setStep("idle");
+    }
+  }, [params, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,7 +62,7 @@ export default function Finder() {
           <div className="mb-8 text-center">
             <h1 className="mb-1 text-2xl font-bold tracking-tight">Find Clients</h1>
             <p className="text-sm text-muted-foreground">
-              Enter your niche, location, and service to discover leads.
+              Enter your niche, location, and service to discover real leads.
             </p>
           </div>
 
@@ -123,7 +128,7 @@ export default function Finder() {
                     Find Clients
                   </>
                 ) : (
-                  "Processing…"
+                  "Searching real businesses…"
                 )}
               </Button>
             </div>
@@ -132,8 +137,4 @@ export default function Finder() {
       </div>
     </div>
   );
-}
-
-function delay(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
 }
