@@ -4,6 +4,7 @@ import {
   Crosshair, ArrowRight, Zap, Clock, Mail, TrendingDown,
   Search, Brain, Users, Shield, Star, ChevronRight,
 } from "lucide-react";
+import { LiveActivity } from "@/components/landing/LiveActivity";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
@@ -104,6 +105,9 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
+      {/* Live Activity Feed */}
+      <LiveActivity />
 
       {/* Live counter bar */}
       <section className="border-y border-border/50 bg-card/50">

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crosshair, Search, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepIndicator } from "@/components/shared/StepIndicator";
@@ -9,13 +9,23 @@ import { findLeads } from "@/lib/lead-api";
 import { SearchStep } from "@/types/lead";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useSessionStore } from "@/lib/session-store";
+import { PaywallModal } from "@/components/results/PaywallModal";
+
+const SPECIALIZATIONS = [
+  { key: "agency" as const, label: "🏢 Agency", hint: "Find clients looking for agency-level services" },
+  { key: "freelancer" as const, label: "🎯 Freelancer", hint: "Discover businesses needing individual experts" },
+  { key: "consultant" as const, label: "🧠 Consultant", hint: "Target companies seeking strategic guidance" },
+];
 
 export default function SearchIntake() {
   const navigate = useNavigate();
-  const [industry, setIndustry] = useState("");
-  const [location, setLocation] = useState("");
-  const [service, setService] = useState("");
+  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization } = useSessionStore();
+  const [industry, setIndustry] = useState(lastSearch?.industry || "");
+  const [location, setLocation] = useState(lastSearch?.location || "");
+  const [service, setService] = useState(lastSearch?.service || "");
   const [step, setStep] = useState<SearchStep>("idle");
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const isSearching = step !== "idle" && step !== "complete" && step !== "error";
 
@@ -25,6 +35,14 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
+
+    // Check daily limit
+    if (!incrementSearch()) {
+      setShowPaywall(true);
+      return;
+    }
+
+    setLastSearch({ industry, location, service });
 
     try {
       setStep("searching");
@@ -37,7 +55,7 @@ export default function SearchIntake() {
 
       stepTimers.forEach(clearTimeout);
       setStep("complete");
-      toast.success("Leads found! Redirecting to results...");
+      toast.success("Intelligence report ready!");
       setTimeout(() => navigate("/results"), 1200);
     } catch (err: any) {
       setStep("error");
@@ -47,7 +65,6 @@ export default function SearchIntake() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
-      {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="container flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
@@ -68,12 +85,33 @@ export default function SearchIntake() {
             <div className="mx-auto mb-4 inline-flex rounded-full bg-primary/10 p-3">
               <Search className="h-6 w-6 text-primary" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold tracking-tight">
-              Find your ideal clients
-            </h1>
+            <h1 className="mb-2 text-3xl font-bold tracking-tight">Find your ideal clients</h1>
             <p className="text-muted-foreground">
-              Tell us about your niche and we'll find businesses with real problems you can solve.
+              Tell us about your niche and we'll build an intelligence report with actionable leads.
             </p>
+          </div>
+
+          {/* Specialization picker */}
+          <div className="mb-6">
+            <label className="mb-2 block text-sm font-medium">I'm a...</label>
+            <div className="grid grid-cols-3 gap-2">
+              {SPECIALIZATIONS.map((s) => (
+                <button
+                  key={s.key}
+                  type="button"
+                  onClick={() => setSpecialization(s.key)}
+                  disabled={isSearching}
+                  className={`rounded-lg border p-3 text-center text-xs font-medium transition-all ${
+                    specialization === s.key
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/40"
+                  }`}
+                >
+                  <div className="text-lg mb-0.5">{s.label.split(" ")[0]}</div>
+                  {s.label.split(" ").slice(1).join(" ")}
+                </button>
+              ))}
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -136,9 +174,19 @@ export default function SearchIntake() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mt-8 flex justify-center"
+                className="mt-8"
               >
-                <StepIndicator currentStep={step} />
+                <div className="flex justify-center mb-4">
+                  <StepIndicator currentStep={step} />
+                </div>
+                {/* Deep work simulation */}
+                <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
+                  <p className="text-xs text-muted-foreground animate-pulse">
+                    {step === "searching" && "🔍 Scanning Google Maps, directories, and business listings..."}
+                    {step === "scraping" && "🕷️ Extracting website data, contact info, and social signals..."}
+                    {step === "analyzing" && "🧠 Running AI analysis on marketing gaps and buying intent..."}
+                  </p>
+                </div>
               </motion.div>
             )}
             {step === "complete" && (
@@ -148,7 +196,7 @@ export default function SearchIntake() {
                 className="mt-8 rounded-xl border border-[hsl(var(--success))]/30 bg-[hsl(var(--success))]/10 p-4 text-center"
               >
                 <p className="font-semibold text-[hsl(var(--success))]">
-                  ✓ Leads found! Redirecting...
+                  ✓ Intelligence report ready! Redirecting...
                 </p>
               </motion.div>
             )}
@@ -178,6 +226,8 @@ export default function SearchIntake() {
           </div>
         </motion.div>
       </div>
+
+      <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>
   );
 }
