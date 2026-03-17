@@ -106,6 +106,9 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Live Activity Feed */}
+      <LiveActivity />
+
       {/* Live counter bar */}
       <section className="border-y border-border/50 bg-card/50">
         <div className="container grid grid-cols-3 divide-x divide-border/50 py-8">
