@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock } from "lucide-react";
+import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepIndicator } from "@/components/shared/StepIndicator";
