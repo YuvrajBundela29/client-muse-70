@@ -43,12 +43,21 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("match");
+  const { lastSearch } = useSessionStore();
 
   const load = async () => {
     setLoading(true);
     try {
       const data = await fetchLeads();
-      setLeads(data.map(enrichLead));
+      // Filter by last search params so only relevant leads show
+      const filtered = lastSearch
+        ? data.filter((l) => {
+            const matchIndustry = l.industry.toLowerCase().includes(lastSearch.industry.toLowerCase());
+            const matchCity = l.city.toLowerCase().includes(lastSearch.location.toLowerCase());
+            return matchIndustry || matchCity;
+          })
+        : data;
+      setLeads(filtered.map(enrichLead));
     } catch (err: any) {
       toast.error(err.message);
     } finally {
