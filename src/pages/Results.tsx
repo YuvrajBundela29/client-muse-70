@@ -100,6 +100,11 @@ export default function Results() {
               <SearchIcon className="h-3.5 w-3.5" /> New Search
             </Button>
           </Link>
+          <Link to="/history">
+            <Button size="sm" variant="ghost" className="gap-1.5">
+              <Clock className="h-3.5 w-3.5" /> History
+            </Button>
+          </Link>
         </div>
       </header>
 

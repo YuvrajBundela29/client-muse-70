@@ -72,8 +72,13 @@ export default function SearchIntake() {
             <Crosshair className="h-5 w-5 text-primary" />
             <span>Client Muse</span>
           </Link>
-        </div>
-      </header>
+          <div className="flex items-center gap-2">
+            <Link to="/history">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Clock className="h-3.5 w-3.5" /> History
+              </Button>
+            </Link>
+          </div>
 
       <div className="container flex min-h-[calc(100vh-3.5rem)] items-center justify-center py-12">
         <motion.div
