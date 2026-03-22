@@ -20,7 +20,7 @@ const SPECIALIZATIONS = [
 
 export default function SearchIntake() {
   const navigate = useNavigate();
-  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization } = useSessionStore();
+  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization, addSearchHistory } = useSessionStore();
   const [industry, setIndustry] = useState(lastSearch?.industry || "");
   const [location, setLocation] = useState(lastSearch?.location || "");
   const [service, setService] = useState(lastSearch?.service || "");
