@@ -43,6 +43,7 @@ export default function SearchIntake() {
     }
 
     setLastSearch({ industry, location, service });
+    addSearchHistory({ industry, location, service });
 
     try {
       setStep("searching");
