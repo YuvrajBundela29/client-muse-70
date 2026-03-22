@@ -79,6 +79,8 @@ export default function SearchIntake() {
               </Button>
             </Link>
           </div>
+        </div>
+      </header>
 
       <div className="container flex min-h-[calc(100vh-3.5rem)] items-center justify-center py-12">
         <motion.div
