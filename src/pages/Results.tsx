@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, Download, RefreshCw, ArrowLeft, Search as SearchIcon,
-  SlidersHorizontal,
+  SlidersHorizontal, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { enrichLead } from "@/lib/enrich-lead";
 import { LeadIntelCard } from "@/components/results/LeadIntelCard";
 import { LeadSkeleton } from "@/components/results/LeadSkeleton";
 import { toast } from "sonner";
+import { useSessionStore } from "@/lib/session-store";
 
 type SortKey = "match" | "recent" | "urgency";
 
@@ -42,12 +43,21 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("match");
+  const { lastSearch } = useSessionStore();
 
   const load = async () => {
     setLoading(true);
     try {
       const data = await fetchLeads();
-      setLeads(data.map(enrichLead));
+      // Filter by last search params so only relevant leads show
+      const filtered = lastSearch
+        ? data.filter((l) => {
+            const matchIndustry = l.industry.toLowerCase().includes(lastSearch.industry.toLowerCase());
+            const matchCity = l.city.toLowerCase().includes(lastSearch.location.toLowerCase());
+            return matchIndustry || matchCity;
+          })
+        : data;
+      setLeads(filtered.map(enrichLead));
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -88,6 +98,11 @@ export default function Results() {
           <Link to="/search">
             <Button size="sm" variant="outline" className="gap-1.5">
               <SearchIcon className="h-3.5 w-3.5" /> New Search
+            </Button>
+          </Link>
+          <Link to="/history">
+            <Button size="sm" variant="ghost" className="gap-1.5">
+              <Clock className="h-3.5 w-3.5" /> History
             </Button>
           </Link>
         </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock } from "lucide-react";
+import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepIndicator } from "@/components/shared/StepIndicator";
@@ -20,10 +20,11 @@ const SPECIALIZATIONS = [
 
 export default function SearchIntake() {
   const navigate = useNavigate();
-  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization } = useSessionStore();
-  const [industry, setIndustry] = useState(lastSearch?.industry || "");
-  const [location, setLocation] = useState(lastSearch?.location || "");
-  const [service, setService] = useState(lastSearch?.service || "");
+  const [searchParams] = useSearchParams();
+  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization, addSearchHistory } = useSessionStore();
+  const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
+  const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
+  const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
   const [step, setStep] = useState<SearchStep>("idle");
   const [showPaywall, setShowPaywall] = useState(false);
 
@@ -43,6 +44,7 @@ export default function SearchIntake() {
     }
 
     setLastSearch({ industry, location, service });
+    addSearchHistory({ industry, location, service });
 
     try {
       setStep("searching");
@@ -71,6 +73,13 @@ export default function SearchIntake() {
             <Crosshair className="h-5 w-5 text-primary" />
             <span>Client Muse</span>
           </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/history">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Clock className="h-3.5 w-3.5" /> History
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 

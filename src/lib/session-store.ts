@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+interface SearchHistoryEntry {
+  industry: string;
+  location: string;
+  service: string;
+  timestamp: string;
+}
+
 interface SessionStore {
   lastSearch: { industry: string; location: string; service: string } | null;
   dailySearchCount: number;
@@ -8,13 +15,16 @@ interface SessionStore {
   specialization: "agency" | "freelancer" | "consultant";
   savedLeadIds: string[];
   contactedLeadIds: string[];
+  searchHistory: SearchHistoryEntry[];
   setLastSearch: (s: SessionStore["lastSearch"]) => void;
-  incrementSearch: () => boolean; // returns false if limit hit
+  incrementSearch: () => boolean;
   setSpecialization: (s: SessionStore["specialization"]) => void;
   toggleSaved: (id: string) => void;
   markContacted: (id: string) => void;
   isSaved: (id: string) => boolean;
   isContacted: (id: string) => boolean;
+  addSearchHistory: (entry: Omit<SearchHistoryEntry, "timestamp">) => void;
+  clearHistory: () => void;
 }
 
 const DAILY_LIMIT = 5;
@@ -32,6 +42,7 @@ export const useSessionStore = create<SessionStore>()(
       specialization: "agency",
       savedLeadIds: [],
       contactedLeadIds: [],
+      searchHistory: [],
       setLastSearch: (s) => set({ lastSearch: s }),
       incrementSearch: () => {
         const state = get();
@@ -59,6 +70,14 @@ export const useSessionStore = create<SessionStore>()(
         })),
       isSaved: (id) => get().savedLeadIds.includes(id),
       isContacted: (id) => get().contactedLeadIds.includes(id),
+      addSearchHistory: (entry) =>
+        set((state) => ({
+          searchHistory: [
+            { ...entry, timestamp: new Date().toISOString() },
+            ...state.searchHistory,
+          ].slice(0, 50),
+        })),
+      clearHistory: () => set({ searchHistory: [] }),
     }),
     { name: "client-muse-session" }
   )
