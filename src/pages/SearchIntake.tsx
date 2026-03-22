@@ -20,10 +20,11 @@ const SPECIALIZATIONS = [
 
 export default function SearchIntake() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization, addSearchHistory } = useSessionStore();
-  const [industry, setIndustry] = useState(lastSearch?.industry || "");
-  const [location, setLocation] = useState(lastSearch?.location || "");
-  const [service, setService] = useState(lastSearch?.service || "");
+  const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
+  const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
+  const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
   const [step, setStep] = useState<SearchStep>("idle");
   const [showPaywall, setShowPaywall] = useState(false);
 
