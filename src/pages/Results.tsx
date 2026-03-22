@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, Download, RefreshCw, ArrowLeft, Search as SearchIcon,
-  SlidersHorizontal,
+  SlidersHorizontal, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { enrichLead } from "@/lib/enrich-lead";
 import { LeadIntelCard } from "@/components/results/LeadIntelCard";
 import { LeadSkeleton } from "@/components/results/LeadSkeleton";
 import { toast } from "sonner";
+import { useSessionStore } from "@/lib/session-store";
 
 type SortKey = "match" | "recent" | "urgency";
 
