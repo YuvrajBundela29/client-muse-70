@@ -7,6 +7,9 @@ import Landing from "./pages/Landing";
 import SearchIntake from "./pages/SearchIntake";
 import Results from "./pages/Results";
 import History from "./pages/History";
+import Pipeline from "./pages/Pipeline";
+import ClientIntelligence from "./pages/ClientIntelligence";
+import ReelLibrary from "./pages/ReelLibrary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +25,9 @@ const App = () => (
           <Route path="/search" element={<SearchIntake />} />
           <Route path="/results" element={<Results />} />
           <Route path="/history" element={<History />} />
+          <Route path="/pipeline" element={<Pipeline />} />
+          <Route path="/pipeline/:id" element={<ClientIntelligence />} />
+          <Route path="/reel-library" element={<ReelLibrary />} />
           <Route path="/finder" element={<Navigate to="/search" replace />} />
           <Route path="/dashboard" element={<Navigate to="/results" replace />} />
           <Route path="*" element={<NotFound />} />

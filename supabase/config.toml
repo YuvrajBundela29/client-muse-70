@@ -2,3 +2,9 @@ project_id = "uzwagbtgitoznlfsyiim"
 
 [functions.find-leads]
 verify_jwt = false
+
+[functions.analyze-client]
+verify_jwt = false
+
+[functions.classify-reply]
+verify_jwt = false
