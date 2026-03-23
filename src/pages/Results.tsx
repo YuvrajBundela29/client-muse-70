@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, Download, RefreshCw, ArrowLeft, Search as SearchIcon,
-  SlidersHorizontal, Clock,
+  SlidersHorizontal, Clock, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
