@@ -74,6 +74,11 @@ export default function SearchIntake() {
             <span>Client Muse</span>
           </Link>
           <div className="flex items-center gap-2">
+            <Link to="/pipeline">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Zap className="h-3.5 w-3.5" /> Pipeline
+              </Button>
+            </Link>
             <Link to="/history">
               <Button size="sm" variant="ghost" className="gap-1.5">
                 <Clock className="h-3.5 w-3.5" /> History
