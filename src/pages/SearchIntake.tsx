@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock, Clock } from "lucide-react";
+import { Crosshair, Search, ArrowRight, Loader2, Sparkles, Lock, Clock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepIndicator } from "@/components/shared/StepIndicator";
@@ -74,6 +74,11 @@ export default function SearchIntake() {
             <span>Client Muse</span>
           </Link>
           <div className="flex items-center gap-2">
+            <Link to="/pipeline">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Zap className="h-3.5 w-3.5" /> Pipeline
+              </Button>
+            </Link>
             <Link to="/history">
               <Button size="sm" variant="ghost" className="gap-1.5">
                 <Clock className="h-3.5 w-3.5" /> History

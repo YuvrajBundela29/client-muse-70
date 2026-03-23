@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_pipeline: {
+        Row: {
+          created_at: string
+          email_sent_date: string | null
+          follow_up_day: number | null
+          id: string
+          lead_id: string
+          notes: string | null
+          pipeline_status: string
+          priority_rank: number | null
+          recommended_package: string | null
+          service_track: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_sent_date?: string | null
+          follow_up_day?: number | null
+          id?: string
+          lead_id: string
+          notes?: string | null
+          pipeline_status?: string
+          priority_rank?: number | null
+          recommended_package?: string | null
+          service_track?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_sent_date?: string | null
+          follow_up_day?: number | null
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          pipeline_status?: string
+          priority_rank?: number | null
+          recommended_package?: string | null
+          service_track?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_pipeline_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           business_name: string
@@ -65,6 +115,36 @@ export type Database = {
           status?: string
           website?: string | null
           website_problem?: string | null
+        }
+        Relationships: []
+      }
+      reel_library: {
+        Row: {
+          created_at: string
+          description: string
+          drive_link: string
+          id: string
+          industry_tags: string[]
+          keywords: string[]
+          reel_code: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          drive_link: string
+          id?: string
+          industry_tags?: string[]
+          keywords?: string[]
+          reel_code: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          drive_link?: string
+          id?: string
+          industry_tags?: string[]
+          keywords?: string[]
+          reel_code?: string
         }
         Relationships: []
       }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, Download, RefreshCw, ArrowLeft, Search as SearchIcon,
-  SlidersHorizontal, Clock,
+  SlidersHorizontal, Clock, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,16 +95,23 @@ export default function Results() {
             <Crosshair className="h-5 w-5 text-primary" />
             <span>Client Muse</span>
           </Link>
-          <Link to="/search">
-            <Button size="sm" variant="outline" className="gap-1.5">
-              <SearchIcon className="h-3.5 w-3.5" /> New Search
-            </Button>
-          </Link>
-          <Link to="/history">
-            <Button size="sm" variant="ghost" className="gap-1.5">
-              <Clock className="h-3.5 w-3.5" /> History
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/search">
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <SearchIcon className="h-3.5 w-3.5" /> New Search
+              </Button>
+            </Link>
+            <Link to="/pipeline">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Zap className="h-3.5 w-3.5" /> Pipeline
+              </Button>
+            </Link>
+            <Link to="/history">
+              <Button size="sm" variant="ghost" className="gap-1.5">
+                <Clock className="h-3.5 w-3.5" /> History
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
