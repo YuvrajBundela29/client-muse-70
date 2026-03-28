@@ -45,8 +45,8 @@ export default function Settings() {
         setCountry((profile as Record<string, unknown>).country as string || "");
         setService((profile as Record<string, unknown>).service as string || "");
       }
-      const { data: sub } = await supabase
-        .from("user_subscriptions" as string)
+      const { data: sub } = await (supabase as any)
+        .from("user_subscriptions")
         .select("*")
         .eq("user_id", user.id)
         .single();

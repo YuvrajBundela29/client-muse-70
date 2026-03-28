@@ -30,8 +30,8 @@ export function useSubscription(): Subscription & { loading: boolean; refresh: (
 
   const fetch = async () => {
     if (!user) return;
-    const { data } = await supabase
-      .from("user_subscriptions" as string)
+    const { data } = await (supabase as any)
+      .from("user_subscriptions")
       .select("*")
       .eq("user_id", user.id)
       .single();

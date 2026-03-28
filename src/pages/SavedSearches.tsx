@@ -53,7 +53,7 @@ export default function SavedSearches() {
   };
 
   const deleteSearch = async (id: string) => {
-    await supabase.from("saved_searches" as string).delete().eq("id", id);
+    await (supabase as any).from("saved_searches").delete().eq("id", id);
     setSearches(prev => prev.filter(x => x.id !== id));
     toast.success("Saved search deleted");
   };
