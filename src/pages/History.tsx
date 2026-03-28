@@ -25,24 +25,7 @@ export default function History() {
   };
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-            <Crosshair className="h-5 w-5 text-primary" />
-            <span>Client Muse</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link to="/search">
-              <Button size="sm" variant="outline" className="gap-1.5">
-                <Search className="h-3.5 w-3.5" /> New Search
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="container py-8 max-w-2xl">
+    <div className="p-6 max-w-2xl mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
