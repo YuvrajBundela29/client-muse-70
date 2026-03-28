@@ -27,6 +27,7 @@ export type Database = {
           recommended_package: string | null
           service_track: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -40,6 +41,7 @@ export type Database = {
           recommended_package?: string | null
           service_track?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           recommended_package?: string | null
           service_track?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -79,6 +82,7 @@ export type Database = {
           phone: string | null
           recommended_service: string | null
           status: string
+          user_id: string | null
           website: string | null
           website_problem: string | null
         }
@@ -96,6 +100,7 @@ export type Database = {
           phone?: string | null
           recommended_service?: string | null
           status?: string
+          user_id?: string | null
           website?: string | null
           website_problem?: string | null
         }
@@ -113,8 +118,42 @@ export type Database = {
           phone?: string | null
           recommended_service?: string | null
           status?: string
+          user_id?: string | null
           website?: string | null
           website_problem?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          credits_remaining: number
+          email: string | null
+          full_name: string | null
+          id: string
+          plan: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          credits_remaining?: number
+          email?: string | null
+          full_name?: string | null
+          id: string
+          plan?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          credits_remaining?: number
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          plan?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -145,6 +184,80 @@ export type Database = {
           industry_tags?: string[]
           keywords?: string[]
           reel_code?: string
+        }
+        Relationships: []
+      }
+      saved_leads: {
+        Row: {
+          created_at: string
+          follow_up_due_at: string | null
+          id: string
+          last_contacted_at: string | null
+          lead_id: string
+          notes: string | null
+          pipeline_stage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          follow_up_due_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          lead_id: string
+          notes?: string | null
+          pipeline_stage?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          follow_up_due_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          lead_id?: string
+          notes?: string | null
+          pipeline_stage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_leads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_history: {
+        Row: {
+          created_at: string
+          id: string
+          industry: string
+          location: string
+          result_count: number | null
+          service: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry: string
+          location: string
+          result_count?: number | null
+          service: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry?: string
+          location?: string
+          result_count?: number | null
+          service?: string
+          user_id?: string
         }
         Relationships: []
       }
