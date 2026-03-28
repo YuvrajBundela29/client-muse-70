@@ -1,115 +1,148 @@
 
 
-## Plan: ClientMuse v2.0 — Pipeline CRM + AI Production Engine
+## Plan: Client Muse SaaS Upgrade — Phase-by-Phase
 
-### What This Is
-Transform Client Muse from a lead finder into a full client lifecycle management system with pipeline tracking, dedicated client pages, AI-powered email construction, reply handling, and a reel library. All existing features (landing, search, results, history) remain untouched.
+### Current State Assessment
 
-### What Gets Built
+The app already has:
+- Landing page with dark psychology design
+- Auth (email/password, no Google OAuth yet)
+- Search intake form (industry, location, service)
+- Results page with lead cards and CSV export
+- History page (client-side via Zustand)
+- Saved Leads page (database-backed)
+- Pipeline CRM page (Kanban-style, 7 status columns)
+- Client Intelligence page (per-lead detail with AI emails, reply handler)
+- Reel Library page
+- Dashboard with stats cards
+- Sidebar layout with navigation
+- Edge functions: find-leads, analyze-client, classify-reply
+- Database tables: leads, profiles, saved_leads, search_history, client_pipeline, reel_library
+- RLS policies on all tables
 
-**5 new pages + 2 new database tables + 1 new edge function**
+### What's Missing (from the request)
 
----
+1. **Google OAuth** — not implemented
+2. **Onboarding flow** — no post-signup onboarding step
+3. **Stripe subscription billing** — no payment integration
+4. **Saved Searches** page — search parameters bookmarking for re-run
+5. **Analytics page** — charts and metrics
+6. **Settings page** — profile editing, account management, plan info
+7. **History using database** — currently client-side only, should use `search_history` table with full results stored
+8. **Upgrade/pricing page** inside dashboard
+9. **Usage gating** — plan-based feature limits with upgrade modals
+10. **Follow-up reminders** — date pickers and reminder tracking
+11. **Activity log** per client — timestamped events
 
-### New Database Tables
-
-**1. `client_pipeline`** — extends leads with CRM pipeline data
-- `id` (uuid, PK)
-- `lead_id` (uuid, references leads)
-- `pipeline_status` (text: `not_contacted`, `email_sent`, `replied`, `call_booked`, `closed`, `no_response`, `rejected`)
-- `service_track` (text: nullable — `track_a`, `track_b`, `track_c`, `track_d`)
-- `recommended_package` (text: nullable)
-- `email_sent_date` (timestamptz, nullable)
-- `follow_up_day` (int, nullable — tracks follow-up sequence position)
-- `notes` (text, nullable)
-- `priority_rank` (int, nullable)
-- `created_at` / `updated_at`
-- RLS: public read/write (no auth yet)
-
-**2. `reel_library`** — tracks completed reels for reuse
-- `id` (uuid, PK)
-- `reel_code` (text, e.g. `REEL_001`)
-- `description` (text)
-- `industry_tags` (text[] — searchable)
-- `keywords` (text[] — for matching)
-- `drive_link` (text)
-- `created_at`
-- RLS: public read/write
-
----
-
-### New Pages
-
-**1. `/pipeline` — Pipeline Manager** (kanban-style board)
-- Shows all leads as cards organized by status columns (NOT CONTACTED → EMAIL SENT → REPLIED → CALL BOOKED → CLOSED / NO RESPONSE / REJECTED)
-- Each card: business name, confidence score (color-coded), urgency tag, intent signal, email indicator
-- Priority ranking: has email > confidence score > intent signal priority > urgency
-- Drag-to-change-status or click to update
-- CSV upload button: parses CSV, creates leads + pipeline entries, detects duplicates by business name
-- Bulk export
-
-**2. `/pipeline/:id` — Client Intelligence Page**
-- Section A: Client Brief (all lead data, confidence, intent, pain points)
-- Section B: Service Track Detection — auto-assigns track based on industry keywords (beauty→Track A, fashion→Track B, promo/ecommerce→Track C, IT→Track D)
-- Section C: Reel Decision Check — queries `reel_library` for matches by industry/keywords. Shows REUSE or BUILD NEW decision
-- Section D: AI Email Construction — button triggers edge function that:
-  - Analyzes the lead's website via Firecrawl
-  - Generates 3 email variants (professional, friendly, aggressive) personalized to the brand
-  - Classifies email address type (hello@, press@, name-specific) and suggests LinkedIn backup if generic
-  - Shows follow-up sequence (Day 4, 7, 10 templates)
-- Section E: Reply Handler — text area to paste client reply → AI classifies reply type (WARM INTEREST, PRICING REQUEST, OBJECTION, etc.) and generates exact response
-- Section F: Actions — mark contacted, update status, copy emails, export
-
-**3. `/reel-library` — Reel Library Management**
-- List of all reels with description, industry tags, drive link
-- Add new reel form
-- Search/filter by industry
-
-**4. Update nav** — add Pipeline and Reel Library links to all page headers
+### Implementation Plan (7 phases, sequential)
 
 ---
 
-### New Edge Function: `analyze-client`
-- Input: lead_id
-- Fetches lead data from DB
-- Scrapes the lead's website via Firecrawl (if URL exists)
-- Uses AI (Gemini) to:
-  - Generate personalized email (3 tones) referencing specific brand intel
-  - Classify email type
-  - Generate follow-up sequence
-  - Detect service track + package recommendation
-- Returns structured JSON
+#### Phase 1: Database Schema Updates
 
-### New Edge Function: `classify-reply`
-- Input: reply text + lead context
-- Uses AI to classify reply type and generate appropriate response
-- Returns classification + suggested reply
+Add new tables and modify existing ones:
+
+- **`saved_searches`** — user_id, label, industry, country, service, filters_json, is_alert, created_at
+- **`user_subscriptions`** — user_id, plan, stripe_customer_id, stripe_subscription_id, status, current_period_end, searches_used_this_month, searches_reset_at
+- **`client_activity`** — client_id, user_id, activity_type, description, created_at
+- Update `profiles` to add `onboarding_complete` boolean
+- Update `search_history` to store `results_json` (jsonb) and `filters_json` (jsonb)
+
+All tables get user-scoped RLS policies. Add trigger to auto-create `user_subscriptions` row on signup (free plan).
 
 ---
 
-### Pricing Data
-Stored as static constants in a `src/lib/pricing.ts` file — no DB needed. Contains all 4 tracks with Starter/Pro/Bundle/Retainer packages and prices.
+#### Phase 2: Google OAuth + Onboarding
 
-### Service Track Detection
-Pure client-side logic in a utility function — maps industry keywords to tracks (beauty→A, fashion→B, etc.)
+- Add Google OAuth using Lovable Cloud managed OAuth (no API key needed)
+- Create `/onboarding` page — 4-step wizard: industry, country, service, display name
+- On completion: update `profiles` with selections, set `onboarding_complete = true`, redirect to `/dashboard`
+- Update `ProtectedRoute` to redirect to `/onboarding` if `onboarding_complete` is false
 
 ---
 
-### Implementation Order
-1. Database migration (2 tables)
-2. `src/lib/pricing.ts` + `src/lib/service-tracks.ts` (static data + detection logic)
-3. Pipeline page with cards + status management + CSV upload
-4. Client Intelligence page (brief, track detection, reel check)
-5. `analyze-client` edge function (email construction with Firecrawl + AI)
-6. `classify-reply` edge function (reply handling)
-7. Wire email construction + reply handler into client page
-8. Reel Library page (CRUD)
-9. Update routing + navigation
+#### Phase 3: Stripe Integration
 
-### Technical Notes
-- CSV upload uses `FileReader` + manual parsing on the client, then batch-inserts into `leads` + `client_pipeline`
-- Duplicate detection: check `business_name` match before inserting
-- Pipeline status updates use `updateLeadStatusInDb` pattern (already exists)
-- All new components follow existing dark theme, Lucide icons, framer-motion animations
-- No new npm dependencies needed
+- Enable Stripe via the Lovable Stripe tool
+- Create 4 products/prices: Free, Solo ($19/mo), Pro ($49/mo), Agency ($99/mo)
+- Create edge function `create-checkout-session` for plan upgrades
+- Create edge function `stripe-webhook` to handle subscription lifecycle events
+- Create `useSubscription` hook that fetches user plan and usage
+- Create `usageGuard` utility that shows upgrade modal when limits hit
+- Build `/dashboard/upgrade` pricing comparison page
+
+---
+
+#### Phase 4: History + Saved Searches (Database-Backed)
+
+- Rewrite History page to fetch from `search_history` table instead of Zustand
+- Store full `results_json` in search_history on each search
+- Expandable results view per history entry with "Add to Pipeline" buttons
+- Create Saved Searches page (`/dashboard/saved-searches`):
+  - List bookmarked search parameter sets
+  - "Run Search" button to re-execute
+  - Alert toggle for weekly notifications
+
+---
+
+#### Phase 5: Analytics Page
+
+- Create `/dashboard/analytics` with Recharts:
+  - Line chart: leads added per week (12 weeks)
+  - Pie chart: pipeline stage distribution
+  - Bar chart: leads by industry
+  - Metric cards: total searches, avg fit score, leads converted
+- Data fetched from existing tables (leads, client_pipeline, search_history)
+
+---
+
+#### Phase 6: Settings Page
+
+- Create `/dashboard/settings` with tabs:
+  - **Profile**: edit name, industry, country, service
+  - **Account**: change password
+  - **Notifications**: toggle email alerts (UI only initially)
+  - **Subscription**: current plan, usage stats, upgrade button
+  - **Danger Zone**: delete account
+
+---
+
+#### Phase 7: Activity Log + Follow-up Reminders
+
+- Add activity logging to pipeline actions (stage changes, notes, outreach)
+- Show activity timeline in Client Intelligence page
+- Add follow-up date picker to client cards
+- Show upcoming follow-ups on Dashboard
+
+---
+
+### Technical Details
+
+**Files to create:**
+- `src/pages/Onboarding.tsx`
+- `src/pages/Analytics.tsx`
+- `src/pages/Settings.tsx`
+- `src/pages/SavedSearches.tsx`
+- `src/pages/Upgrade.tsx`
+- `src/hooks/useSubscription.ts`
+- `src/components/shared/UpgradeModal.tsx`
+- `supabase/functions/create-checkout-session/index.ts`
+- `supabase/functions/stripe-webhook/index.ts`
+
+**Files to modify:**
+- `src/App.tsx` — new routes
+- `src/components/shared/AppSidebar.tsx` — new nav items (Analytics, Settings, Upgrade)
+- `src/pages/Auth.tsx` — add Google OAuth button
+- `src/pages/History.tsx` — rewrite to use database
+- `src/pages/SearchIntake.tsx` — save results_json to DB, add "Save Search" button
+- `src/pages/Dashboard.tsx` — add follow-up reminders section
+- `src/pages/ClientIntelligence.tsx` — add activity log and follow-up date picker
+- `src/components/ProtectedRoute.tsx` — onboarding redirect check
+
+**Database migrations:** 1 migration with all new tables + column additions.
+
+**No new npm dependencies** — Recharts is already available via shadcn/ui chart component.
+
+### Execution Note
+This is too large for a single implementation pass. I recommend starting with **Phase 1 + Phase 2** (database + onboarding + Google OAuth), then proceeding phase by phase. Each phase is self-contained and deployable.
 
