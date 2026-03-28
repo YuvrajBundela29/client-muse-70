@@ -87,35 +87,7 @@ export default function Results() {
     });
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-            <Crosshair className="h-5 w-5 text-primary" />
-            <span>Client Muse</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link to="/search">
-              <Button size="sm" variant="outline" className="gap-1.5">
-                <SearchIcon className="h-3.5 w-3.5" /> New Search
-              </Button>
-            </Link>
-            <Link to="/pipeline">
-              <Button size="sm" variant="ghost" className="gap-1.5">
-                <Zap className="h-3.5 w-3.5" /> Pipeline
-              </Button>
-            </Link>
-            <Link to="/history">
-              <Button size="sm" variant="ghost" className="gap-1.5">
-                <Clock className="h-3.5 w-3.5" /> History
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="container py-8">
+    <div className="p-6 max-w-6xl mx-auto">
         {/* Top bar */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -185,7 +157,6 @@ export default function Results() {
             ))}
           </div>
         )}
-      </div>
     </div>
   );
 }
