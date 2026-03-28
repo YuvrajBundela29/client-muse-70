@@ -1,6 +1,6 @@
 import {
   Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  Film, CreditCard, LogOut, Crosshair, ChevronLeft,
+  Film, LogOut, Crosshair, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -18,7 +18,10 @@ const mainItems = [
   { title: "Saved Leads", url: "/saved", icon: Bookmark },
   { title: "Pipeline CRM", url: "/pipeline", icon: GitBranch },
   { title: "Search History", url: "/history", icon: Clock },
+  { title: "Saved Searches", url: "/saved-searches", icon: BookmarkCheck },
   { title: "Reel Library", url: "/reel-library", icon: Film },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -63,6 +66,10 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3">
+        <NavLink to="/upgrade" className="flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors mb-2">
+          <Zap className="h-4 w-4" />
+          {!collapsed && "Upgrade Plan"}
+        </NavLink>
         {!collapsed && user && (
           <div className="mb-2 px-2 text-xs text-muted-foreground truncate">
             {user.email}

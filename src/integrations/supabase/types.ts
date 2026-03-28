@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_activity: {
+        Row: {
+          activity_type: string
+          client_id: string
+          created_at: string | null
+          description: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          client_id: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          client_id?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_pipeline: {
         Row: {
           created_at: string
@@ -127,32 +154,44 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string | null
           created_at: string
           credits_remaining: number
           email: string | null
           full_name: string | null
           id: string
+          industry: string | null
+          onboarding_complete: boolean | null
           plan: string
+          service: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           credits_remaining?: number
           email?: string | null
           full_name?: string | null
           id: string
+          industry?: string | null
+          onboarding_complete?: boolean | null
           plan?: string
+          service?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           credits_remaining?: number
           email?: string | null
           full_name?: string | null
           id?: string
+          industry?: string | null
+          onboarding_complete?: boolean | null
           plan?: string
+          service?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -231,32 +270,116 @@ export type Database = {
           },
         ]
       }
+      saved_searches: {
+        Row: {
+          alert_frequency: string | null
+          country: string | null
+          created_at: string | null
+          filters_json: Json | null
+          id: string
+          industry: string | null
+          is_alert: boolean | null
+          label: string
+          service: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_frequency?: string | null
+          country?: string | null
+          created_at?: string | null
+          filters_json?: Json | null
+          id?: string
+          industry?: string | null
+          is_alert?: boolean | null
+          label: string
+          service?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_frequency?: string | null
+          country?: string | null
+          created_at?: string | null
+          filters_json?: Json | null
+          id?: string
+          industry?: string | null
+          is_alert?: boolean | null
+          label?: string
+          service?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       search_history: {
         Row: {
           created_at: string
+          filters_json: Json | null
           id: string
           industry: string
           location: string
           result_count: number | null
+          results_json: Json | null
           service: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          filters_json?: Json | null
           id?: string
           industry: string
           location: string
           result_count?: number | null
+          results_json?: Json | null
           service: string
           user_id: string
         }
         Update: {
           created_at?: string
+          filters_json?: Json | null
           id?: string
           industry?: string
           location?: string
           result_count?: number | null
+          results_json?: Json | null
           service?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          id: string
+          plan: string
+          searches_reset_at: string | null
+          searches_used_this_month: number | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          searches_reset_at?: string | null
+          searches_used_this_month?: number | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          searches_reset_at?: string | null
+          searches_used_this_month?: number | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           user_id?: string
         }
         Relationships: []
