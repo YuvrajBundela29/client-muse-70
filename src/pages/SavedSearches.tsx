@@ -44,9 +44,9 @@ export default function SavedSearches() {
   };
 
   const toggleAlert = async (s: SavedSearch) => {
-    await supabase
-      .from("saved_searches" as string)
-      .update({ is_alert: !s.is_alert } as Record<string, unknown>)
+    await (supabase as any)
+      .from("saved_searches")
+      .update({ is_alert: !s.is_alert })
       .eq("id", s.id);
     setSearches(prev => prev.map(x => x.id === s.id ? { ...x, is_alert: !x.is_alert } : x));
     toast.success(s.is_alert ? "Alert disabled" : "Alert enabled");
