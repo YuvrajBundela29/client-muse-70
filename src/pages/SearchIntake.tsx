@@ -220,6 +220,6 @@ export default function SearchIntake() {
       </div>
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
-    </div>
+    </>
   );
 }
