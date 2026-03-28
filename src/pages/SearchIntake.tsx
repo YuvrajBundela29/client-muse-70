@@ -68,6 +68,7 @@ export default function SearchIntake() {
   return (
     <>
       <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center p-6">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
