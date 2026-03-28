@@ -55,7 +55,6 @@ export default function Auth() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
             <Crosshair className="h-8 w-8 text-primary" />
@@ -66,14 +65,8 @@ export default function Auth() {
           </p>
         </div>
 
-        {/* Form Card */}
         <div className="rounded-xl border bg-card p-6 shadow-lg">
-          {/* Google OAuth */}
-          <Button
-            variant="outline"
-            className="w-full gap-2 mb-4"
-            onClick={handleGoogleSignIn}
-          >
+          <Button variant="outline" className="w-full gap-2 mb-4" onClick={handleGoogleSignIn}>
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -84,9 +77,7 @@ export default function Auth() {
           </Button>
 
           <div className="relative mb-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t" />
-            </div>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t" /></div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-card px-2 text-muted-foreground">or</span>
             </div>
@@ -96,39 +87,17 @@ export default function Auth() {
             {mode === "signup" && (
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10"
-                  required
-                />
+                <Input placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="pl-10" required />
               </div>
             )}
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10"
-                required
-              />
+              <Input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10" required />
             </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-10"
-                required
-                minLength={6}
-              />
+              <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10" required minLength={6} />
             </div>
-
             <Button type="submit" className="w-full gap-2" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
               {mode === "login" ? "Sign In" : "Create Account"}
@@ -141,118 +110,7 @@ export default function Auth() {
               onClick={() => setMode(mode === "login" ? "signup" : "login")}
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              {mode === "login"
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (mode === "signup") {
-      const { error } = await signUp(email, password, fullName);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Check your email to confirm your account!");
-      }
-    } else {
-      const { error } = await signIn(email, password);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        navigate("/dashboard");
-      }
-    }
-    setLoading(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <Crosshair className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Client Muse</span>
-          </div>
-          <p className="text-muted-foreground text-sm">
-            {mode === "login" ? "Welcome back. Let's find clients." : "Start finding clients in 60 seconds."}
-          </p>
-        </div>
-
-        {/* Form Card */}
-        <div className="rounded-xl border bg-card p-6 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === "signup" && (
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            )}
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10"
-                required
-              />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-10"
-                required
-                minLength={6}
-              />
-            </div>
-
-            <Button type="submit" className="w-full gap-2" disabled={loading}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-              {mode === "login" ? "Sign In" : "Create Account"}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              {mode === "login"
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
+              {mode === "login" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
           </div>
         </div>
