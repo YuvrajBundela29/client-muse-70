@@ -28,8 +28,8 @@ export default function SavedSearches() {
   useEffect(() => {
     if (!user) return;
     const fetch = async () => {
-      const { data } = await supabase
-        .from("saved_searches" as string)
+      const { data } = await (supabase as any)
+        .from("saved_searches")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
