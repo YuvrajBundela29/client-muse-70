@@ -1,6 +1,6 @@
 import {
   Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  Film, CreditCard, LogOut, Crosshair, ChevronLeft,
+  Film, LogOut, Crosshair, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -18,7 +18,10 @@ const mainItems = [
   { title: "Saved Leads", url: "/saved", icon: Bookmark },
   { title: "Pipeline CRM", url: "/pipeline", icon: GitBranch },
   { title: "Search History", url: "/history", icon: Clock },
+  { title: "Saved Searches", url: "/saved-searches", icon: BookmarkCheck },
   { title: "Reel Library", url: "/reel-library", icon: Film },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
