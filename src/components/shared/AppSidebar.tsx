@@ -66,6 +66,10 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3">
+        <NavLink to="/upgrade" className="flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors mb-2">
+          <Zap className="h-4 w-4" />
+          {!collapsed && "Upgrade Plan"}
+        </NavLink>
         {!collapsed && user && (
           <div className="mb-2 px-2 text-xs text-muted-foreground truncate">
             {user.email}
