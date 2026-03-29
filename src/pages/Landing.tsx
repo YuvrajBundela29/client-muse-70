@@ -259,8 +259,8 @@ export default function Landing() {
       <footer className="border-t border-[rgba(255,255,255,0.06)] py-8">
         <div className="container flex items-center justify-between text-xs text-[#8892B0]">
           <div className="flex items-center gap-2">
-            <img src={logoWhite} alt="Client Muse" className="h-4 w-4" />
-            <span className="font-mono">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-4 w-4" />
+            <span className="font-mono">AutoClient AI</span>
           </div>
           <span>Built for freelancers who want to grow</span>
         </div>
