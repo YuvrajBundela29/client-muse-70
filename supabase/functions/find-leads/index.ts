@@ -6,6 +6,92 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+interface SearchResult {
+  title: string;
+  url: string;
+  description: string;
+  source: string;
+}
+
+// --- Source fetchers ---
+
+async function fetchZenserp(query: string): Promise<SearchResult[]> {
+  const key = Deno.env.get("ZENSERP_API_KEY");
+  if (!key) return [];
+  try {
+    const params = new URLSearchParams({ apikey: key, q: query, num: "15" });
+    const res = await fetch(`https://app.zenserp.com/api/v2/search?${params}`);
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    return (data.organic || []).map((r: Record<string, string>) => ({
+      title: r.title || "", url: r.url || "", description: r.description || "", source: "zenserp",
+    }));
+  } catch (e) { console.error("Zenserp error:", e); return []; }
+}
+
+async function fetchSerpstack(query: string): Promise<SearchResult[]> {
+  const key = Deno.env.get("SERPSTACK_API_KEY");
+  if (!key) return [];
+  try {
+    const params = new URLSearchParams({ access_key: key, query, num: "15" });
+    const res = await fetch(`http://api.serpstack.com/search?${params}`);
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    return (data.organic_results || []).map((r: Record<string, string>) => ({
+      title: r.title || "", url: r.url || "", description: r.snippet || "", source: "serpstack",
+    }));
+  } catch (e) { console.error("Serpstack error:", e); return []; }
+}
+
+async function fetchJooble(industry: string, location: string): Promise<SearchResult[]> {
+  const key = Deno.env.get("JOOBLE_API_KEY");
+  if (!key) return [];
+  try {
+    const res = await fetch(`https://jooble.org/api/${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ keywords: industry, location, page: 1 }),
+    });
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    return (data.jobs || []).slice(0, 15).map((j: Record<string, string>) => ({
+      title: j.title || "", url: j.link || "", description: `${j.company || ""} - ${j.snippet || ""}`, source: "jooble",
+    }));
+  } catch (e) { console.error("Jooble error:", e); return []; }
+}
+
+async function fetchCareerjet(industry: string, location: string): Promise<SearchResult[]> {
+  const affid = Deno.env.get("CAREERJET_AFFILIATE_ID");
+  if (!affid) return [];
+  try {
+    const params = new URLSearchParams({
+      affid, keywords: industry, location, pagesize: "15", page: "1", sort: "date",
+    });
+    const res = await fetch(`http://public.api.careerjet.net/search?${params}`);
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    return (data.jobs || []).map((j: Record<string, string>) => ({
+      title: j.title || "", url: j.url || "", description: `${j.company || ""} - ${j.description || ""}`, source: "careerjet",
+    }));
+  } catch (e) { console.error("Careerjet error:", e); return []; }
+}
+
+async function fetchWhatJobs(industry: string, location: string): Promise<SearchResult[]> {
+  const key = Deno.env.get("WHATJOBS_API_KEY");
+  if (!key) return [];
+  try {
+    const params = new URLSearchParams({ api_key: key, keywords: industry, location, results_per_page: "15" });
+    const res = await fetch(`https://api.whatjobs.com/api/v1/search?${params}`);
+    if (!res.ok) { await res.text(); return []; }
+    const data = await res.json();
+    return (data.data || data.results || []).slice(0, 15).map((j: Record<string, string>) => ({
+      title: j.title || "", url: j.url || j.redirect_url || "", description: `${j.company || ""} - ${j.description || ""}`, source: "whatjobs",
+    }));
+  } catch (e) { console.error("WhatJobs error:", e); return []; }
+}
+
+// --- Main handler ---
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -21,14 +107,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const ZENSERP_API_KEY = Deno.env.get("ZENSERP_API_KEY");
-    if (!ZENSERP_API_KEY) {
-      return new Response(
-        JSON.stringify({ success: false, error: "ZENSERP_API_KEY not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return new Response(
@@ -37,49 +115,43 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 1: Search for businesses using Zenserp
+    // Step 1: Fetch from all configured sources in parallel
     const searchQuery = `${industry} businesses in ${location} that need ${service}`;
-    console.log(`Zenserp search: "${searchQuery}"`);
+    console.log(`Multi-source search: "${searchQuery}"`);
 
-    const zenserpParams = new URLSearchParams({
-      apikey: ZENSERP_API_KEY,
-      q: searchQuery,
-      num: "20",
+    const allResults = await Promise.all([
+      fetchZenserp(searchQuery),
+      fetchSerpstack(searchQuery),
+      fetchJooble(industry, location),
+      fetchCareerjet(industry, location),
+      fetchWhatJobs(industry, location),
+    ]);
+
+    const combined: SearchResult[] = allResults.flat();
+    console.log(`Total results from all sources: ${combined.length} (${allResults.map((r, i) => `${["zenserp","serpstack","jooble","careerjet","whatjobs"][i]}:${r.length}`).join(", ")})`);
+
+    // Deduplicate by URL
+    const seen = new Set<string>();
+    const unique = combined.filter((r) => {
+      const key = r.url.replace(/\/$/, "").toLowerCase();
+      if (seen.has(key) || !key) return false;
+      seen.add(key);
+      return true;
     });
 
-    const searchResponse = await fetch(
-      `https://app.zenserp.com/api/v2/search?${zenserpParams.toString()}`,
-      { method: "GET" }
-    );
-
-    if (!searchResponse.ok) {
-      const errText = await searchResponse.text();
-      console.error("Zenserp error:", searchResponse.status, errText);
+    if (unique.length === 0) {
       return new Response(
-        JSON.stringify({ success: false, error: `Search API error: ${searchResponse.status}` }),
-        { status: searchResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const searchData = await searchResponse.json();
-    const organicResults = searchData.organic || [];
-    console.log(`Zenserp returned ${organicResults.length} organic results`);
-
-    if (organicResults.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, leads: [] }),
+        JSON.stringify({ success: true, leads: [], sources_queried: allResults.map((r, i) => ({ source: ["zenserp","serpstack","jooble","careerjet","whatjobs"][i], count: r.length })) }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Step 2: Analyze results with AI
-    const businessSummaries = organicResults
-      .map((r: Record<string, string>, i: number) => {
-        return `--- Result ${i + 1} ---\nURL: ${r.url || "N/A"}\nTitle: ${r.title || "N/A"}\nDescription: ${r.description || "N/A"}`;
-      })
+    // Step 2: AI analysis
+    const businessSummaries = unique.slice(0, 30)
+      .map((r, i) => `--- Result ${i + 1} [${r.source}] ---\nURL: ${r.url}\nTitle: ${r.title}\nDescription: ${r.description}`)
       .join("\n\n");
 
-    const aiPrompt = `You are analyzing Google search results to find real businesses. For each result below, determine if it's an actual ${industry} business in or near ${location}. Skip directories, news articles, listicles, and aggregator pages.
+    const aiPrompt = `You are analyzing search results from multiple sources (Google, job boards) to find real businesses. For each result, determine if it represents an actual ${industry} business in or near ${location}. Job postings indicate a hiring company — extract the company as a lead. Skip directories, aggregator pages, and duplicates.
 
 Search results:
 ${businessSummaries}
@@ -87,18 +159,18 @@ ${businessSummaries}
 Service being offered to them: ${service}
 
 For each REAL business found, return a JSON array element with:
-- "business_name": string (the actual business name, not the page title)
-- "website": string or null (their website URL)
-- "email": string or null (contact email if visible in snippet)
-- "phone": string or null (phone if visible)
+- "business_name": string
+- "website": string or null
+- "email": string or null
+- "phone": string or null
 - "instagram_url": string or null
 - "google_rating": number or null
-- "website_problem": string (identify a specific problem their website/marketing likely has based on the snippet and URL)
-- "growth_opportunity": string (a concrete improvement they could make)
+- "website_problem": string (identify a specific problem)
+- "growth_opportunity": string (a concrete improvement)
 - "recommended_service": string (recommend from: "${service}")
-- "outreach_message": string (a short, personalized outreach message referencing a real detail about them)
+- "outreach_message": string (personalized outreach referencing a real detail)
 
-Return ONLY a valid JSON array. No markdown. If no real businesses are found, return [].`;
+Return ONLY a valid JSON array. No markdown. If no real businesses found, return [].`;
 
     console.log("Calling AI for analysis...");
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -133,7 +205,6 @@ Return ONLY a valid JSON array. No markdown. If no real businesses are found, re
 
     const aiData = await aiResponse.json();
     const aiContent = aiData.choices?.[0]?.message?.content || "[]";
-    console.log("AI response received, parsing...");
 
     let leads: Record<string, unknown>[];
     try {
@@ -154,7 +225,7 @@ Return ONLY a valid JSON array. No markdown. If no real businesses are found, re
       );
     }
 
-    // Step 3: Store leads in database
+    // Step 3: Store in database
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -188,7 +259,7 @@ Return ONLY a valid JSON array. No markdown. If no real businesses are found, re
       );
     }
 
-    console.log(`Successfully saved ${insertedLeads?.length} leads via Zenserp`);
+    console.log(`Saved ${insertedLeads?.length} leads from ${unique.length} unique results`);
 
     return new Response(
       JSON.stringify({ success: true, leads: insertedLeads }),

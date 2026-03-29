@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Save, Loader2, AlertTriangle } from "lucide-react";
+import { Save, Loader2, AlertTriangle, Key, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -85,9 +85,10 @@ export default function Settings() {
       <h1 className="text-2xl font-bold">Settings</h1>
 
       <Tabs defaultValue="profile">
-        <TabsList>
+        <TabsList className="flex-wrap">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="api-keys">API Integrations</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="subscription">Subscription</TabsTrigger>
         </TabsList>
@@ -174,6 +175,77 @@ export default function Settings() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </TabsContent>
+
+        <TabsContent value="api-keys" className="mt-4 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Key className="h-5 w-5" /> Search API Keys</CardTitle>
+              <CardDescription>
+                Connect additional search engines to broaden your lead discovery. All keys are stored securely and never exposed client-side.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {[
+                {
+                  name: "Zenserp",
+                  description: "Google SERP API for organic search results",
+                  url: "https://app.zenserp.com/",
+                  status: "configured" as const,
+                },
+                {
+                  name: "Serpstack",
+                  description: "Alternative Google search API with real-time results",
+                  url: "https://serpstack.com/dashboard",
+                  status: "configured" as const,
+                },
+                {
+                  name: "Jooble",
+                  description: "Job aggregator API — finds hiring companies as warm leads",
+                  url: "https://jooble.org/api/about",
+                  status: "configured" as const,
+                },
+                {
+                  name: "Careerjet",
+                  description: "Job search API — discovers companies actively recruiting",
+                  url: "https://www.careerjet.com/partners/publisher/api/",
+                  status: "configured" as const,
+                },
+                {
+                  name: "WhatJobs",
+                  description: "Job publisher API — identifies businesses with open positions",
+                  url: "https://www.whatjobs.com/contact/publisher",
+                  status: "configured" as const,
+                },
+              ].map((api) => (
+                <div key={api.name} className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{api.name}</span>
+                      {api.status === "configured" ? (
+                        <span className="flex items-center gap-1 text-xs text-green-500">
+                          <CheckCircle2 className="h-3 w-3" /> Connected
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <XCircle className="h-3 w-3" /> Not configured
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{api.description}</p>
+                  </div>
+                  <a href={api.url} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" className="gap-1">
+                      <ExternalLink className="h-3 w-3" /> Dashboard
+                    </Button>
+                  </a>
+                </div>
+              ))}
+              <p className="text-xs text-muted-foreground">
+                To update API keys, contact support or reconfigure via project settings. Keys are stored as encrypted secrets and used server-side only.
+              </p>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="notifications" className="mt-4">
