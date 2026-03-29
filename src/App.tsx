@@ -12,14 +12,12 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SearchIntake from "./pages/SearchIntake";
 import Results from "./pages/Results";
-import SavedLeads from "./pages/SavedLeads";
 import History from "./pages/History";
 import Pipeline from "./pages/Pipeline";
 import ClientIntelligence from "./pages/ClientIntelligence";
 
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
-import SavedSearches from "./pages/SavedSearches";
 import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
@@ -54,14 +52,14 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedWithLayout><Dashboard /></ProtectedWithLayout>} />
             <Route path="/search" element={<ProtectedWithLayout><SearchIntake /></ProtectedWithLayout>} />
             <Route path="/results" element={<ProtectedWithLayout><Results /></ProtectedWithLayout>} />
-            <Route path="/saved" element={<ProtectedWithLayout><SavedLeads /></ProtectedWithLayout>} />
+            <Route path="/saved" element={<Navigate to="/history" replace />} />
             <Route path="/history" element={<ProtectedWithLayout><History /></ProtectedWithLayout>} />
             <Route path="/pipeline" element={<ProtectedWithLayout><Pipeline /></ProtectedWithLayout>} />
             <Route path="/pipeline/:id" element={<ProtectedWithLayout><ClientIntelligence /></ProtectedWithLayout>} />
             
             <Route path="/analytics" element={<ProtectedWithLayout><Analytics /></ProtectedWithLayout>} />
             <Route path="/settings" element={<ProtectedWithLayout><Settings /></ProtectedWithLayout>} />
-            <Route path="/saved-searches" element={<ProtectedWithLayout><SavedSearches /></ProtectedWithLayout>} />
+            <Route path="/saved-searches" element={<Navigate to="/history" replace />} />
             <Route path="/upgrade" element={<ProtectedWithLayout><Upgrade /></ProtectedWithLayout>} />
 
             {/* Redirects */}

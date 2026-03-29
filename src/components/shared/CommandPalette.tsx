@@ -4,17 +4,15 @@ import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
 } from "@/components/ui/command";
 import {
-  Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  BarChart3, Settings, BookmarkCheck, Zap,
+  Search, LayoutDashboard, Clock, GitBranch,
+  BarChart3, Settings, Zap,
 } from "lucide-react";
 
 const pages = [
   { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { name: "Search Clients", url: "/search", icon: Search },
-  { name: "Saved Leads", url: "/saved", icon: Bookmark },
   { name: "Pipeline CRM", url: "/pipeline", icon: GitBranch },
   { name: "Search History", url: "/history", icon: Clock },
-  { name: "Saved Searches", url: "/saved-searches", icon: BookmarkCheck },
   { name: "Analytics", url: "/analytics", icon: BarChart3 },
   { name: "Settings", url: "/settings", icon: Settings },
   { name: "Upgrade Plan", url: "/upgrade", icon: Zap },

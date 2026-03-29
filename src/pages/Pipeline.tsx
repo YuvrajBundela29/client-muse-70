@@ -19,20 +19,15 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const STATUS_COLUMNS = [
-  { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, accent: "#8892B0", dealValue: 0 },
-  { key: "email_sent", label: "Email Sent", icon: Mail, accent: "#5B5FEF", dealValue: 1200 },
-  { key: "replied", label: "Replied", icon: MessageSquare, accent: "#F59E0B", dealValue: 2500 },
-  { key: "call_booked", label: "Call Booked", icon: Phone, accent: "#A78BFA", dealValue: 4000 },
-  { key: "closed", label: "Closed", icon: CheckCircle2, accent: "#00E5C3", dealValue: 5000 },
-  { key: "no_response", label: "No Response", icon: MailX, accent: "#F97316", dealValue: 0 },
-  { key: "rejected", label: "Rejected", icon: XCircle, accent: "#EF4444", dealValue: 0 },
+const STATUS_OPTIONS = [
+  { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, color: "text-muted-foreground", bg: "bg-muted/30" },
+  { key: "email_sent", label: "Email Sent", icon: Mail, color: "text-primary", bg: "bg-primary/10" },
+  { key: "replied", label: "Replied", icon: MessageSquare, color: "text-warning", bg: "bg-warning/10" },
+  { key: "call_booked", label: "Call Booked", icon: Phone, color: "text-[hsl(var(--glow-violet))]", bg: "bg-[hsl(var(--glow-violet))]/10" },
+  { key: "closed", label: "Closed", icon: CheckCircle2, color: "text-success", bg: "bg-success/10" },
+  { key: "no_response", label: "No Response", icon: MailX, color: "text-orange-400", bg: "bg-orange-400/10" },
+  { key: "rejected", label: "Rejected", icon: XCircle, color: "text-destructive", bg: "bg-destructive/10" },
 ] as const;
-
-const STATUS_EMOJI: Record<string, string> = {
-  not_contacted: "🔵", email_sent: "📤", replied: "💬",
-  call_booked: "📞", closed: "✅", no_response: "❌", rejected: "🚫",
-};
 
 function hashValue(s: string, min: number, max: number): number {
   let h = 0;
@@ -67,10 +62,22 @@ function PipelineAvatar({ name }: { name: string }) {
   );
 }
 
+function StatusBadge({ status }: { status: string }) {
+  const opt = STATUS_OPTIONS.find(s => s.key === status) || STATUS_OPTIONS[0];
+  const Icon = opt.icon;
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium ${opt.color} ${opt.bg}`}>
+      <Icon className="h-3 w-3" />
+      {opt.label}
+    </span>
+  );
+}
+
 export default function Pipeline() {
   const [entries, setEntries] = useState<PipelineWithLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -151,43 +158,40 @@ export default function Pipeline() {
   };
 
   const filtered = entries.filter((e) => {
+    if (filterStatus !== "all" && e.pipeline_status !== filterStatus) return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
     return e.lead.business_name.toLowerCase().includes(q) || e.lead.industry.toLowerCase().includes(q) || e.lead.city.toLowerCase().includes(q);
   });
 
-  const getColumn = (status: string) => filtered.filter((e) => e.pipeline_status === status);
-
-  // Revenue forecast calculations
-  const totalPipelineValue = filtered.reduce((sum, e) => {
-    const col = STATUS_COLUMNS.find(c => c.key === e.pipeline_status);
-    return sum + (col?.dealValue || 0) + hashValue(e.lead_id, 500, 3000);
-  }, 0);
-  const projectedClose = Math.round(totalPipelineValue * 0.3);
+  // Stats
+  const closedCount = entries.filter(e => e.pipeline_status === "closed").length;
+  const activeCount = entries.filter(e => !["closed", "rejected", "no_response"].includes(e.pipeline_status)).length;
+  const repliedCount = entries.filter(e => ["replied", "call_booked"].includes(e.pipeline_status)).length;
 
   return (
-    <div className="p-6 lg:p-8">
-      {/* Top bar */}
+    <div className="p-6 lg:p-8 max-w-6xl mx-auto">
+      {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="page-title flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
-            Revenue Forecast Board
+            Pipeline CRM
           </h1>
-          <p className="text-sm text-muted-foreground font-mono">{entries.length} clients in pipeline</p>
+          <p className="text-sm text-muted-foreground font-mono">{entries.length} clients tracked</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search pipeline..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-48 pl-9 glass-input"
+              className="h-9 w-44 pl-9 glass-input"
             />
           </div>
           <Button size="sm" onClick={syncLeadsToPipeline} className="gap-1.5 bg-primary hover:bg-primary/90">
-            <Plus className="h-3.5 w-3.5" /> Add Client
+            <Plus className="h-3.5 w-3.5" /> Add Leads
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -211,42 +215,69 @@ export default function Pipeline() {
         </div>
       </div>
 
-      {/* Revenue Forecast Summary */}
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="glass-card p-4 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <DollarSign className="h-5 w-5 text-primary" />
+      {/* Summary stats */}
+      <div className="mb-5 grid grid-cols-3 gap-3">
+        <div className="glass-card p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <TrendingUp className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <p className="text-xl font-bold font-mono text-foreground">${totalPipelineValue.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Pipeline Value</p>
+            <p className="text-lg font-bold font-mono text-foreground">{activeCount}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
           </div>
         </div>
-        <div className="glass-card p-4 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center">
-            <TrendingUp className="h-5 w-5 text-success" />
+        <div className="glass-card p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-warning/10 flex items-center justify-center">
+            <MessageSquare className="h-4 w-4 text-warning" />
           </div>
           <div>
-            <p className="text-xl font-bold font-mono text-success">${projectedClose.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Projected Close (30%)</p>
+            <p className="text-lg font-bold font-mono text-warning">{repliedCount}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Engaged</p>
           </div>
         </div>
-        <div className="glass-card p-4 flex items-center gap-3 border-warning/20">
-          <div className="h-10 w-10 rounded-xl bg-warning/10 flex items-center justify-center">
-            <Clock className="h-5 w-5 text-warning" />
+        <div className="glass-card p-3 flex items-center gap-3">
+          <div className="h-9 w-9 rounded-lg bg-success/10 flex items-center justify-center">
+            <CheckCircle2 className="h-4 w-4 text-success" />
           </div>
           <div>
-            <p className="text-xs font-medium text-warning">⚡ Follow up now</p>
-            <p className="text-[10px] text-muted-foreground">Leads go cold after 48hrs</p>
+            <p className="text-lg font-bold font-mono text-success">{closedCount}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Closed</p>
           </div>
         </div>
       </div>
 
-      {/* Free tier upgrade prompt */}
+      {/* Filter tabs */}
+      <div className="mb-4 flex items-center gap-1.5 flex-wrap">
+        <button
+          onClick={() => setFilterStatus("all")}
+          className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+            filterStatus === "all" ? "bg-primary text-primary-foreground" : "bg-[rgba(255,255,255,0.04)] text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          All ({entries.length})
+        </button>
+        {STATUS_OPTIONS.map(s => {
+          const count = entries.filter(e => e.pipeline_status === s.key).length;
+          if (count === 0) return null;
+          return (
+            <button
+              key={s.key}
+              onClick={() => setFilterStatus(s.key)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+                filterStatus === s.key ? "bg-primary text-primary-foreground" : "bg-[rgba(255,255,255,0.04)] text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {s.label} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Upgrade prompt */}
       <Link to="/upgrade">
-        <div className="mb-6 glass-card p-3 border-primary/15 hover:border-primary/30 transition-colors cursor-pointer flex items-center justify-between">
+        <div className="mb-4 glass-card p-2.5 border-primary/15 hover:border-primary/30 transition-colors cursor-pointer flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Crown className="h-4 w-4 text-primary" />
+            <Crown className="h-3.5 w-3.5 text-primary" />
             <span className="text-[11px] text-muted-foreground">
               <span className="text-primary font-medium">Upgrade to automate follow-ups</span> — Pro users close 3× more deals
             </span>
@@ -256,121 +287,94 @@ export default function Pipeline() {
       </Link>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {[1,2,3,4].map((i) => (
-            <div key={i} className="h-48 rounded-2xl bg-[rgba(255,255,255,0.04)] animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%)", backgroundSize: "200% 100%" }} />
+        <div className="space-y-3">
+          {[1,2,3,4,5].map((i) => (
+            <div key={i} className="h-16 rounded-xl bg-[rgba(255,255,255,0.04)] animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%)", backgroundSize: "200% 100%" }} />
           ))}
         </div>
+      ) : filtered.length === 0 ? (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-16 text-center">
+          <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Zap className="h-7 w-7 text-primary" />
+          </div>
+          <h3 className="text-lg font-medium mb-1">No clients in pipeline</h3>
+          <p className="text-sm text-muted-foreground mb-4">Run a search and your leads will appear here.</p>
+          <Link to="/search">
+            <Button className="gap-2 bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" /> Find Clients
+            </Button>
+          </Link>
+        </motion.div>
       ) : (
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STATUS_COLUMNS.map((col) => {
-            const items = getColumn(col.key);
-            const colValue = items.reduce((s, e) => s + hashValue(e.lead_id, 500, 3000) + col.dealValue, 0);
+        <div className="space-y-2">
+          {filtered.map((entry, i) => {
+            const enriched = enrichLead(entry.lead as any);
+            const successProb = hashValue(entry.lead_id + "prob", 15, 85);
             return (
-              <div key={col.key} className="min-w-[280px] max-w-[300px] flex-shrink-0">
-                <div className="mb-3 flex items-center justify-between px-1 pb-3 border-b border-[rgba(255,255,255,0.08)]" style={{ borderTopColor: col.accent }}>
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: col.accent }} />
-                    <span className="section-label">{col.label}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Badge variant="secondary" className="text-[10px] font-mono bg-[rgba(255,255,255,0.06)]">{items.length}</Badge>
-                    {colValue > 0 && (
-                      <span className="text-[9px] font-mono text-success">${(colValue / 1000).toFixed(1)}K</span>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-3 min-h-[200px]">
-                  {items.map((entry, i) => {
-                    const enriched = enrichLead(entry.lead as any);
-                    const successProb = hashValue(entry.lead_id + "prob", 15, 85);
-                    return (
-                      <motion.div
-                        key={entry.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.03 }}
-                        whileHover={{ y: -2, transition: { type: "spring", stiffness: 400, damping: 30 } }}
-                      >
-                        <Link to={`/pipeline/${entry.lead_id}`}>
-                          <div className="glass-card p-4 rounded-xl cursor-pointer group hover:border-[rgba(255,255,255,0.15)] transition-all duration-200">
-                            <div className="mb-2 flex items-start justify-between">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <PipelineAvatar name={entry.lead.business_name} />
-                                <div className="min-w-0">
-                                  <h3 className="font-medium text-sm leading-tight truncate">{entry.lead.business_name}</h3>
-                                  {entry.lead.website && (
-                                    <p className="text-[10px] text-success truncate font-mono">{entry.lead.website}</p>
-                                  )}
-                                </div>
-                              </div>
-                              <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-md ${
-                                enriched.confidence_score >= 75 ? "bg-success/15 text-success" :
-                                enriched.confidence_score >= 50 ? "bg-warning/15 text-warning" : "bg-destructive/15 text-destructive"
-                              }`}>
-                                {enriched.confidence_score}%
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-muted-foreground mb-2 font-mono truncate">
-                              {entry.lead.industry} · {entry.lead.city}
-                            </p>
-                            {/* Success probability bar */}
-                            <div className="mb-2">
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-[9px] text-muted-foreground">Win probability</span>
-                                <span className="text-[9px] font-mono font-bold" style={{ color: successProb >= 50 ? "hsl(166, 72%, 45%)" : "hsl(38, 92%, 50%)" }}>
-                                  {successProb}%
-                                </span>
-                              </div>
-                              <div className="h-1 rounded-full bg-[rgba(255,255,255,0.06)] overflow-hidden">
-                                <div
-                                  className="h-full rounded-full transition-all duration-500"
-                                  style={{
-                                    width: `${successProb}%`,
-                                    background: successProb >= 50 ? "hsl(166, 72%, 45%)" : "hsl(38, 92%, 50%)",
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap gap-1 mb-2">
-                              {entry.lead.email && (
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-success/20 text-success bg-success/5">
-                                  <Mail className="h-2.5 w-2.5 mr-0.5" /> Email
-                                </Badge>
-                              )}
-                              {entry.lead.website && (
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5">
-                                  <Globe className="h-2.5 w-2.5 mr-0.5" /> Web
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="mt-3 flex items-center justify-between">
-                              <select
-                                value={entry.pipeline_status}
-                                onClick={(e) => e.preventDefault()}
-                                onChange={(e) => { e.preventDefault(); e.stopPropagation(); handleStatusChange(entry.id, e.target.value); }}
-                                className="rounded-lg bg-[rgba(255,255,255,0.06)] px-2 py-1 text-[10px] font-medium border border-[rgba(255,255,255,0.08)] outline-none text-foreground backdrop-blur-sm"
-                              >
-                                {STATUS_COLUMNS.map((s) => (
-                                  <option key={s.key} value={s.key}>{STATUS_EMOJI[s.key]} {s.label}</option>
-                                ))}
-                              </select>
-                              <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
-                                View Details <ChevronRight className="h-3 w-3" />
-                              </span>
-                            </div>
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.02 }}
+              >
+                <Link to={`/pipeline/${entry.lead_id}`}>
+                  <div className="glass-card rounded-xl p-4 hover:border-[rgba(255,255,255,0.15)] transition-all duration-200 group cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      {/* Avatar + Name */}
+                      <PipelineAvatar name={entry.lead.business_name} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-medium text-sm truncate">{entry.lead.business_name}</h3>
+                          <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded ${
+                            enriched.confidence_score >= 75 ? "bg-success/15 text-success" :
+                            enriched.confidence_score >= 50 ? "bg-warning/15 text-warning" : "bg-destructive/15 text-destructive"
+                          }`}>
+                            {enriched.confidence_score}%
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground font-mono truncate">
+                          {entry.lead.industry} · {entry.lead.city}
+                          {entry.lead.email && <span className="ml-2 text-success">✉ Has email</span>}
+                        </p>
+                      </div>
+
+                      {/* Win probability */}
+                      <div className="hidden sm:flex items-center gap-2 shrink-0 w-24">
+                        <div className="flex-1">
+                          <div className="h-1.5 rounded-full bg-[rgba(255,255,255,0.06)] overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${successProb}%`,
+                                background: successProb >= 50 ? "hsl(var(--success))" : "hsl(var(--warning))",
+                              }}
+                            />
                           </div>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                  {items.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-[rgba(255,255,255,0.08)] p-6 text-center">
-                      <p className="text-xs text-muted-foreground">No clients</p>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold w-8 text-right" style={{ color: successProb >= 50 ? "hsl(var(--success))" : "hsl(var(--warning))" }}>
+                          {successProb}%
+                        </span>
+                      </div>
+
+                      {/* Status */}
+                      <div className="shrink-0" onClick={(e) => e.preventDefault()}>
+                        <select
+                          value={entry.pipeline_status}
+                          onChange={(e) => { e.stopPropagation(); handleStatusChange(entry.id, e.target.value); }}
+                          className="rounded-lg bg-[rgba(255,255,255,0.06)] px-2 py-1.5 text-[11px] font-medium border border-[rgba(255,255,255,0.08)] outline-none text-foreground backdrop-blur-sm cursor-pointer"
+                        >
+                          {STATUS_OPTIONS.map((s) => (
+                            <option key={s.key} value={s.key}>{s.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Arrow */}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                     </div>
-                  )}
-                </div>
-              </div>
+                  </div>
+                </Link>
+              </motion.div>
             );
           })}
         </div>
