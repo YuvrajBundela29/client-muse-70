@@ -85,9 +85,9 @@ export default function Dashboard() {
   }, [user]);
 
   const insights = [
-    { title: "Best time to outreach", desc: "9–11am gets 3× reply rates in your timezone", icon: Lightbulb, accent: "hsl(238, 75%, 64%)" },
-    { title: "Top converting niche", desc: "SaaS startups in Germany — 42% response rate", icon: Zap, accent: "hsl(166, 72%, 45%)" },
-    { title: "Pipeline needs attention", desc: `${stats.pipelineActive} leads with no recent activity`, icon: AlertCircle, accent: "hsl(38, 92%, 50%)" },
+    { title: "Best time to outreach", desc: "9–11am gets 3× reply rates in your timezone", icon: Lightbulb, accent: "hsl(238, 75%, 64%)", link: "/search" },
+    { title: "Top converting niche", desc: "SaaS startups in Germany — 42% response rate", icon: Zap, accent: "hsl(166, 72%, 45%)", link: "/analytics" },
+    { title: "Pipeline needs attention", desc: `${stats.pipelineActive} leads with no recent activity`, icon: AlertCircle, accent: "hsl(38, 92%, 50%)", link: "/pipeline" },
   ];
 
   return (
