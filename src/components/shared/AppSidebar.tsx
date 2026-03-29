@@ -63,11 +63,8 @@ export function AppSidebar() {
           ) : (
             <div className="flex items-center gap-2.5">
               <div className="relative group">
-                <div className="h-7 w-7 relative">
-                  <svg viewBox="0 0 28 28" className="h-7 w-7 text-primary group-hover:animate-spin-slow transition-transform">
-                    <polygon points="14,1 26,8 26,20 14,27 2,20 2,8" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                </div>
+                <img src={logoWhite} alt="Client Muse" className="h-7 w-7 shrink-0" />
+                <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
               </div>
               <span className="text-[15px] font-semibold tracking-tight text-foreground">Client Muse</span>
             </div>
