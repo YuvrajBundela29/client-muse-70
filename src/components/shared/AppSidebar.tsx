@@ -1,6 +1,6 @@
 import {
   Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  Film, LogOut, Crosshair, BarChart3, Settings, Zap, BookmarkCheck,
+  LogOut, Crosshair, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
