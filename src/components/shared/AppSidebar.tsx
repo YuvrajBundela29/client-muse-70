@@ -3,6 +3,7 @@ import {
   LogOut, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
+import logoHorizontal from "@/assets/logo-horizontal-white.png";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,15 +36,14 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent className="bg-sidebar border-r border-sidebar-border">
         {/* Logo */}
-        <div className={`flex items-center gap-2.5 px-4 py-5 ${collapsed ? "justify-center" : ""}`}>
-          <div className="relative">
-            <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
-            <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
-          </div>
-          {!collapsed && (
-            <span className="font-bold text-lg tracking-tight text-gradient">
-              AutoClient AI
-            </span>
+        <div className={`flex items-center px-4 py-5 ${collapsed ? "justify-center" : ""}`}>
+          {collapsed ? (
+            <div className="relative">
+              <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
+              <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
+            </div>
+          ) : (
+            <img src={logoHorizontal} alt="AutoClient AI" className="h-8 w-auto" />
           )}
         </div>
 
