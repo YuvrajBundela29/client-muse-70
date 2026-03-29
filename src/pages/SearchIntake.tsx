@@ -13,6 +13,7 @@ import { SearchStep } from "@/types/lead";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useSessionStore } from "@/lib/session-store";
+import { useSubscription } from "@/hooks/useSubscription";
 import { PaywallModal } from "@/components/results/PaywallModal";
 
 const STATUS_MESSAGES = [
@@ -53,7 +54,8 @@ function LiveActivityDot() {
 export default function SearchIntake() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { lastSearch, setLastSearch, incrementSearch, specialization, addSearchHistory } = useSessionStore();
+  const { lastSearch, setLastSearch, specialization, addSearchHistory } = useSessionStore();
+  const { canSearch, plan } = useSubscription();
   const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
   const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
   const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
@@ -75,7 +77,7 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
-    if (!incrementSearch()) { setShowPaywall(true); return; }
+    if (!canSearch) { setShowPaywall(true); return; }
     setLastSearch({ industry, location, service });
     addSearchHistory({ industry, location, service });
     try {
