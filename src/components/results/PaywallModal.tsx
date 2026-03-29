@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Zap, X, Crown, Shield, TrendingUp, Clock, Users } from "lucide-react";
+import { Lock, Zap, X, Crown, Shield, TrendingUp, Users, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -34,37 +34,46 @@ export function PaywallModal({ open, onClose }: PaywallModalProps) {
             </div>
             <h2 className="mb-2 text-2xl font-bold">You've Hit Your Limit</h2>
             <p className="mb-2 text-muted-foreground">
-              You've used all <span className="font-bold text-foreground">5 free searches</span> for today.
+              You've used all <span className="font-bold text-foreground">10 free searches</span> this month.
             </p>
-            <p className="mb-2 text-sm text-destructive font-medium">
-              ⚠️ You've missed 12 perfect leads this week
-            </p>
+            
+            {/* Loss aversion */}
+            <div className="mb-4 rounded-xl bg-destructive/5 border border-destructive/20 p-3">
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <Target className="h-4 w-4 text-destructive" />
+                <span className="text-destructive font-medium">You've missed 43 perfect leads this week</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                Free users miss 87% of the best opportunities
+              </p>
+            </div>
 
             {/* ROI calculator */}
             <div className="mb-4 rounded-xl bg-primary/5 border border-primary/20 p-3">
               <p className="text-xs text-muted-foreground mb-1">Investment Calculator</p>
               <p className="text-sm">
-                <span className="text-primary font-bold">$49/mo</span> → Average <span className="text-success font-bold">$3,200</span> extra/mo = <span className="text-warning font-bold">65× ROI</span>
+                <span className="text-primary font-bold">$67/mo</span> → Average <span className="text-success font-bold">$3,400</span> extra/mo = <span className="text-warning font-bold">51× ROI</span>
               </p>
+              <p className="text-[10px] text-muted-foreground mt-1">Break even with ONE client</p>
             </div>
 
             <div className="flex items-center justify-center gap-3 mb-4 text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,400+ users</span>
-              <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-success" /> 65× avg ROI</span>
-              <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> Money-back</span>
+              <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,847+ users</span>
+              <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-success" /> 51× avg ROI</span>
+              <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> 60-day guarantee</span>
             </div>
 
             <Link to="/upgrade">
-              <Button size="lg" className="w-full gap-2 h-12 text-base shadow-lg shadow-primary/25 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 animate-glow-pulse">
-                <Crown className="h-5 w-5" /> Upgrade to Pro — $49/mo
+              <Button size="lg" className="w-full gap-2 h-12 text-base shadow-lg shadow-primary/25 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 animate-glow-pulse font-bold">
+                <Crown className="h-5 w-5" /> See All Plans
               </Button>
             </Link>
 
-            <p className="mt-2 text-[10px] text-warning">
-              ⏰ Only 7 Pro slots left this month
+            <p className="mt-2 text-[10px] text-warning font-medium">
+              ⏰ Only 23 Elite spots left at launch pricing
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Or come back tomorrow for 5 more free searches.
+              Or wait until next month for 10 more free searches.
             </p>
           </motion.div>
         </motion.div>
