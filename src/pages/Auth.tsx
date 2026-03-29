@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Crosshair, Mail, Lock, User, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
