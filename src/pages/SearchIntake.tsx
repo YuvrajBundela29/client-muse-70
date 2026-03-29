@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowRight, Loader2, Sparkles, Settings, Users, Clock, Shield, Zap, Crown } from "lucide-react";
+import {
+  Search, Loader2, Sparkles, Settings, Users, Clock, Shield, Zap, Crown,
+  Target, TrendingUp, Globe, MapPin, Briefcase,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StepIndicator } from "@/components/shared/StepIndicator";
@@ -20,6 +23,15 @@ const STATUS_MESSAGES = [
   "Ranking by conversion probability...",
 ];
 
+const PRESETS = [
+  { label: "🏋️ Gyms in NYC", i: "Gyms", l: "New York", s: "Website Design", color: "from-orange-500/20 to-red-500/20" },
+  { label: "🍕 Restaurants in London", i: "Restaurants", l: "London", s: "Social Media Marketing", color: "from-green-500/20 to-emerald-500/20" },
+  { label: "🏠 Realtors in Dubai", i: "Real Estate Agents", l: "Dubai", s: "SEO", color: "from-blue-500/20 to-cyan-500/20" },
+  { label: "💇 Salons in LA", i: "Hair Salons", l: "Los Angeles", s: "Google Ads", color: "from-pink-500/20 to-purple-500/20" },
+  { label: "🦷 Dentists in Mumbai", i: "Dentists", l: "Mumbai", s: "Website Design", color: "from-teal-500/20 to-cyan-500/20" },
+  { label: "🚗 Car Dealers in Delhi", i: "Car Dealerships", l: "Delhi", s: "Google Ads", color: "from-amber-500/20 to-yellow-500/20" },
+];
+
 function LiveCounter() {
   const [count, setCount] = useState(47293);
   useEffect(() => {
@@ -29,10 +41,19 @@ function LiveCounter() {
   return <span className="text-success font-mono font-bold">{count.toLocaleString()}</span>;
 }
 
+function LiveActivityDot() {
+  return (
+    <span className="relative flex h-2 w-2">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
+    </span>
+  );
+}
+
 export default function SearchIntake() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { lastSearch, setLastSearch, incrementSearch, specialization, setSpecialization, addSearchHistory } = useSessionStore();
+  const { lastSearch, setLastSearch, incrementSearch, specialization, addSearchHistory } = useSessionStore();
   const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
   const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
   const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
@@ -74,222 +95,216 @@ export default function SearchIntake() {
     }
   }
 
+  function applyPreset(p: typeof PRESETS[0]) {
+    setIndustry(p.i);
+    setLocation(p.l);
+    setService(p.s);
+  }
+
   return (
     <>
-      <div className="flex min-h-[calc(100vh-3rem)] p-6 lg:p-8 gap-6 relative">
-        {/* Left panel — Search form */}
-        <div className="w-full lg:w-[45%] flex items-start justify-center lg:pt-12">
+      <div className="min-h-[calc(100vh-3rem)] p-4 lg:p-6">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <LiveActivityDot />
+            <span className="text-[11px] text-muted-foreground font-mono">
+              <LiveCounter /> businesses indexed
+            </span>
+          </div>
+          <Link to="/settings" className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary transition-colors font-mono px-3 py-1.5 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
+            <Settings className="h-3 w-3" />
+            {specialization || "Freelancer"}
+          </Link>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          {/* Hero */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="w-full max-w-md"
+            className="text-center mb-8"
           >
-            {/* Live scanning indicator */}
-            <div className="flex items-center gap-2 mb-4 px-1">
-              <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-              <span className="text-[11px] text-muted-foreground font-mono">
-                Scanning <LiveCounter /> businesses in real-time
-              </span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] text-primary font-medium">AI-Powered Client Discovery</span>
             </div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
+              Find Your Perfect Clients
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Tell us your niche and we'll find businesses that need your services — with verified contact details and AI insights.
+            </p>
+          </motion.div>
 
-            <div className="glass-card p-7">
-              <div className="mb-5 flex items-center justify-between">
-                <p className="section-label">Discover Your Ideal Clients</p>
-                <Link to="/settings" className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary transition-colors font-mono">
-                  <Settings className="h-3 w-3" />
-                  Searching as: {specialization || "Freelancer"}
-                </Link>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Search Form Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="glass-card p-6 lg:p-8 mb-6 max-w-2xl mx-auto"
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="section-label mb-1.5 block">Industry / Niche</label>
+                  <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    <Target className="h-3 w-3" /> Industry
+                  </label>
                   <Input
-                    placeholder='e.g. "Gyms", "Restaurants", "Real Estate Agents"'
+                    placeholder='e.g. "Gyms"'
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     disabled={isSearching}
-                    className="h-12 glass-input focus:border-primary/60 focus:shadow-[0_0_0_3px_hsl(238_75%_64%/0.1)] transition-all"
+                    className="h-11 glass-input focus:border-primary/60 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="section-label mb-1.5 block">Target Country / City</label>
+                  <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    <MapPin className="h-3 w-3" /> Location
+                  </label>
                   <Input
-                    placeholder='e.g. "New York", "London", "Delhi"'
+                    placeholder='e.g. "New York"'
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     disabled={isSearching}
-                    className="h-12 glass-input focus:border-primary/60 focus:shadow-[0_0_0_3px_hsl(238_75%_64%/0.1)] transition-all"
+                    className="h-11 glass-input focus:border-primary/60 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="section-label mb-1.5 block">Service You Provide</label>
+                  <label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                    <Briefcase className="h-3 w-3" /> Service
+                  </label>
                   <Input
-                    placeholder='e.g. "Web Design", "SEO", "Social Media Marketing"'
+                    placeholder='e.g. "Web Design"'
                     value={service}
                     onChange={(e) => setService(e.target.value)}
                     disabled={isSearching}
-                    className="h-12 glass-input focus:border-primary/60 focus:shadow-[0_0_0_3px_hsl(238_75%_64%/0.1)] transition-all"
+                    className="h-11 glass-input focus:border-primary/60 transition-all"
                   />
                 </div>
+              </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={isSearching}
-                  className="h-[52px] w-full gap-2 text-base rounded-[14px] bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 hover:scale-[1.01] active:scale-[0.98] transition-all duration-150 shadow-glow"
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSearching}
+                className="h-12 w-full gap-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 hover:scale-[1.005] active:scale-[0.995] transition-all duration-150 shadow-glow"
+              >
+                {isSearching ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Scanning the web
+                    <span className="animate-pulse">●●●</span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4" />
+                    Find Clients Now
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Competitor indicator */}
+            <div className="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/70">
+              <Users className="h-3 w-3" />
+              <span>23 freelancers searched this niche today</span>
+            </div>
+
+            {/* Progress */}
+            <AnimatePresence>
+              {isSearching && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-5 overflow-hidden"
                 >
-                  {isSearching ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Scanning the web
-                      <span className="animate-pulse">●●●</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4" />
-                      Find My Clients
-                    </>
-                  )}
-                </Button>
-              </form>
-
-              {/* Competitor indicator */}
-              <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
-                <Users className="h-3 w-3" />
-                <span>23 other freelancers searched this niche today</span>
-              </div>
-
-              {/* Progress */}
-              <AnimatePresence>
-                {isSearching && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mt-6"
-                  >
-                    <div className="h-1 rounded-full bg-[rgba(255,255,255,0.06)] mb-4 overflow-hidden">
-                      <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-primary to-glow-cyan animate-shimmer" style={{ backgroundSize: "200% 100%" }} />
-                    </div>
-                    <div className="flex justify-center mb-3">
-                      <StepIndicator currentStep={step} />
-                    </div>
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={statusIdx}
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        className="text-center text-xs text-muted-foreground font-mono"
-                      >
-                        {STATUS_MESSAGES[statusIdx]}
-                      </motion.p>
-                    </AnimatePresence>
-                  </motion.div>
-                )}
-                {step === "complete" && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-6 rounded-xl border border-success/30 bg-success/10 p-4 text-center shadow-glow-cyan"
-                  >
-                    <p className="font-semibold text-success">
-                      ✓ Intelligence report ready! Redirecting...
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Quick presets */}
-              <div className="mt-8 text-center">
-                <p className="mb-3 section-label">Quick start — try a preset</p>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {[
-                    { label: "🏋️ Gyms in NYC", i: "Gyms", l: "New York", s: "Website Design" },
-                    { label: "🍕 Restaurants in London", i: "Restaurants", l: "London", s: "Social Media Marketing" },
-                    { label: "🏠 Realtors in Dubai", i: "Real Estate Agents", l: "Dubai", s: "SEO" },
-                    { label: "💇 Salons in LA", i: "Hair Salons", l: "Los Angeles", s: "Google Ads" },
-                  ].map((p) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      disabled={isSearching}
-                      onClick={() => { setIndustry(p.i); setLocation(p.l); setService(p.s); }}
-                      className="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-foreground disabled:opacity-50"
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Trust badges */}
-            <div className="mt-4 flex items-center justify-center gap-4 text-[10px] text-muted-foreground/60">
-              <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> Bank-level encryption</span>
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 99.9% uptime</span>
-              <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,400+ users</span>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Right panel — Preview area */}
-        <div className="hidden lg:flex w-[55%] items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-center"
-          >
-            <svg className="w-64 h-64 mx-auto mb-6 text-primary/20" viewBox="0 0 200 200">
-              {[
-                { cx: 100, cy: 60, r: 6 }, { cx: 50, cy: 100, r: 5 }, { cx: 150, cy: 100, r: 5 },
-                { cx: 70, cy: 150, r: 4 }, { cx: 130, cy: 150, r: 4 }, { cx: 100, cy: 120, r: 7 },
-              ].map((n, i) => (
-                <g key={i}>
-                  <circle cx={n.cx} cy={n.cy} r={n.r} fill="currentColor" opacity={0.4}>
-                    <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" begin={`${i * 0.3}s`} repeatCount="indefinite" />
-                  </circle>
-                </g>
-              ))}
-              {[
-                [100, 60, 100, 120], [50, 100, 100, 120], [150, 100, 100, 120],
-                [70, 150, 100, 120], [130, 150, 100, 120], [50, 100, 70, 150],
-                [150, 100, 130, 150], [100, 60, 50, 100], [100, 60, 150, 100],
-              ].map((l, i) => (
-                <line key={i} x1={l[0]} y1={l[1]} x2={l[2]} y2={l[3]} stroke="currentColor" strokeWidth="0.5" opacity="0.3">
-                  <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3s" begin={`${i * 0.2}s`} repeatCount="indefinite" />
-                </line>
-              ))}
-            </svg>
-            <p className="text-muted-foreground text-sm mb-2">Enter your niche to discover qualified leads</p>
-            <p className="text-[11px] text-muted-foreground/60 font-mono mb-6">
-              Pro users see 5× more details per lead
-            </p>
-
-            {/* Phantom cards with Pro overlay */}
-            <div className="space-y-3 relative">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="glass-card p-4 opacity-30 max-w-sm mx-auto">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="h-3 w-32 rounded bg-[rgba(255,255,255,0.1)]" />
-                    <div className="h-8 w-8 rounded-full bg-[rgba(255,255,255,0.06)]" />
+                  <div className="h-1 rounded-full bg-[rgba(255,255,255,0.06)] mb-4 overflow-hidden">
+                    <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-primary to-glow-cyan animate-shimmer" style={{ backgroundSize: "200% 100%" }} />
                   </div>
-                  <div className="h-2 w-48 rounded bg-[rgba(255,255,255,0.06)] mb-1.5" />
-                  <div className="h-2 w-36 rounded bg-[rgba(255,255,255,0.04)]" />
-                </div>
+                  <div className="flex justify-center mb-3">
+                    <StepIndicator currentStep={step} />
+                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={statusIdx}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      className="text-center text-xs text-muted-foreground font-mono"
+                    >
+                      {STATUS_MESSAGES[statusIdx]}
+                    </motion.p>
+                  </AnimatePresence>
+                </motion.div>
+              )}
+              {step === "complete" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mt-5 rounded-xl border border-success/30 bg-success/10 p-3 text-center"
+                >
+                  <p className="font-semibold text-success text-sm">
+                    ✓ Intelligence report ready! Redirecting...
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Quick Presets */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-2xl mx-auto"
+          >
+            <p className="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+              Quick Start — Try a Preset
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {PRESETS.map((p) => (
+                <button
+                  key={p.label}
+                  type="button"
+                  disabled={isSearching}
+                  onClick={() => applyPreset(p)}
+                  className={`rounded-xl border border-[rgba(255,255,255,0.06)] bg-gradient-to-br ${p.color} px-3 py-3 text-left transition-all duration-200 hover:border-primary/30 hover:scale-[1.02] disabled:opacity-50 group`}
+                >
+                  <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{p.label}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{p.s}</p>
+                </button>
               ))}
-              {/* Pro overlay on last card */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm">
-                <div className="glass-strong rounded-xl p-3 text-center border-primary/20">
-                  <Crown className="h-4 w-4 text-primary mx-auto mb-1" />
-                  <p className="text-[11px] text-primary font-medium">Pro users see 5× more details</p>
-                </div>
-              </div>
             </div>
           </motion.div>
+
+          {/* Stats Row */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 grid grid-cols-3 gap-3 max-w-2xl mx-auto"
+          >
+            {[
+              { icon: Globe, label: "5 Data Sources", sub: "Search engines & job boards" },
+              { icon: TrendingUp, label: "AI Ranked", sub: "By conversion probability" },
+              { icon: Zap, label: "Instant Results", sub: "Leads in under 2 minutes" },
+            ].map((s) => (
+              <div key={s.label} className="text-center p-3 rounded-xl bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.04)]">
+                <s.icon className="h-4 w-4 text-primary mx-auto mb-1.5" />
+                <p className="text-[11px] font-medium text-foreground">{s.label}</p>
+                <p className="text-[9px] text-muted-foreground">{s.sub}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Trust badges */}
+          <div className="mt-6 flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
+            <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> Bank-level encryption</span>
+            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 99.9% uptime</span>
+            <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,400+ users</span>
+          </div>
         </div>
       </div>
 
