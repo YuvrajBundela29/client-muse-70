@@ -1,6 +1,6 @@
 import {
-  Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  LogOut, BarChart3, Settings, Zap, BookmarkCheck, Command,
+  Search, LayoutDashboard, Clock, GitBranch,
+  LogOut, BarChart3, Settings, Zap, Command,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 import logoHorizontal from "@/assets/logo-horizontal-white.png";
