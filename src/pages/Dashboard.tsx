@@ -41,7 +41,6 @@ const ROI_METRICS = [
 
 const STAT_CONFIGS = [
   { label: "TOTAL LEADS", key: "totalLeads" as const, icon: Users, accent: "hsl(238, 75%, 64%)" },
-  { label: "SAVED LEADS", key: "savedLeads" as const, icon: Bookmark, accent: "hsl(166, 72%, 45%)" },
   { label: "IN PIPELINE", key: "pipelineActive" as const, icon: GitBranch, accent: "hsl(260, 80%, 60%)" },
   { label: "SEARCHES", key: "recentSearches" as const, icon: Search, accent: "hsl(38, 92%, 50%)" },
 ];
