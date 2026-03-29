@@ -57,16 +57,16 @@ export function AppSidebar() {
         <div className={`flex items-center px-4 py-5 ${collapsed ? "justify-center" : ""}`}>
           {collapsed ? (
             <div className="relative">
-              <img src={logoWhite} alt="Client Muse" className="h-7 w-7 shrink-0" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
               <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
             </div>
           ) : (
             <div className="flex items-center gap-2.5">
               <div className="relative group">
-                <img src={logoWhite} alt="Client Muse" className="h-7 w-7 shrink-0" />
+                <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
                 <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
               </div>
-              <span className="text-[15px] font-semibold tracking-tight text-foreground">Client Muse</span>
+              <span className="text-[15px] font-semibold tracking-tight text-foreground">AutoClient AI</span>
             </div>
           )}
         </div>
