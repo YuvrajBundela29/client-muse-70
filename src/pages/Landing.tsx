@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Crosshair, ArrowRight, Zap, Clock, Mail, TrendingDown,
+  ArrowRight, Zap, Clock, Mail, TrendingDown,
   Search, Brain, Users, Shield, Star, ChevronRight, Sparkles,
 } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 import { LiveActivity } from "@/components/landing/LiveActivity";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
