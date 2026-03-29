@@ -60,11 +60,9 @@ export default function Referrals() {
     load();
   }, [user]);
 
-  const referralLink = `${window.location.origin}/auth?ref=${referralCode}`;
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(referralLink);
-    toast.success("Referral link copied!");
+  const copyCode = () => {
+    navigator.clipboard.writeText(referralCode.toUpperCase());
+    toast.success("Referral code copied!");
   };
 
   const shareWhatsApp = () => {
