@@ -70,7 +70,7 @@ export default function Onboarding() {
       setSaving(false);
       return;
     }
-    toast.success("Welcome to Client Muse!");
+    toast.success("Welcome to AutoClient AI!");
     navigate("/dashboard");
   };
 
