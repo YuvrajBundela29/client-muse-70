@@ -46,7 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 status: "completed",
               });
               // Give bonus credits to both
-              await supabase.rpc("increment_credits" as any, { user_id_input: referrer.id, amount: 50 }).catch(() => {});
+              // Give bonus credits to referrer (best effort)
+              const { data: referrerProfile } = await supabase.from("profiles").select("credits_remaining").eq("id", referrer.id).single();
+              if (referrerProfile) {
+                await supabase.from("profiles").update({ credits_remaining: referrerProfile.credits_remaining + 50 }).eq("id", referrer.id);
+              }
               await supabase.from("profiles").update({ credits_remaining: 60 }).eq("id", session.user.id);
             }
           } catch {}
