@@ -13,110 +13,44 @@ export interface ServiceTrack {
 }
 
 export const SERVICE_TRACKS: Record<string, ServiceTrack> = {
-  track_a: {
-    id: "track_a",
-    name: "3D Medical Animation",
-    description: "Skincare / Beauty Science",
+  track_web: {
+    id: "track_web",
+    name: "Web Design & Development",
+    description: "Websites, landing pages, e-commerce",
     packages: [
-      {
-        name: "Starter",
-        description: "1 × 30-sec reel, 2 formats (9:16 + 16:9), 2 revisions",
-        price: 450,
-        features: ["1 × 30-sec reel", "2 formats (9:16 + 16:9)", "2 revisions"],
-      },
-      {
-        name: "Pro",
-        description: "1 × 45-sec reel, voiceover, 3 formats, 3 revisions",
-        price: 900,
-        features: ["1 × 45-sec reel", "Voiceover included", "3 formats", "3 revisions"],
-      },
-      {
-        name: "Bundle",
-        description: "3 reels, all formats, voiceover included",
-        price: 2200,
-        features: ["3 reels", "All formats", "Voiceover included"],
-      },
-      {
-        name: "Retainer",
-        description: "2 reels/month ongoing",
-        price: 1500,
-        features: ["2 reels/month", "All formats", "Priority support"],
-      },
+      { name: "Starter", description: "Single-page website with responsive design", price: 500, features: ["1-page site", "Responsive design", "1 revision"] },
+      { name: "Pro", description: "Multi-page site with CMS and SEO basics", price: 1500, features: ["Up to 5 pages", "CMS integration", "SEO basics", "3 revisions"] },
+      { name: "Bundle", description: "Full site + landing pages + maintenance", price: 3500, features: ["Full website", "3 landing pages", "Monthly maintenance"] },
     ],
   },
-  track_b: {
-    id: "track_b",
-    name: "AI Influencer Reels",
-    description: "Fashion / Clothing",
+  track_seo: {
+    id: "track_seo",
+    name: "SEO & Search Optimization",
+    description: "Organic growth, rankings, traffic",
     packages: [
-      {
-        name: "Starter",
-        description: "3 × 15-sec lifestyle reels",
-        price: 400,
-        features: ["3 × 15-sec reels", "Lifestyle format"],
-      },
-      {
-        name: "Pro",
-        description: "5 × 30-sec styled reels, 2 formats",
-        price: 850,
-        features: ["5 × 30-sec reels", "Styled content", "2 formats"],
-      },
-      {
-        name: "Bundle",
-        description: "10 reels, mixed formats",
-        price: 1800,
-        features: ["10 reels", "Mixed formats", "Brand kit"],
-      },
+      { name: "Starter", description: "SEO audit + keyword research", price: 400, features: ["Full site audit", "Keyword research", "Action plan"] },
+      { name: "Pro", description: "Monthly SEO management", price: 1200, features: ["On-page optimization", "Link building", "Monthly reports"] },
+      { name: "Bundle", description: "Full SEO + content strategy", price: 2500, features: ["Technical SEO", "Content calendar", "Link building", "Quarterly reviews"] },
     ],
   },
-  track_c: {
-    id: "track_c",
-    name: "Product Reveal Reels",
-    description: "Promotional / E-commerce",
+  track_social: {
+    id: "track_social",
+    name: "Social Media & Content",
+    description: "Content creation, social management",
     packages: [
-      {
-        name: "Starter",
-        description: "1 × 20-sec unboxing reel",
-        price: 350,
-        features: ["1 × 20-sec reel", "Unboxing format"],
-      },
-      {
-        name: "Pro",
-        description: "3 × product reels, mixed formats",
-        price: 800,
-        features: ["3 product reels", "Mixed formats"],
-      },
-      {
-        name: "Bundle",
-        description: "5 reels + brand kit",
-        price: 1600,
-        features: ["5 reels", "Brand kit included"],
-      },
+      { name: "Starter", description: "Content calendar + 12 posts/month", price: 350, features: ["12 posts/month", "Content calendar", "1 platform"] },
+      { name: "Pro", description: "Full social management across platforms", price: 900, features: ["30 posts/month", "3 platforms", "Engagement management"] },
+      { name: "Bundle", description: "Content + ads + influencer outreach", price: 2000, features: ["Full content suite", "Ad management", "Influencer outreach"] },
     ],
   },
-  track_d: {
-    id: "track_d",
-    name: "Technical Explainer",
-    description: "IT / B2B",
+  track_consulting: {
+    id: "track_consulting",
+    name: "Business Consulting & Strategy",
+    description: "Strategy, growth planning, optimization",
     packages: [
-      {
-        name: "Starter",
-        description: "1 × 60-sec explainer",
-        price: 600,
-        features: ["1 × 60-sec explainer"],
-      },
-      {
-        name: "Pro",
-        description: "1 × 90-sec with voiceover and motion graphics",
-        price: 1200,
-        features: ["1 × 90-sec explainer", "Voiceover", "Motion graphics"],
-      },
-      {
-        name: "Bundle",
-        description: "3 explainers",
-        price: 2800,
-        features: ["3 explainers", "All formats"],
-      },
+      { name: "Starter", description: "2-hour strategy session", price: 300, features: ["2-hour session", "Action roadmap", "Email follow-up"] },
+      { name: "Pro", description: "Monthly advisory retainer", price: 1500, features: ["4 sessions/month", "Slack support", "KPI tracking"] },
+      { name: "Bundle", description: "Full growth partner engagement", price: 4000, features: ["Weekly sessions", "Full analytics", "Implementation support"] },
     ],
   },
 };

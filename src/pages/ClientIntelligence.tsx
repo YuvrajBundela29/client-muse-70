@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, ArrowLeft, Mail, Globe, Phone, MapPin, Star, Copy,
-  CheckCircle2, Film, Send, Loader2, MessageSquare, Clock, Zap, Search,
+  CheckCircle2, Send, Loader2, MessageSquare, Clock, Zap, Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Lead } from "@/types/lead";
 import { enrichLead } from "@/lib/enrich-lead";
 import { EnrichedLead } from "@/types/lead";
-import { fetchPipeline, upsertPipelineEntry, PipelineWithLead, fetchReels, findMatchingReel, ReelEntry } from "@/lib/pipeline-api";
+import { fetchPipeline, upsertPipelineEntry, PipelineWithLead } from "@/lib/pipeline-api";
 import { detectServiceTrack, getTrackLabel, getTrackEmoji } from "@/lib/service-tracks";
 import { SERVICE_TRACKS, getRecommendedPackage } from "@/lib/pricing";
 import { ConfidenceArc } from "@/components/results/ConfidenceArc";
@@ -25,8 +25,6 @@ export default function ClientIntelligence() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [enriched, setEnriched] = useState<EnrichedLead | null>(null);
   const [pipeline, setPipeline] = useState<PipelineWithLead | null>(null);
-  const [reels, setReels] = useState<ReelEntry[]>([]);
-  const [matchingReel, setMatchingReel] = useState<ReelEntry | null>(null);
   const [loading, setLoading] = useState(true);
 
   // AI email generation state
@@ -67,11 +65,6 @@ export default function ClientIntelligence() {
             service_track: track,
           });
         }
-
-        // Fetch reels
-        const reelData = await fetchReels();
-        setReels(reelData);
-        setMatchingReel(findMatchingReel(reelData, l.industry, l.growth_opportunity));
       } catch (err: any) {
         toast.error(err.message);
       } finally {
@@ -153,7 +146,6 @@ export default function ClientIntelligence() {
           <nav className="flex items-center gap-2">
             <Link to="/pipeline"><Button size="sm" variant="ghost" className="gap-1.5"><ArrowLeft className="h-3.5 w-3.5" /> Pipeline</Button></Link>
             <Link to="/search"><Button size="sm" variant="ghost" className="gap-1.5"><Search className="h-3.5 w-3.5" /> Search</Button></Link>
-            <Link to="/reel-library"><Button size="sm" variant="ghost" className="gap-1.5"><Film className="h-3.5 w-3.5" /> Reels</Button></Link>
           </nav>
         </div>
       </header>
@@ -285,39 +277,6 @@ export default function ClientIntelligence() {
                 <p className="text-sm text-muted-foreground">
                   No track auto-detected for industry "{lead.industry}". You can manually assign one.
                 </p>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* SECTION C — Reel Decision Check */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                🎬 Reel Decision Check
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {matchingReel ? (
-                <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-4">
-                  <p className="font-semibold text-green-400 flex items-center gap-2">
-                    ✅ REUSE: {matchingReel.reel_code} matches this client
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">{matchingReel.description}</p>
-                  <a href={matchingReel.drive_link} target="_blank" rel="noopener" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">
-                    <Film className="h-3.5 w-3.5" /> View Reel
-                  </a>
-                </div>
-              ) : (
-                <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-4">
-                  <p className="font-semibold text-yellow-400 flex items-center gap-2">
-                    🔨 BUILD NEW: No existing reel matches
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Proceed to production engine to create a new reel for this client.
-                  </p>
-                </div>
               )}
             </CardContent>
           </Card>

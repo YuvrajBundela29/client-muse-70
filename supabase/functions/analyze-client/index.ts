@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const prompt = `You are an elite B2B outreach copywriter for a 3D animation producer.
+    const prompt = `You are an elite B2B outreach copywriter for a freelancer/agency.
 
 LEAD DATA:
 - Business: ${lead.business_name}
@@ -82,14 +82,15 @@ LEAD DATA:
 - Problem: ${lead.website_problem || "unknown"}
 - Opportunity: ${lead.growth_opportunity || "unknown"}
 - Rating: ${lead.google_rating || "unknown"}
+- Recommended Service: ${lead.recommended_service || "unknown"}
 
 ${websiteContent ? `WEBSITE CONTENT (scraped):\n${websiteContent}\n` : ""}
 
-Generate 3 personalized outreach email variants. Each must:
+Generate 3 personalized outreach email variants tailored to the lead's industry and the recommended service. Each must:
 - Reference something SPECIFIC from the data above
 - Be under 200 words
 - Sound human, not templated
-- Include a specific value proposition for 3D animation/content
+- Include a specific value proposition based on the recommended service and the lead's actual problems
 
 Return a JSON object with these exact keys:
 {

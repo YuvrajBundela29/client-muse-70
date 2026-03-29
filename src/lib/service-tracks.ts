@@ -1,8 +1,8 @@
 const TRACK_KEYWORDS: Record<string, string[]> = {
-  track_a: ["beauty", "skincare", "cosmetics", "derma", "skin", "spa", "wellness", "clinic", "medical"],
-  track_b: ["cloth", "fashion", "apparel", "wear", "boutique", "textile", "garment"],
-  track_c: ["promo", "promotional", "e-commerce", "ecommerce", "product", "restaurant", "food", "hospitality", "retail", "shop", "store"],
-  track_d: ["it", "technology", "software", "data", "saas", "tech", "digital", "cyber", "ai", "cloud"],
+  track_web: ["web", "website", "design", "development", "wordpress", "shopify", "landing page"],
+  track_seo: ["seo", "search engine", "google", "ranking", "organic", "backlink"],
+  track_social: ["social", "instagram", "facebook", "tiktok", "content", "influencer", "marketing"],
+  track_consulting: ["consult", "strategy", "business", "management", "analytics", "data"],
 };
 
 export function detectServiceTrack(industry: string, opportunity?: string | null): string | null {
@@ -18,20 +18,20 @@ export function detectServiceTrack(industry: string, opportunity?: string | null
 
 export function getTrackLabel(trackId: string): string {
   const labels: Record<string, string> = {
-    track_a: "Track A — 3D Medical Animation",
-    track_b: "Track B — AI Influencer Reels",
-    track_c: "Track C — Product Reveal Reels",
-    track_d: "Track D — Technical Explainer",
+    track_web: "Web Design & Development",
+    track_seo: "SEO & Search Optimization",
+    track_social: "Social Media & Content",
+    track_consulting: "Business Consulting & Strategy",
   };
   return labels[trackId] || trackId;
 }
 
 export function getTrackEmoji(trackId: string): string {
   const emojis: Record<string, string> = {
-    track_a: "🧬",
-    track_b: "👗",
-    track_c: "📦",
-    track_d: "💻",
+    track_web: "🌐",
+    track_seo: "📈",
+    track_social: "📱",
+    track_consulting: "💼",
   };
-  return emojis[trackId] || "🎬";
+  return emojis[trackId] || "🎯";
 }
