@@ -54,7 +54,8 @@ function LiveActivityDot() {
 export default function SearchIntake() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { lastSearch, setLastSearch, incrementSearch, specialization, addSearchHistory } = useSessionStore();
+  const { lastSearch, setLastSearch, specialization, addSearchHistory } = useSessionStore();
+  const { canSearch, plan } = useSubscription();
   const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
   const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
   const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
