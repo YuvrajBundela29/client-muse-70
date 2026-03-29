@@ -85,8 +85,8 @@ export default function Onboarding() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Crosshair className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-8 w-8" />
+            <span className="text-2xl font-bold">AutoClient AI</span>
           </div>
         </div>
 

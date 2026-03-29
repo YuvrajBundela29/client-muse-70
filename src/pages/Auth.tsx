@@ -53,10 +53,10 @@ export default function Auth() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2.5 mb-3">
             <div className="relative">
-              <Crosshair className="h-8 w-8 text-primary" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-8 w-8" />
               <div className="absolute inset-0 blur-xl bg-primary/30" />
             </div>
-            <span className="text-2xl font-bold text-gradient">Client Muse</span>
+            <span className="text-2xl font-bold text-gradient">AutoClient AI</span>
           </div>
           <p className="text-muted-foreground text-sm">
             {mode === "login" ? "Welcome back. Let's find clients." : "Start finding clients in 60 seconds."}

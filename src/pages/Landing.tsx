@@ -269,8 +269,8 @@ export default function Landing() {
       <footer className="border-t border-border/30 py-8">
         <div className="container flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Crosshair className="h-3.5 w-3.5 text-primary" />
-            <span className="font-mono">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-4 w-4" />
+            <span className="font-mono">AutoClient AI</span>
           </div>
           <span>Built for freelancers who want to grow</span>
         </div>
