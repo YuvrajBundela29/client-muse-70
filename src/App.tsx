@@ -19,6 +19,7 @@ import ClientIntelligence from "./pages/ClientIntelligence";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
+import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
