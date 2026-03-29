@@ -77,7 +77,7 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
-    if (!incrementSearch()) { setShowPaywall(true); return; }
+    if (!canSearch) { setShowPaywall(true); return; }
     setLastSearch({ industry, location, service });
     addSearchHistory({ industry, location, service });
     try {
