@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { Search, LayoutDashboard, Crosshair } from "lucide-react";
+import { Search, LayoutDashboard } from "lucide-react";
 import { CreditCounter } from "@/components/finder/CreditCounter";
+import logoWhite from "@/assets/logo-white.png";
 
 const navItems = [
   { to: "/finder", label: "Finder", icon: Search },
