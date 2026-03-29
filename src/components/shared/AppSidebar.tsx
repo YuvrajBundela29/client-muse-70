@@ -3,6 +3,7 @@ import {
   LogOut, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
+import logoHorizontal from "@/assets/logo-horizontal-white.png";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
