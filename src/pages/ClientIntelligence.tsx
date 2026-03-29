@@ -25,8 +25,7 @@ export default function ClientIntelligence() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [enriched, setEnriched] = useState<EnrichedLead | null>(null);
   const [pipeline, setPipeline] = useState<PipelineWithLead | null>(null);
-  const [reels, setReels] = useState<ReelEntry[]>([]);
-  const [matchingReel, setMatchingReel] = useState<ReelEntry | null>(null);
+  const [loading, setLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
   // AI email generation state
