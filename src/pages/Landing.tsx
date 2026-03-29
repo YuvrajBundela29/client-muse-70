@@ -57,10 +57,10 @@ export default function Landing() {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5 font-semibold tracking-tight">
             <div className="relative">
-              <img src={logoWhite} alt="Client Muse" className="h-6 w-6" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-6 w-6" />
               <div className="absolute inset-0 blur-lg bg-[#5B5FEF]/30" />
             </div>
-            <span className="text-gradient">Client Muse</span>
+            <span className="text-gradient">AutoClient AI</span>
           </div>
           <Link to="/search">
             <Button size="sm" className="gap-1.5 bg-[#5B5FEF] hover:bg-[#5B5FEF]/90 shadow-glow">
@@ -259,8 +259,8 @@ export default function Landing() {
       <footer className="border-t border-[rgba(255,255,255,0.06)] py-8">
         <div className="container flex items-center justify-between text-xs text-[#8892B0]">
           <div className="flex items-center gap-2">
-            <img src={logoWhite} alt="Client Muse" className="h-4 w-4" />
-            <span className="font-mono">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-4 w-4" />
+            <span className="font-mono">AutoClient AI</span>
           </div>
           <span>Built for freelancers who want to grow</span>
         </div>

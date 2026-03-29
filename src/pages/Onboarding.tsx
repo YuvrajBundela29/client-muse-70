@@ -60,7 +60,7 @@ export default function Onboarding() {
       .eq("id", user.id);
 
     if (error) { toast.error("Failed to save profile"); setSaving(false); return; }
-    toast.success("Welcome to Client Muse!");
+    toast.success("Welcome to AutoClient AI!");
     navigate("/dashboard");
   };
 
@@ -75,8 +75,8 @@ export default function Onboarding() {
       <div className="w-full max-w-lg relative">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <img src={logoWhite} alt="Client Muse" className="h-8 w-8" />
-            <span className="text-2xl font-bold text-gradient">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-8 w-8" />
+            <span className="text-2xl font-bold text-gradient">AutoClient AI</span>
           </div>
         </div>
 
