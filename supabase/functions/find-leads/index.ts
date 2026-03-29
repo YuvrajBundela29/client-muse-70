@@ -21,10 +21,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
-    if (!FIRECRAWL_API_KEY) {
+    const ZENSERP_API_KEY = Deno.env.get("ZENSERP_API_KEY");
+    if (!ZENSERP_API_KEY) {
       return new Response(
-        JSON.stringify({ success: false, error: "FIRECRAWL_API_KEY not configured" }),
+        JSON.stringify({ success: false, error: "ZENSERP_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -37,74 +37,68 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Step 1: Search for businesses using Firecrawl
-    console.log(`Searching for: ${industry} in ${location}`);
-    const searchQuery = `${industry} in ${location} website contact`;
+    // Step 1: Search for businesses using Zenserp
+    const searchQuery = `${industry} businesses in ${location} that need ${service}`;
+    console.log(`Zenserp search: "${searchQuery}"`);
 
-    const searchResponse = await fetch("https://api.firecrawl.dev/v1/search", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: searchQuery,
-        limit: 10,
-        scrapeOptions: { formats: ["markdown"] },
-      }),
+    const zenserpParams = new URLSearchParams({
+      apikey: ZENSERP_API_KEY,
+      q: searchQuery,
+      num: "20",
     });
 
-    const searchData = await searchResponse.json();
+    const searchResponse = await fetch(
+      `https://app.zenserp.com/api/v2/search?${zenserpParams.toString()}`,
+      { method: "GET" }
+    );
 
     if (!searchResponse.ok) {
-      console.error("Firecrawl search error:", searchData);
+      const errText = await searchResponse.text();
+      console.error("Zenserp error:", searchResponse.status, errText);
       return new Response(
-        JSON.stringify({ success: false, error: searchData.error || "Search failed" }),
+        JSON.stringify({ success: false, error: `Search API error: ${searchResponse.status}` }),
         { status: searchResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const results = searchData.data || [];
-    console.log(`Found ${results.length} search results`);
+    const searchData = await searchResponse.json();
+    const organicResults = searchData.organic || [];
+    console.log(`Zenserp returned ${organicResults.length} organic results`);
 
-    if (results.length === 0) {
+    if (organicResults.length === 0) {
       return new Response(
         JSON.stringify({ success: true, leads: [] }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Step 2: Analyze each result with AI
-    const businessSummaries = results
-      .map((r: any, i: number) => {
-        const content = (r.markdown || "").slice(0, 1500);
-        return `--- Business ${i + 1} ---\nURL: ${r.url || "N/A"}\nTitle: ${r.title || "N/A"}\nDescription: ${r.description || "N/A"}\nContent:\n${content}`;
+    // Step 2: Analyze results with AI
+    const businessSummaries = organicResults
+      .map((r: Record<string, string>, i: number) => {
+        return `--- Result ${i + 1} ---\nURL: ${r.url || "N/A"}\nTitle: ${r.title || "N/A"}\nDescription: ${r.description || "N/A"}`;
       })
       .join("\n\n");
 
-    const aiPrompt = `You are analyzing businesses found online. For each business below, extract and analyze their information.
+    const aiPrompt = `You are analyzing Google search results to find real businesses. For each result below, determine if it's an actual ${industry} business in or near ${location}. Skip directories, news articles, listicles, and aggregator pages.
 
-Industry: ${industry}
-Location: ${location}
-Service being offered to them: ${service}
-
+Search results:
 ${businessSummaries}
 
-For EACH business, return a JSON array where each element has:
-- "business_name": string (the business name)
+Service being offered to them: ${service}
+
+For each REAL business found, return a JSON array element with:
+- "business_name": string (the actual business name, not the page title)
 - "website": string or null (their website URL)
-- "email": string or null (contact email if found)
-- "phone": string or null (phone number if found)
-- "instagram_url": string or null (Instagram link if found)
-- "google_rating": number or null (rating if mentioned)
-- "website_problem": string (identify a specific marketing/website problem)
-- "growth_opportunity": string (suggest a specific improvement opportunity)
-- "recommended_service": string (recommend a specific service from: "${service}")
-- "outreach_message": string (a short, friendly, personalized outreach message referencing the detected problem and suggesting the service)
+- "email": string or null (contact email if visible in snippet)
+- "phone": string or null (phone if visible)
+- "instagram_url": string or null
+- "google_rating": number or null
+- "website_problem": string (identify a specific problem their website/marketing likely has based on the snippet and URL)
+- "growth_opportunity": string (a concrete improvement they could make)
+- "recommended_service": string (recommend from: "${service}")
+- "outreach_message": string (a short, personalized outreach message referencing a real detail about them)
 
-Only include businesses that are actual ${industry} businesses in or near ${location}. Skip irrelevant results like directories or news articles.
-
-Return ONLY a valid JSON array, no markdown formatting.`;
+Return ONLY a valid JSON array. No markdown. If no real businesses are found, return [].`;
 
     console.log("Calling AI for analysis...");
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -131,12 +125,6 @@ Return ONLY a valid JSON array, no markdown formatting.`;
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (aiResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ success: false, error: "AI credits exhausted. Please add credits in Settings → Workspace → Usage." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
       return new Response(
         JSON.stringify({ success: false, error: "AI analysis failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -147,12 +135,11 @@ Return ONLY a valid JSON array, no markdown formatting.`;
     const aiContent = aiData.choices?.[0]?.message?.content || "[]";
     console.log("AI response received, parsing...");
 
-    // Parse AI response - handle potential markdown wrapping
-    let leads: any[];
+    let leads: Record<string, unknown>[];
     try {
       const cleaned = aiContent.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       leads = JSON.parse(cleaned);
-    } catch (e) {
+    } catch {
       console.error("Failed to parse AI response:", aiContent.slice(0, 500));
       return new Response(
         JSON.stringify({ success: false, error: "Failed to parse AI analysis results" }),
@@ -172,19 +159,19 @@ Return ONLY a valid JSON array, no markdown formatting.`;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const leadsToInsert = leads.map((l: any) => ({
-      business_name: l.business_name || "Unknown Business",
+    const leadsToInsert = leads.map((l) => ({
+      business_name: (l.business_name as string) || "Unknown Business",
       industry,
       city: location,
-      website: l.website || null,
-      email: l.email || null,
-      phone: l.phone || null,
-      instagram_url: l.instagram_url || null,
-      google_rating: l.google_rating || null,
-      website_problem: l.website_problem || null,
-      growth_opportunity: l.growth_opportunity || null,
-      recommended_service: l.recommended_service || null,
-      outreach_message: l.outreach_message || null,
+      website: (l.website as string) || null,
+      email: (l.email as string) || null,
+      phone: (l.phone as string) || null,
+      instagram_url: (l.instagram_url as string) || null,
+      google_rating: (l.google_rating as number) || null,
+      website_problem: (l.website_problem as string) || null,
+      growth_opportunity: (l.growth_opportunity as string) || null,
+      recommended_service: (l.recommended_service as string) || null,
+      outreach_message: (l.outreach_message as string) || null,
       status: "new",
     }));
 
@@ -201,7 +188,7 @@ Return ONLY a valid JSON array, no markdown formatting.`;
       );
     }
 
-    console.log(`Successfully saved ${insertedLeads?.length} leads`);
+    console.log(`Successfully saved ${insertedLeads?.length} leads via Zenserp`);
 
     return new Response(
       JSON.stringify({ success: true, leads: insertedLeads }),
