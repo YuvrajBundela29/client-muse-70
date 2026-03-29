@@ -18,18 +18,18 @@ export function UpgradeModal({ open, onClose }: Props) {
           </div>
           <DialogTitle className="text-center">You've used all your credits</DialogTitle>
           <DialogDescription className="text-center">
-            Upgrade to unlock unlimited searches, AI emails, and priority access to verified contacts.
+            Upgrade to unlock more searches, AI emails, and priority access to verified contacts.
           </DialogDescription>
         </DialogHeader>
         <div className="rounded-xl bg-primary/5 border border-primary/20 p-3 text-center mb-2">
           <p className="text-xs text-muted-foreground">Investment Calculator</p>
           <p className="text-sm">
-            <span className="text-primary font-bold">$67/mo</span> → Average <span className="text-success font-bold">$3,400</span>/mo = <span className="text-warning font-bold">51× ROI</span>
+            <span className="text-primary font-bold">₹1,299/mo</span> → Average <span className="text-success font-bold">₹1,24,000</span> in 6 months = <span className="text-warning font-bold">95× ROI</span>
           </p>
         </div>
         <div className="flex items-center justify-center gap-3 text-[10px] text-muted-foreground mb-2">
           <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,847+ users</span>
-          <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-success" /> 51× ROI</span>
+          <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-success" /> 95× ROI</span>
           <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> 60-day guarantee</span>
         </div>
         <div className="flex flex-col gap-2 pt-2">
