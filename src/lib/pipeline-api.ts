@@ -1,5 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 
+async function getCurrentUserId(): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  return user.id;
+}
+
 export interface PipelineEntry {
   id: string;
   lead_id: string;
@@ -48,10 +54,11 @@ export async function upsertPipelineEntry(
   leadId: string,
   fields: Partial<Omit<PipelineEntry, "id" | "lead_id" | "created_at" | "updated_at">>
 ): Promise<void> {
+  const userId = await getCurrentUserId();
   const { error } = await supabase
     .from("client_pipeline")
     .upsert(
-      { lead_id: leadId, ...fields, updated_at: new Date().toISOString() },
+      { lead_id: leadId, user_id: userId, ...fields, updated_at: new Date().toISOString() },
       { onConflict: "lead_id" }
     );
   if (error) throw new Error(error.message);
