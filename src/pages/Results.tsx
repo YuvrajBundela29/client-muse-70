@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Crosshair, Download, RefreshCw, ArrowLeft, Search as SearchIcon,
-  SlidersHorizontal, Clock, Zap,
+  Download, RefreshCw, ArrowLeft, Search as SearchIcon, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,17 +80,14 @@ export default function Results() {
     });
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link to="/search" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back to search
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <div className="relative">
-              <Zap className="h-5 w-5 text-primary" />
-              <div className="absolute inset-0 blur-md bg-primary/30" />
-            </div>
+          <h1 className="page-title flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
             Intelligence Report
           </h1>
           <p className="text-sm text-muted-foreground font-mono">
@@ -105,27 +101,27 @@ export default function Results() {
               placeholder="Filter leads..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-48 pl-9 glass border-border/50 focus:border-primary/50"
+              className="h-9 w-48 pl-9 glass-input"
             />
           </div>
-          <div className="flex items-center gap-0.5 rounded-xl glass border-border/50 p-0.5">
+          <div className="flex items-center gap-0.5 rounded-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-0.5">
             {(["match", "urgency", "recent"] as SortKey[]).map((s) => (
               <button
                 key={s}
                 onClick={() => setSort(s)}
-                className={`rounded-lg px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
-                  sort === s ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground hover:text-foreground"
+                className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+                  sort === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {s === "match" ? "Best Match" : s === "urgency" ? "Urgency" : "Recent"}
               </button>
             ))}
           </div>
-          <Button size="sm" variant="outline" onClick={load} className="gap-1.5 glass border-border/50">
+          <Button size="sm" variant="outline" onClick={load} className="gap-1.5 glass-input">
             <RefreshCw className="h-3.5 w-3.5" /> Refresh
           </Button>
-          <Button size="sm" onClick={() => exportAllCSV(filtered)} className="gap-1.5 shadow-glow" disabled={filtered.length === 0}>
-            <Download className="h-3.5 w-3.5" /> Export All CSV
+          <Button size="sm" onClick={() => exportAllCSV(filtered)} className="gap-1.5 bg-primary hover:bg-primary/90" disabled={filtered.length === 0}>
+            <Download className="h-3.5 w-3.5" /> Export CSV
           </Button>
         </div>
       </div>
@@ -136,21 +132,28 @@ export default function Results() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="py-24 text-center">
-          <SearchIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
-          <h2 className="mb-2 text-xl font-bold">No matches found</h2>
-          <p className="mb-6 text-muted-foreground">Try adjusting your filters or run a new search to discover leads.</p>
+          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <SearchIcon className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="mb-2 text-lg font-medium">No matches found</h2>
+          <p className="mb-6 text-sm text-muted-foreground">Try adjusting your filters or run a new search.</p>
           <Link to="/search">
-            <Button className="gap-2 shadow-glow">
+            <Button className="gap-2 bg-primary hover:bg-primary/90">
               <SearchIcon className="h-4 w-4" /> Start Searching
             </Button>
           </Link>
         </div>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+          className="grid gap-5 md:grid-cols-2"
+        >
           {filtered.map((lead, i) => (
             <LeadIntelCard key={lead.id} lead={lead} index={i} onStatusChange={handleStatusChange} />
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

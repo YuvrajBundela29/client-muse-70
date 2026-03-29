@@ -21,10 +21,10 @@ export function LiveActivity() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center gap-2.5 py-3 glass border-y border-border/30">
+    <div className="flex items-center justify-center gap-2.5 py-3 border-y border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
       <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5C3] opacity-75" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00E5C3]" />
       </span>
       <AnimatePresence mode="wait">
         <motion.span
@@ -32,7 +32,7 @@ export function LiveActivity() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="text-xs text-muted-foreground font-mono"
+          className="text-xs text-[#8892B0] font-mono"
         >
           {MESSAGES[index]}
         </motion.span>

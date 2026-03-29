@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Bookmark, Trash2, MessageSquare, Calendar, ArrowUpDown,
-  Search, ExternalLink, Mail, Phone, Globe,
+  Bookmark, Trash2, MessageSquare, Search, Mail, Phone, Globe, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface SavedLead {
   id: string;
@@ -37,9 +37,9 @@ interface SavedLead {
 
 const STAGES = [
   { value: "new", label: "New", color: "bg-primary/10 text-primary border-primary/20" },
-  { value: "contacted", label: "Contacted", color: "bg-warning/10 text-warning border-warning/20" },
-  { value: "replied", label: "Replied", color: "bg-success/10 text-success border-success/20" },
-  { value: "closed", label: "Closed", color: "bg-glow-violet/10 text-glow-violet border-glow-violet/20" },
+  { value: "saved", label: "Saved", color: "bg-success/10 text-success border-success/20" },
+  { value: "reviewing", label: "Reviewing", color: "bg-warning/10 text-warning border-warning/20" },
+  { value: "archived", label: "Archived", color: "bg-muted text-muted-foreground border-border" },
 ];
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.03 } } };
@@ -68,7 +68,7 @@ export default function SavedLeads() {
     if (stage === "contacted") updates.last_contacted_at = new Date().toISOString();
     await supabase.from("saved_leads").update(updates).eq("id", id);
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, pipeline_stage: stage } : l));
-    toast.success(`Stage updated to ${stage}`);
+    toast.success(`Status updated to ${stage}`);
   }
 
   async function saveNotes(id: string) {
@@ -91,14 +91,11 @@ export default function SavedLeads() {
   });
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <div className="relative">
-              <Bookmark className="h-5 w-5 text-primary" />
-              <div className="absolute inset-0 blur-md bg-primary/30" />
-            </div>
+          <h1 className="page-title flex items-center gap-2">
+            <Bookmark className="h-5 w-5 text-primary" />
             Saved Leads
           </h1>
           <p className="text-sm text-muted-foreground font-mono">{leads.length} leads saved</p>
@@ -108,14 +105,14 @@ export default function SavedLeads() {
       <div className="flex gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search saved leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 glass border-border/50 focus:border-primary/50" />
+          <Input placeholder="Search saved leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 glass-input" />
         </div>
         <Select value={stageFilter} onValueChange={setStageFilter}>
-          <SelectTrigger className="w-40 glass border-border/50">
-            <SelectValue placeholder="All stages" />
+          <SelectTrigger className="w-40 glass-input">
+            <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Stages</SelectItem>
+            <SelectItem value="all">All Status</SelectItem>
             {STAGES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -124,21 +121,30 @@ export default function SavedLeads() {
       {loading ? (
         <div className="text-center py-12 text-muted-foreground font-mono">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-12">
-          <Bookmark className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-          <h3 className="font-medium text-muted-foreground">No saved leads yet</h3>
-          <p className="text-sm text-muted-foreground/70">Search for clients and save the best ones here</p>
-        </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16">
+          <div className="mx-auto mb-4 w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Sparkles className="h-10 w-10 text-primary" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">Your lead library is empty</h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
+            Save promising leads from your searches to review them here before adding to your pipeline.
+          </p>
+          <Link to="/search">
+            <Button className="gap-2 bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4" /> Start a search
+            </Button>
+          </Link>
+        </motion.div>
       ) : (
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
           {filtered.map((saved) => (
             <motion.div key={saved.id} variants={item}>
-              <Card className="p-4 glass border-border/50 hover:border-primary/20 hover:shadow-card-hover transition-all duration-300">
+              <div className="glass-card rounded-2xl p-5 hover:border-[rgba(255,255,255,0.15)] transition-all duration-200">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold truncate">{saved.lead.business_name}</h3>
-                      <Badge variant="outline" className="text-xs shrink-0 border-border/50">{saved.lead.industry}</Badge>
+                      <h3 className="font-medium truncate">{saved.lead.business_name}</h3>
+                      <Badge variant="outline" className="text-xs shrink-0 border-[rgba(255,255,255,0.1)]">{saved.lead.industry}</Badge>
                       {STAGES.map((s) =>
                         s.value === saved.pipeline_stage ? (
                           <Badge key={s.value} className={`text-xs border ${s.color}`}>{s.label}</Badge>
@@ -166,21 +172,24 @@ export default function SavedLeads() {
                     )}
                     {editingNotes === saved.id ? (
                       <div className="mt-2 space-y-2">
-                        <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Add notes..." className="text-sm glass border-border/50" rows={2} />
+                        <Textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Add notes..." className="text-sm glass-input" rows={2} />
                         <div className="flex gap-2">
-                          <Button size="sm" onClick={() => saveNotes(saved.id)} className="shadow-glow">Save</Button>
+                          <Button size="sm" onClick={() => saveNotes(saved.id)} className="bg-primary hover:bg-primary/90">Save</Button>
                           <Button size="sm" variant="ghost" onClick={() => setEditingNotes(null)}>Cancel</Button>
                         </div>
                       </div>
                     ) : saved.notes ? (
-                      <p className="mt-2 text-xs bg-muted/50 p-2.5 rounded-lg cursor-pointer border border-border/50 hover:border-primary/20 transition-colors" onClick={() => { setEditingNotes(saved.id); setNoteText(saved.notes || ""); }}>
+                      <p className="mt-2 text-xs bg-[rgba(255,255,255,0.04)] p-2.5 rounded-lg cursor-pointer border border-[rgba(255,255,255,0.06)] hover:border-primary/20 transition-colors" onClick={() => { setEditingNotes(saved.id); setNoteText(saved.notes || ""); }}>
                         📝 {saved.notes}
                       </p>
                     ) : null}
                   </div>
                   <div className="flex flex-col gap-1.5 shrink-0">
+                    <span className="text-[10px] text-muted-foreground font-mono text-right">
+                      saved {new Date(saved.created_at).toLocaleDateString()}
+                    </span>
                     <Select value={saved.pipeline_stage} onValueChange={(v) => updateStage(saved.id, v)}>
-                      <SelectTrigger className="w-32 h-8 text-xs glass border-border/50">
+                      <SelectTrigger className="w-32 h-8 text-xs glass-input">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -195,7 +204,7 @@ export default function SavedLeads() {
                     </Button>
                   </div>
                 </div>
-              </Card>
+              </div>
             </motion.div>
           ))}
         </motion.div>

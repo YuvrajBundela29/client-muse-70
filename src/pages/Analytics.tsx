@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp, Users, Search, Activity } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line,
+  PieChart, Pie, Cell, LineChart, Line, Area, AreaChart,
 } from "recharts";
 
-const COLORS = ["hsl(230, 80%, 60%)", "hsl(152, 60%, 45%)", "hsl(38, 92%, 50%)", "hsl(0, 84%, 60%)", "hsl(260, 80%, 60%)", "hsl(185, 80%, 55%)"];
+const COLORS = ["#5B5FEF", "#00E5C3", "#F59E0B", "#EF4444", "#A78BFA", "#00B4D8"];
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-[rgba(10,15,30,0.95)] border border-[rgba(255,255,255,0.12)] rounded-lg px-3.5 py-2.5 shadow-lg">
+      <p className="text-[11px] text-muted-foreground font-mono mb-1">{label}</p>
+      {payload.map((p: any, i: number) => (
+        <p key={i} className="text-sm font-medium" style={{ color: p.color }}>{p.value}</p>
+      ))}
+    </div>
+  );
+};
 
 export default function Analytics() {
   const { user } = useAuth();
@@ -56,86 +67,81 @@ export default function Analytics() {
   }, [user]);
 
   const metricCards = [
-    { label: "Total Leads", value: stats.totalLeads, icon: Users, gradient: "from-primary/20 to-glow-cyan/10", border: "border-primary/20" },
-    { label: "Searches Run", value: stats.totalSearches, icon: Search, gradient: "from-glow-violet/20 to-glow-violet/5", border: "border-glow-violet/20" },
-    { label: "Avg Fit Score", value: stats.avgScore, icon: TrendingUp, gradient: "from-success/20 to-success/5", border: "border-success/20" },
-    { label: "Converted", value: stats.converted, icon: BarChart3, gradient: "from-warning/20 to-warning/5", border: "border-warning/20" },
+    { label: "TOTAL LEADS", value: stats.totalLeads, icon: Users, accent: "#5B5FEF" },
+    { label: "SEARCHES RUN", value: stats.totalSearches, icon: Search, accent: "#A78BFA" },
+    { label: "AVG FIT SCORE", value: stats.avgScore, icon: TrendingUp, accent: "#00E5C3" },
+    { label: "CONVERTED", value: stats.converted, icon: BarChart3, accent: "#F59E0B" },
   ];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
       <div className="flex items-center gap-2">
-        <div className="relative">
-          <Activity className="h-5 w-5 text-primary" />
-          <div className="absolute inset-0 blur-md bg-primary/30" />
-        </div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
+        <Activity className="h-5 w-5 text-primary" />
+        <h1 className="page-title">Analytics</h1>
       </div>
 
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {metricCards.map((m) => (
-          <motion.div key={m.label} variants={item}>
-            <Card className={`border ${m.border} bg-gradient-to-br ${m.gradient} backdrop-blur-sm overflow-hidden relative group hover:shadow-card-hover transition-all duration-300`}>
-              <CardContent className="pt-6 relative">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-background/60 backdrop-blur-sm border border-border/50 group-hover:scale-110 transition-transform duration-300">
-                    <m.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold font-mono">{m.value}</p>
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{m.label}</p>
-                  </div>
+          <motion.div key={m.label} variants={item} whileHover={{ y: -4, transition: { type: "spring", stiffness: 400, damping: 30 } }}>
+            <div className="glass-card p-5 cursor-default" style={{ borderTop: `1px solid ${m.accent}` }}>
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `${m.accent}1F` }}>
+                  <m.icon className="h-5 w-5" style={{ color: m.accent }} />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-2xl font-bold font-mono">{m.value}</p>
+                  <p className="section-label">{m.label}</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
         ))}
       </motion.div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300">
-          <CardHeader><CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Leads Added Per Week</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="week" className="text-xs" />
-                <YAxis className="text-xs" />
-                <Tooltip contentStyle={{ backgroundColor: "hsl(225, 25%, 9%)", border: "1px solid hsl(225, 15%, 15%)", borderRadius: "12px" }} />
-                <Line type="monotone" dataKey="leads" stroke="hsl(230, 80%, 60%)" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="glass-card p-5 rounded-2xl">
+          <h3 className="section-label mb-4">Leads Added Per Week</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={weeklyData}>
+              <defs>
+                <linearGradient id="leadsFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#5B5FEF" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#5B5FEF" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+              <XAxis dataKey="week" tick={{ fill: "#8892B0", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="leads" stroke="#5B5FEF" strokeWidth={2} fill="url(#leadsFill)" isAnimationActive animationDuration={600} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
 
-        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300">
-          <CardHeader><CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Pipeline Distribution</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie data={pipelineData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name }) => name}>
-                  {pipelineData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: "hsl(225, 25%, 9%)", border: "1px solid hsl(225, 15%, 15%)", borderRadius: "12px" }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="glass-card p-5 rounded-2xl">
+          <h3 className="section-label mb-4">Pipeline Distribution</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie data={pipelineData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" label={({ name }) => name} isAnimationActive animationDuration={800}>
+                {pipelineData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
 
-        <Card className="lg:col-span-2 glass border-border/50 hover:border-primary/20 transition-all duration-300">
-          <CardHeader><CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Leads by Industry</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={industryData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="name" className="text-xs" />
-                <YAxis className="text-xs" />
-                <Tooltip contentStyle={{ backgroundColor: "hsl(225, 25%, 9%)", border: "1px solid hsl(225, 15%, 15%)", borderRadius: "12px" }} />
-                <Bar dataKey="count" fill="hsl(230, 80%, 60%)" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2 glass-card p-5 rounded-2xl">
+          <h3 className="section-label mb-4">Leads by Industry</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={industryData}>
+              <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+              <XAxis dataKey="name" tick={{ fill: "#8892B0", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="count" fill="#5B5FEF" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={600} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
