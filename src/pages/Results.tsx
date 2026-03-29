@@ -32,9 +32,7 @@ function exportAllCSV(leads: EnrichedLead[]) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = "client-muse-intelligence-report.csv";
-  a.click();
+  a.href = url; a.download = "client-muse-intelligence-report.csv"; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -49,7 +47,6 @@ export default function Results() {
     setLoading(true);
     try {
       const data = await fetchLeads();
-      // Filter by last search params so only relevant leads show
       const filtered = lastSearch
         ? data.filter((l) => {
             const matchIndustry = l.industry.toLowerCase().includes(lastSearch.industry.toLowerCase());
@@ -58,11 +55,8 @@ export default function Results() {
           })
         : data;
       setLeads(filtered.map(enrichLead));
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: any) { toast.error(err.message); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -88,75 +82,76 @@ export default function Results() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-        {/* Top bar */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <Link to="/search" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="h-3.5 w-3.5" /> Back to search
-            </Link>
-            <h1 className="text-2xl font-bold tracking-tight">Intelligence Report</h1>
-            <p className="text-sm text-muted-foreground">
-              {filtered.length} {filtered.length === 1 ? "lead" : "leads"} analyzed
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <Link to="/search" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to search
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <div className="relative">
-              <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Filter leads..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-9 w-48 bg-card pl-9 border-border"
-              />
+              <Zap className="h-5 w-5 text-primary" />
+              <div className="absolute inset-0 blur-md bg-primary/30" />
             </div>
-            {/* Sort */}
-            <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-0.5">
-              {(["match", "urgency", "recent"] as SortKey[]).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSort(s)}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                    sort === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {s === "match" ? "Best Match" : s === "urgency" ? "Urgency" : "Recent"}
-                </button>
-              ))}
-            </div>
-            <Button size="sm" variant="outline" onClick={load} className="gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" /> Refresh
-            </Button>
-            <Button size="sm" onClick={() => exportAllCSV(filtered)} className="gap-1.5" disabled={filtered.length === 0}>
-              <Download className="h-3.5 w-3.5" /> Export All CSV
-            </Button>
-          </div>
+            Intelligence Report
+          </h1>
+          <p className="text-sm text-muted-foreground font-mono">
+            {filtered.length} {filtered.length === 1 ? "lead" : "leads"} analyzed
+          </p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Filter leads..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9 w-48 pl-9 glass border-border/50 focus:border-primary/50"
+            />
+          </div>
+          <div className="flex items-center gap-0.5 rounded-xl glass border-border/50 p-0.5">
+            {(["match", "urgency", "recent"] as SortKey[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSort(s)}
+                className={`rounded-lg px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+                  sort === s ? "bg-primary text-primary-foreground shadow-glow" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {s === "match" ? "Best Match" : s === "urgency" ? "Urgency" : "Recent"}
+              </button>
+            ))}
+          </div>
+          <Button size="sm" variant="outline" onClick={load} className="gap-1.5 glass border-border/50">
+            <RefreshCw className="h-3.5 w-3.5" /> Refresh
+          </Button>
+          <Button size="sm" onClick={() => exportAllCSV(filtered)} className="gap-1.5 shadow-glow" disabled={filtered.length === 0}>
+            <Download className="h-3.5 w-3.5" /> Export All CSV
+          </Button>
+        </div>
+      </div>
 
-        {/* Grid */}
-        {loading ? (
-          <div className="grid gap-5 md:grid-cols-2">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <LeadSkeleton key={i} />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="py-24 text-center">
-            <SearchIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
-            <h2 className="mb-2 text-xl font-bold">No matches found</h2>
-            <p className="mb-6 text-muted-foreground">Try adjusting your filters or run a new search to discover leads.</p>
-            <Link to="/search">
-              <Button className="gap-2">
-                <SearchIcon className="h-4 w-4" /> Start Searching
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2">
-            {filtered.map((lead, i) => (
-              <LeadIntelCard key={lead.id} lead={lead} index={i} onStatusChange={handleStatusChange} />
-            ))}
-          </div>
-        )}
+      {loading ? (
+        <div className="grid gap-5 md:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => <LeadSkeleton key={i} />)}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="py-24 text-center">
+          <SearchIcon className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
+          <h2 className="mb-2 text-xl font-bold">No matches found</h2>
+          <p className="mb-6 text-muted-foreground">Try adjusting your filters or run a new search to discover leads.</p>
+          <Link to="/search">
+            <Button className="gap-2 shadow-glow">
+              <SearchIcon className="h-4 w-4" /> Start Searching
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-2">
+          {filtered.map((lead, i) => (
+            <LeadIntelCard key={lead.id} lead={lead} index={i} onStatusChange={handleStatusChange} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
