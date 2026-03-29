@@ -45,12 +45,7 @@ export default function Onboarding() {
     { title: "What's your name?", subtitle: "How should we address you?" },
   ];
 
-  const canAdvance = [
-    !!industry,
-    !!country,
-    !!service,
-    !!displayName,
-  ][step];
+  const canAdvance = [!!industry, !!country, !!service, !!displayName][step];
 
   const handleFinish = async () => {
     if (!user) return;
@@ -58,20 +53,14 @@ export default function Onboarding() {
     const { error } = await supabase
       .from("profiles")
       .update({
-        industry,
-        country,
-        service,
+        industry, country, service,
         full_name: displayName,
         onboarding_complete: true,
       } as Record<string, unknown>)
       .eq("id", user.id);
 
-    if (error) {
-      toast.error("Failed to save profile");
-      setSaving(false);
-      return;
-    }
-    toast.success("Welcome to AutoClient AI!");
+    if (error) { toast.error("Failed to save profile"); setSaving(false); return; }
+    toast.success("Welcome to Client Muse!");
     navigate("/dashboard");
   };
 
@@ -81,31 +70,29 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
-        {/* Logo */}
+    <div className="min-h-screen bg-[hsl(228,50%,8%)] flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 mesh-gradient" />
+      <div className="w-full max-w-lg relative">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <img src={logoWhite} alt="AutoClient AI" className="h-8 w-8" />
-            <span className="text-2xl font-bold">AutoClient AI</span>
+            <img src={logoWhite} alt="Client Muse" className="h-8 w-8" />
+            <span className="text-2xl font-bold text-gradient">Client Muse</span>
           </div>
         </div>
 
-        {/* Step indicators */}
         <div className="flex gap-2 justify-center mb-8">
           {steps.map((_, i) => (
             <div
               key={i}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i <= step ? "w-8 bg-primary" : "w-2 bg-muted"
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i <= step ? "w-8 bg-primary" : "w-2 bg-[rgba(255,255,255,0.1)]"
               }`}
             />
           ))}
         </div>
 
-        {/* Card */}
         <motion.div
-          className="rounded-xl border bg-card p-8 shadow-lg"
+          className="glass-card rounded-2xl p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -118,41 +105,25 @@ export default function Onboarding() {
               transition={{ duration: 0.2 }}
             >
               <h2 className="text-xl font-semibold mb-1">{steps[step].title}</h2>
-              <p className="text-muted-foreground text-sm mb-6">{steps[step].subtitle}</p>
+              <p className="text-[#8892B0] text-sm mb-6">{steps[step].subtitle}</p>
 
               {step === 0 && (
                 <Select value={industry} onValueChange={setIndustry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select industry..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INDUSTRIES.map((ind) => (
-                      <SelectItem key={ind} value={ind}>{ind}</SelectItem>
-                    ))}
-                  </SelectContent>
+                  <SelectTrigger className="glass-input"><SelectValue placeholder="Select industry..." /></SelectTrigger>
+                  <SelectContent>{INDUSTRIES.map((ind) => <SelectItem key={ind} value={ind}>{ind}</SelectItem>)}</SelectContent>
                 </Select>
               )}
 
               {step === 1 && (
                 <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
+                  <SelectTrigger className="glass-input"><SelectValue placeholder="Select country..." /></SelectTrigger>
+                  <SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                 </Select>
               )}
 
               {step === 2 && (
                 <div className="space-y-3">
-                  <Input
-                    placeholder="e.g. Web design, Video editing..."
-                    value={service}
-                    onChange={(e) => setService(e.target.value)}
-                  />
+                  <Input placeholder="e.g. Web design, Video editing..." value={service} onChange={(e) => setService(e.target.value)} className="glass-input" />
                   <div className="flex flex-wrap gap-2">
                     {SERVICE_SUGGESTIONS.map((s) => (
                       <button
@@ -162,7 +133,7 @@ export default function Onboarding() {
                         className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                           service === s
                             ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-muted/50 text-muted-foreground hover:bg-muted border-transparent"
+                            : "bg-[rgba(255,255,255,0.04)] text-[#8892B0] hover:bg-[rgba(255,255,255,0.08)] border-[rgba(255,255,255,0.08)]"
                         }`}
                       >
                         {s}
@@ -173,33 +144,17 @@ export default function Onboarding() {
               )}
 
               {step === 3 && (
-                <Input
-                  placeholder="Your display name"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                />
+                <Input placeholder="Your display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="glass-input" />
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation */}
           <div className="flex justify-between mt-8">
-            <Button
-              variant="ghost"
-              onClick={() => setStep(step - 1)}
-              disabled={step === 0}
-              className="gap-1"
-            >
+            <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={step === 0} className="gap-1 text-[#8892B0] hover:text-foreground">
               <ArrowLeft className="h-4 w-4" /> Back
             </Button>
-            <Button onClick={handleNext} disabled={!canAdvance || saving} className="gap-1">
-              {saving ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : step === 3 ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <ArrowRight className="h-4 w-4" />
-              )}
+            <Button onClick={handleNext} disabled={!canAdvance || saving} className="gap-1 bg-primary hover:bg-primary/90">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : step === 3 ? <Check className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
               {step === 3 ? "Finish" : "Next"}
             </Button>
           </div>

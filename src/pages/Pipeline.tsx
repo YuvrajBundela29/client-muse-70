@@ -2,9 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Crosshair, Upload, Download, RefreshCw, Search, Clock, Plus,
+  Upload, RefreshCw, Search, Plus,
   Mail, MailX, MessageSquare, Phone, CheckCircle2, XCircle, AlertCircle,
-  ChevronRight, Star, Globe, Zap,
+  ChevronRight, Globe, Zap, MoreHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,18 @@ import { fetchLeads } from "@/lib/lead-api";
 import { supabase } from "@/integrations/supabase/client";
 import { enrichLead } from "@/lib/enrich-lead";
 import { detectServiceTrack } from "@/lib/service-tracks";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const STATUS_COLUMNS = [
-  { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, color: "text-blue-400" },
-  { key: "email_sent", label: "Email Sent", icon: Mail, color: "text-yellow-400" },
-  { key: "replied", label: "Replied", icon: MessageSquare, color: "text-emerald-400" },
-  { key: "call_booked", label: "Call Booked", icon: Phone, color: "text-glow-violet" },
-  { key: "closed", label: "Closed", icon: CheckCircle2, color: "text-success" },
-  { key: "no_response", label: "No Response", icon: MailX, color: "text-orange-400" },
-  { key: "rejected", label: "Rejected", icon: XCircle, color: "text-destructive" },
+  { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, accent: "#8892B0" },
+  { key: "email_sent", label: "Email Sent", icon: Mail, accent: "#5B5FEF" },
+  { key: "replied", label: "Replied", icon: MessageSquare, accent: "#F59E0B" },
+  { key: "call_booked", label: "Call Booked", icon: Phone, accent: "#A78BFA" },
+  { key: "closed", label: "Closed", icon: CheckCircle2, accent: "#00E5C3" },
+  { key: "no_response", label: "No Response", icon: MailX, accent: "#F97316" },
+  { key: "rejected", label: "Rejected", icon: XCircle, accent: "#EF4444" },
 ] as const;
 
 const STATUS_EMOJI: Record<string, string> = {
@@ -44,6 +47,19 @@ function computePriority(lead: PipelineWithLead["lead"], enriched: ReturnType<ty
   const urgencyOrder: Record<string, number> = { high: 30, medium: 20, low: 10 };
   score += urgencyOrder[enriched.urgency] || 0;
   return 1000 - score;
+}
+
+function PipelineAvatar({ name }: { name: string }) {
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  const hue = Math.abs(hash % 360);
+  return (
+    <div className="h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+      style={{ background: `hsl(${hue}, 50%, 40%)` }}>
+      {initials}
+    </div>
+  );
 }
 
 export default function Pipeline() {
@@ -125,6 +141,7 @@ export default function Pipeline() {
     try {
       await updatePipelineStatus(entryId, newStatus);
       setEntries((prev) => prev.map((e) => (e.id === entryId ? { ...e, pipeline_status: newStatus } : e)));
+      toast.success("Status updated");
     } catch (err: any) { toast.error(err.message); }
   };
 
@@ -137,15 +154,12 @@ export default function Pipeline() {
   const getColumn = (status: string) => filtered.filter((e) => e.pipeline_status === status);
 
   return (
-    <div className="p-6">
+    <div className="p-6 lg:p-8">
       {/* Top bar */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <div className="relative">
-              <Zap className="h-5 w-5 text-primary" />
-              <div className="absolute inset-0 blur-md bg-primary/30" />
-            </div>
+          <h1 className="page-title flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
             Pipeline Manager
           </h1>
           <p className="text-sm text-muted-foreground font-mono">{entries.length} clients in pipeline</p>
@@ -157,26 +171,38 @@ export default function Pipeline() {
               placeholder="Search pipeline..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-48 pl-9 glass border-border/50 focus:border-primary/50"
+              className="h-9 w-48 pl-9 glass-input"
             />
           </div>
-          <Button size="sm" variant="outline" onClick={syncLeadsToPipeline} className="gap-1.5 glass border-border/50 hover:border-primary/30 hover:glow-border transition-all">
-            <Plus className="h-3.5 w-3.5" /> Sync Leads
+          <Button size="sm" onClick={syncLeadsToPipeline} className="gap-1.5 bg-primary hover:bg-primary/90">
+            <Plus className="h-3.5 w-3.5" /> Add Client
           </Button>
-          <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()} className="gap-1.5 glass border-border/50 hover:border-primary/30">
-            <Upload className="h-3.5 w-3.5" /> Import CSV
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="outline" className="glass border-[rgba(255,255,255,0.08)] h-9 w-9 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="glass-strong">
+              <DropdownMenuItem onClick={syncLeadsToPipeline} className="gap-2">
+                <RefreshCw className="h-3.5 w-3.5" /> Sync Leads
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => fileRef.current?.click()} className="gap-2">
+                <Upload className="h-3.5 w-3.5" /> Import CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={load} className="gap-2">
+                <RefreshCw className="h-3.5 w-3.5" /> Refresh
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleCSVUpload} />
-          <Button size="sm" variant="outline" onClick={load} className="gap-1.5 glass border-border/50">
-            <RefreshCw className="h-3.5 w-3.5" /> Refresh
-          </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {[1,2,3,4].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl glass border-border/30" />
+            <div key={i} className="h-48 rounded-2xl bg-[rgba(255,255,255,0.04)] animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%)", backgroundSize: "200% 100%" }} />
           ))}
         </div>
       ) : (
@@ -184,13 +210,15 @@ export default function Pipeline() {
           {STATUS_COLUMNS.map((col) => {
             const items = getColumn(col.key);
             return (
-              <div key={col.key} className="min-w-[280px] flex-shrink-0">
-                <div className="mb-3 flex items-center gap-2 px-1">
-                  <col.icon className={`h-4 w-4 ${col.color}`} />
-                  <span className="text-sm font-semibold">{col.label}</span>
-                  <Badge variant="secondary" className="text-xs font-mono">{items.length}</Badge>
+              <div key={col.key} className="min-w-[280px] max-w-[300px] flex-shrink-0">
+                <div className="mb-3 flex items-center justify-between px-1 pb-3 border-b border-[rgba(255,255,255,0.08)]" style={{ borderTopColor: col.accent }}>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: col.accent }} />
+                    <span className="section-label">{col.label}</span>
+                  </div>
+                  <Badge variant="secondary" className="text-[10px] font-mono bg-[rgba(255,255,255,0.06)]">{items.length}</Badge>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 min-h-[200px]">
                   {items.map((entry, i) => {
                     const enriched = enrichLead(entry.lead as any);
                     return (
@@ -199,65 +227,64 @@ export default function Pipeline() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.03 }}
+                        whileHover={{ y: -2, transition: { type: "spring", stiffness: 400, damping: 30 } }}
                       >
                         <Link to={`/pipeline/${entry.lead_id}`}>
-                          <Card className="cursor-pointer glass border-border/50 transition-all duration-300 hover:border-primary/40 hover:shadow-card-hover hover:glow-border group">
-                            <CardContent className="p-4">
-                              <div className="mb-2 flex items-start justify-between">
-                                <h3 className="font-semibold text-sm leading-tight">{entry.lead.business_name}</h3>
-                                <span className={`text-xs font-bold font-mono ${
-                                  enriched.confidence_score >= 75 ? "text-success" :
-                                  enriched.confidence_score >= 50 ? "text-warning" : "text-destructive"
-                                }`}>
-                                  {enriched.confidence_score}%
-                                </span>
+                          <div className="glass-card p-4 rounded-xl cursor-pointer group hover:border-[rgba(255,255,255,0.15)] transition-all duration-200">
+                            <div className="mb-2 flex items-start justify-between">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <PipelineAvatar name={entry.lead.business_name} />
+                                <div className="min-w-0">
+                                  <h3 className="font-medium text-sm leading-tight truncate">{entry.lead.business_name}</h3>
+                                  {entry.lead.website && (
+                                    <p className="text-[10px] text-success truncate font-mono">{entry.lead.website}</p>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-xs text-muted-foreground mb-2 font-mono">
-                                {entry.lead.industry} · {entry.lead.city}
-                              </p>
-                              <div className="flex flex-wrap gap-1 mb-2">
-                                {entry.lead.email && (
-                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-emerald-500/30 text-emerald-400">
-                                    <Mail className="h-2.5 w-2.5 mr-0.5" /> Email
-                                  </Badge>
-                                )}
-                                {entry.lead.website && (
-                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-blue-500/30 text-blue-400">
-                                    <Globe className="h-2.5 w-2.5 mr-0.5" /> Web
-                                  </Badge>
-                                )}
-                                <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${
-                                  enriched.urgency === "high" ? "border-destructive/30 text-destructive" :
-                                  enriched.urgency === "medium" ? "border-warning/30 text-warning" :
-                                  "border-muted text-muted-foreground"
-                                }`}>
-                                  {enriched.urgency}
+                              <span className={`text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-md ${
+                                enriched.confidence_score >= 75 ? "bg-success/15 text-success" :
+                                enriched.confidence_score >= 50 ? "bg-warning/15 text-warning" : "bg-destructive/15 text-destructive"
+                              }`}>
+                                {enriched.confidence_score}%
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground mb-2 font-mono truncate">
+                              {entry.lead.industry} · {entry.lead.city}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {entry.lead.email && (
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-success/20 text-success bg-success/5">
+                                  <Mail className="h-2.5 w-2.5 mr-0.5" /> Email
                                 </Badge>
-                              </div>
-                              <p className="text-[11px] text-muted-foreground line-clamp-2">
-                                {enriched.intent_signal}
-                              </p>
-                              <div className="mt-3 flex items-center justify-between">
-                                <select
-                                  value={entry.pipeline_status}
-                                  onClick={(e) => e.preventDefault()}
-                                  onChange={(e) => { e.preventDefault(); e.stopPropagation(); handleStatusChange(entry.id, e.target.value); }}
-                                  className="rounded-lg bg-secondary/80 px-2 py-1 text-[10px] font-medium border border-border/50 outline-none text-foreground backdrop-blur-sm"
-                                >
-                                  {STATUS_COLUMNS.map((s) => (
-                                    <option key={s.key} value={s.key}>{STATUS_EMOJI[s.key]} {s.label}</option>
-                                  ))}
-                                </select>
-                                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                              </div>
-                            </CardContent>
-                          </Card>
+                              )}
+                              {entry.lead.website && (
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/20 text-primary bg-primary/5">
+                                  <Globe className="h-2.5 w-2.5 mr-0.5" /> Web
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="mt-3 flex items-center justify-between">
+                              <select
+                                value={entry.pipeline_status}
+                                onClick={(e) => e.preventDefault()}
+                                onChange={(e) => { e.preventDefault(); e.stopPropagation(); handleStatusChange(entry.id, e.target.value); }}
+                                className="rounded-lg bg-[rgba(255,255,255,0.06)] px-2 py-1 text-[10px] font-medium border border-[rgba(255,255,255,0.08)] outline-none text-foreground backdrop-blur-sm"
+                              >
+                                {STATUS_COLUMNS.map((s) => (
+                                  <option key={s.key} value={s.key}>{STATUS_EMOJI[s.key]} {s.label}</option>
+                                ))}
+                              </select>
+                              <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+                                View Details <ChevronRight className="h-3 w-3" />
+                              </span>
+                            </div>
+                          </div>
                         </Link>
                       </motion.div>
                     );
                   })}
                   {items.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-border/50 p-6 text-center glass">
+                    <div className="rounded-2xl border border-dashed border-[rgba(255,255,255,0.08)] p-6 text-center">
                       <p className="text-xs text-muted-foreground">No clients</p>
                     </div>
                   )}
