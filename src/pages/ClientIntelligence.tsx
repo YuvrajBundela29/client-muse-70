@@ -67,11 +67,6 @@ export default function ClientIntelligence() {
           });
         }
 
-        // Fetch reels
-        const reelData = await fetchReels();
-        setReels(reelData);
-        setMatchingReel(findMatchingReel(reelData, l.industry, l.growth_opportunity));
-      } catch (err: any) {
         toast.error(err.message);
       } finally {
         setLoading(false);
