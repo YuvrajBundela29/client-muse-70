@@ -173,7 +173,7 @@ export default function Dashboard() {
       <RevenueFlow />
 
       {/* Data Stats */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
         {STAT_CONFIGS.map((m) => (
           <StatCard key={m.key} label={m.label} value={stats[m.key]} icon={m.icon} accent={m.accent} />
         ))}
