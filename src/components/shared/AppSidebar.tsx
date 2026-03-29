@@ -37,12 +37,12 @@ export function AppSidebar() {
         {/* Logo */}
         <div className={`flex items-center gap-2.5 px-4 py-5 ${collapsed ? "justify-center" : ""}`}>
           <div className="relative">
-            <Crosshair className="h-6 w-6 text-primary shrink-0" />
+            <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
             <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
           </div>
           {!collapsed && (
             <span className="font-bold text-lg tracking-tight text-gradient">
-              Client Muse
+              AutoClient AI
             </span>
           )}
         </div>

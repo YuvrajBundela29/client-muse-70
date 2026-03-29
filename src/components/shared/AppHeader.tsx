@@ -19,8 +19,8 @@ export function AppHeader({ showCredits }: Props) {
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
       <div className="container flex h-14 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <Crosshair className="h-5 w-5 text-primary" />
-          <span>Client Muse</span>
+          <img src={logoWhite} alt="AutoClient AI" className="h-5 w-5" />
+          <span>AutoClient AI</span>
         </Link>
         <div className="flex items-center gap-4">
           {showCredits && <CreditCounter />}
