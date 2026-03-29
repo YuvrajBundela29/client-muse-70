@@ -57,10 +57,10 @@ export default function Landing() {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5 font-bold tracking-tight">
             <div className="relative">
-              <Crosshair className="h-5 w-5 text-primary" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-6 w-6" />
               <div className="absolute inset-0 blur-lg bg-primary/30" />
             </div>
-            <span className="text-gradient">Client Muse</span>
+            <span className="text-gradient">AutoClient AI</span>
           </div>
           <Link to="/search">
             <Button size="sm" className="gap-1.5 shadow-glow">
