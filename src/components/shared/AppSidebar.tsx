@@ -1,7 +1,8 @@
 import {
   Search, LayoutDashboard, Bookmark, Clock, GitBranch,
-  LogOut, Crosshair, BarChart3, Settings, Zap, BookmarkCheck,
+  LogOut, BarChart3, Settings, Zap, BookmarkCheck,
 } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
