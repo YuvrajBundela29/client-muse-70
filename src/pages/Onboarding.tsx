@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crosshair, ArrowRight, ArrowLeft, Loader2, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Loader2, Check } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -70,7 +71,7 @@ export default function Onboarding() {
       setSaving(false);
       return;
     }
-    toast.success("Welcome to Client Muse!");
+    toast.success("Welcome to AutoClient AI!");
     navigate("/dashboard");
   };
 
@@ -85,8 +86,8 @@ export default function Onboarding() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Crosshair className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-8 w-8" />
+            <span className="text-2xl font-bold">AutoClient AI</span>
           </div>
         </div>
 

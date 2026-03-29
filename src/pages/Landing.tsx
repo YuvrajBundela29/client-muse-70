@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Crosshair, ArrowRight, Zap, Clock, Mail, TrendingDown,
+  ArrowRight, Zap, Clock, Mail, TrendingDown,
   Search, Brain, Users, Shield, Star, ChevronRight, Sparkles,
 } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 import { LiveActivity } from "@/components/landing/LiveActivity";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -56,10 +57,10 @@ export default function Landing() {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5 font-bold tracking-tight">
             <div className="relative">
-              <Crosshair className="h-5 w-5 text-primary" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-6 w-6" />
               <div className="absolute inset-0 blur-lg bg-primary/30" />
             </div>
-            <span className="text-gradient">Client Muse</span>
+            <span className="text-gradient">AutoClient AI</span>
           </div>
           <Link to="/search">
             <Button size="sm" className="gap-1.5 shadow-glow">
@@ -268,8 +269,8 @@ export default function Landing() {
       <footer className="border-t border-border/30 py-8">
         <div className="container flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Crosshair className="h-3.5 w-3.5 text-primary" />
-            <span className="font-mono">Client Muse</span>
+            <img src={logoWhite} alt="AutoClient AI" className="h-4 w-4" />
+            <span className="font-mono">AutoClient AI</span>
           </div>
           <span>Built for freelancers who want to grow</span>
         </div>
