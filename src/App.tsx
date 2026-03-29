@@ -52,7 +52,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedWithLayout><Dashboard /></ProtectedWithLayout>} />
             <Route path="/search" element={<ProtectedWithLayout><SearchIntake /></ProtectedWithLayout>} />
             <Route path="/results" element={<ProtectedWithLayout><Results /></ProtectedWithLayout>} />
-            <Route path="/saved" element={<ProtectedWithLayout><SavedLeads /></ProtectedWithLayout>} />
+            <Route path="/saved" element={<Navigate to="/history" replace />} />
             <Route path="/history" element={<ProtectedWithLayout><History /></ProtectedWithLayout>} />
             <Route path="/pipeline" element={<ProtectedWithLayout><Pipeline /></ProtectedWithLayout>} />
             <Route path="/pipeline/:id" element={<ProtectedWithLayout><ClientIntelligence /></ProtectedWithLayout>} />
