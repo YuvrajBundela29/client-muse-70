@@ -283,39 +283,6 @@ export default function ClientIntelligence() {
           </Card>
         </motion.div>
 
-        {/* SECTION C — Reel Decision Check */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                🎬 Reel Decision Check
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {matchingReel ? (
-                <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-4">
-                  <p className="font-semibold text-green-400 flex items-center gap-2">
-                    ✅ REUSE: {matchingReel.reel_code} matches this client
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">{matchingReel.description}</p>
-                  <a href={matchingReel.drive_link} target="_blank" rel="noopener" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">
-                    <Film className="h-3.5 w-3.5" /> View Reel
-                  </a>
-                </div>
-              ) : (
-                <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-4">
-                  <p className="font-semibold text-yellow-400 flex items-center gap-2">
-                    🔨 BUILD NEW: No existing reel matches
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Proceed to production engine to create a new reel for this client.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
         {/* SECTION D — AI Email Construction */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="border-border bg-card">
