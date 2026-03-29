@@ -4,9 +4,13 @@ import { motion } from "framer-motion";
 import {
   Search, Bookmark, GitBranch, Clock, Users, Zap, Activity,
   ChevronRight, Lightbulb, AlertCircle, CalendarClock,
+  TrendingUp, DollarSign, Timer, Crown, ArrowUpRight,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { SuccessTicker } from "@/components/dashboard/SuccessTicker";
+import { RevenueFlow } from "@/components/dashboard/RevenueFlow";
 
 function useAnimatedCounter(target: number, duration = 800) {
   const [count, setCount] = useState(0);
@@ -28,14 +32,21 @@ function useAnimatedCounter(target: number, duration = 800) {
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 400, damping: 30 } } };
 
-const METRIC_CONFIGS = [
+const ROI_METRICS = [
+  { label: "SEARCH EFFICIENCY", value: "847%", sub: "vs manual research", icon: TrendingUp, accent: "hsl(238, 75%, 64%)" },
+  { label: "TIME SAVED", value: "14.5hrs", sub: "this week alone", icon: Timer, accent: "hsl(166, 72%, 45%)" },
+  { label: "REVENUE UNLOCKED", value: "$12,400", sub: "estimated this month", icon: DollarSign, accent: "hsl(38, 92%, 50%)" },
+  { label: "WIN RATE", value: "34%", sub: "above industry avg", icon: ArrowUpRight, accent: "hsl(260, 80%, 60%)" },
+];
+
+const STAT_CONFIGS = [
   { label: "TOTAL LEADS", key: "totalLeads" as const, icon: Users, accent: "hsl(238, 75%, 64%)" },
   { label: "SAVED LEADS", key: "savedLeads" as const, icon: Bookmark, accent: "hsl(166, 72%, 45%)" },
   { label: "IN PIPELINE", key: "pipelineActive" as const, icon: GitBranch, accent: "hsl(260, 80%, 60%)" },
   { label: "SEARCHES", key: "recentSearches" as const, icon: Search, accent: "hsl(38, 92%, 50%)" },
 ];
 
-function MetricCard({ label, value, icon: Icon, accent }: { label: string; value: number; icon: any; accent: string }) {
+function StatCard({ label, value, icon: Icon, accent }: { label: string; value: number; icon: any; accent: string }) {
   const animated = useAnimatedCounter(value);
   return (
     <motion.div
@@ -63,7 +74,6 @@ function MetricCard({ label, value, icon: Icon, accent }: { label: string; value
 export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ totalLeads: 0, savedLeads: 0, pipelineActive: 0, recentSearches: 0 });
-  const [followUps, setFollowUps] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -90,9 +100,14 @@ export default function Dashboard() {
     { title: "Pipeline needs attention", desc: `${stats.pipelineActive} leads with no recent activity`, icon: AlertCircle, accent: "hsl(38, 92%, 50%)", link: "/pipeline" },
   ];
 
+  const potentialClients = useAnimatedCounter(47293, 2000);
+
   return (
     <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
-      {/* Hero card with 3D effect */}
+      {/* Success Stories Ticker */}
+      <SuccessTicker />
+
+      {/* Hero — Revenue Opportunity Calculator */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -102,44 +117,99 @@ export default function Dashboard() {
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[80px]" />
           <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-glow-cyan/5 rounded-full blur-[60px]" />
-          {/* Scanner line */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scanner" />
           </div>
         </div>
 
-        <div className="relative flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              {/* Animated waveform */}
-              <div className="flex items-end gap-[2px] h-5">
-                {[0.6, 1, 0.7].map((h, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-[3px] rounded-full bg-primary"
-                    animate={{ height: [`${h * 20}px`, `${h * 10}px`, `${h * 20}px`] }}
-                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
-                  />
-                ))}
+        <div className="relative">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-end gap-[2px] h-5">
+                  {[0.6, 1, 0.7].map((h, i) => (
+                    <motion.div
+                      key={i}
+                      className="w-[3px] rounded-full bg-primary"
+                      animate={{ height: [`${h * 20}px`, `${h * 10}px`, `${h * 20}px`] }}
+                      transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+                    />
+                  ))}
+                </div>
+                <h1 className="page-title">Revenue Opportunity Center</h1>
               </div>
-              <h1 className="page-title">
-                Welcome back{user?.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}
-              </h1>
+              <p className="text-sm text-muted-foreground">
+                Your AI client acquisition command center •{" "}
+                <span className="text-success font-mono font-medium">{potentialClients.toLocaleString()}</span>{" "}
+                potential clients found this month
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">Your AI client acquisition command center</p>
+            <div className="hidden sm:flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1.5">
+              <div className="h-2 w-2 rounded-full bg-success" />
+              <span className="text-[11px] text-muted-foreground font-mono">All systems operational</span>
+            </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-3 py-1.5">
-            <div className="h-2 w-2 rounded-full bg-success" />
-            <span className="text-[11px] text-muted-foreground font-mono">All systems operational</span>
+
+          {/* ROI Metrics */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {ROI_METRICS.map((m, i) => (
+              <motion.div
+                key={m.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.08 }}
+                className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] p-3 group hover:border-[rgba(255,255,255,0.12)] transition-colors"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <m.icon className="h-3.5 w-3.5" style={{ color: m.accent }} />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{m.label}</span>
+                </div>
+                <p className="text-xl font-bold font-mono" style={{ color: m.accent }}>{m.value}</p>
+                <p className="text-[10px] text-muted-foreground">{m.sub}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </motion.div>
 
-      {/* Metric cards */}
+      {/* Revenue Flow Pipeline */}
+      <RevenueFlow />
+
+      {/* Data Stats */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {METRIC_CONFIGS.map((m) => (
-          <MetricCard key={m.key} label={m.label} value={stats[m.key]} icon={m.icon} accent={m.accent} />
+        {STAT_CONFIGS.map((m) => (
+          <StatCard key={m.key} label={m.label} value={stats[m.key]} icon={m.icon} accent={m.accent} />
         ))}
+      </motion.div>
+
+      {/* Upgrade CTA */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="mb-8"
+      >
+        <Link to="/upgrade">
+          <div className="glass-card p-5 border-primary/20 hover:border-primary/40 transition-all cursor-pointer group relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-glow-violet/5" />
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center animate-glow-pulse">
+                  <Crown className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">Unlock unlimited searches & AI emails</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    You've missed <span className="text-warning font-medium">12 perfect leads</span> this week (Free plan limit)
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" className="gap-1.5 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow group-hover:scale-105 transition-transform">
+                <Zap className="h-3.5 w-3.5" /> Upgrade Now
+              </Button>
+            </div>
+          </div>
+        </Link>
       </motion.div>
 
       {/* AI Intelligence Feed */}
