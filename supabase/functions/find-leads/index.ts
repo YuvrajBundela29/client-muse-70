@@ -225,10 +225,18 @@ Return ONLY a valid JSON array. No markdown. If no real businesses found, return
       );
     }
 
-    // Step 3: Store in database
+    // Step 3: Extract user ID from auth header
+    const authHeader = req.headers.get("authorization") || "";
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    let userId: string | null = null;
+    if (authHeader.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: { user } } = await supabase.auth.getUser(token);
+      userId = user?.id || null;
+    }
 
     const leadsToInsert = leads.map((l) => ({
       business_name: (l.business_name as string) || "Unknown Business",
@@ -244,6 +252,7 @@ Return ONLY a valid JSON array. No markdown. If no real businesses found, return
       recommended_service: (l.recommended_service as string) || null,
       outreach_message: (l.outreach_message as string) || null,
       status: "new",
+      user_id: userId,
     }));
 
     const { data: insertedLeads, error: insertError } = await supabase
