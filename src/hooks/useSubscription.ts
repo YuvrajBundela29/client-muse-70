@@ -12,11 +12,12 @@ interface Subscription {
 
 const PLAN_LIMITS: Record<string, number> = {
   free: 10,
-  starter: 10,
+  trial: 25,
+  starter: 200,
   solo: 100,
   professional: 300,
-  pro: 500,
-  elite: 1000,
+  pro: 600,
+  elite: 99999,
   agency: 99999,
 };
 
