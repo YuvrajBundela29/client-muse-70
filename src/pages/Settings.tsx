@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Save, Loader2, AlertTriangle, Key, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
+import { Save, Loader2, AlertTriangle, Key, ExternalLink, CheckCircle2, XCircle, Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -34,22 +34,14 @@ export default function Settings() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+      const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
       if (profile) {
         setFullName(profile.full_name || "");
         setIndustry((profile as Record<string, unknown>).industry as string || "");
         setCountry((profile as Record<string, unknown>).country as string || "");
         setService((profile as Record<string, unknown>).service as string || "");
       }
-      const { data: sub } = await (supabase as any)
-        .from("user_subscriptions")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
+      const { data: sub } = await (supabase as any).from("user_subscriptions").select("*").eq("user_id", user.id).single();
       if (sub) {
         setPlan((sub as Record<string, unknown>).plan as string || "free");
         setSearchesUsed((sub as Record<string, unknown>).searches_used_this_month as number || 0);
@@ -61,10 +53,7 @@ export default function Settings() {
   const saveProfile = async () => {
     if (!user) return;
     setSaving(true);
-    await supabase
-      .from("profiles")
-      .update({ full_name: fullName, industry, country, service } as Record<string, unknown>)
-      .eq("id", user.id);
+    await supabase.from("profiles").update({ full_name: fullName, industry, country, service } as Record<string, unknown>).eq("id", user.id);
     toast.success("Profile updated");
     setSaving(false);
   };
@@ -82,10 +71,16 @@ export default function Settings() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <SettingsIcon className="h-5 w-5 text-primary" />
+          <div className="absolute inset-0 blur-md bg-primary/30" />
+        </div>
+        <h1 className="text-2xl font-bold">Settings</h1>
+      </div>
 
       <Tabs defaultValue="profile">
-        <TabsList className="flex-wrap">
+        <TabsList className="flex-wrap glass border-border/50">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="api-keys">API Integrations</TabsTrigger>
@@ -94,31 +89,31 @@ export default function Settings() {
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4 mt-4">
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader><CardTitle>Profile Details</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>Display Name</Label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                <Label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Display Name</Label>
+                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="glass border-border/50 focus:border-primary/50 mt-1" />
               </div>
               <div>
-                <Label>Industry</Label>
+                <Label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Industry</Label>
                 <Select value={industry} onValueChange={setIndustry}>
-                  <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectTrigger className="glass border-border/50 mt-1"><SelectValue placeholder="Select..." /></SelectTrigger>
                   <SelectContent>
                     {INDUSTRIES.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label>Target Country</Label>
-                <Input value={country} onChange={(e) => setCountry(e.target.value)} />
+                <Label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Target Country</Label>
+                <Input value={country} onChange={(e) => setCountry(e.target.value)} className="glass border-border/50 focus:border-primary/50 mt-1" />
               </div>
               <div>
-                <Label>Service</Label>
-                <Input value={service} onChange={(e) => setService(e.target.value)} />
+                <Label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Service</Label>
+                <Input value={service} onChange={(e) => setService(e.target.value)} className="glass border-border/50 focus:border-primary/50 mt-1" />
               </div>
-              <Button onClick={saveProfile} disabled={saving} className="gap-2">
+              <Button onClick={saveProfile} disabled={saving} className="gap-2 shadow-glow">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save Changes
               </Button>
@@ -127,129 +122,87 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="account" className="space-y-4 mt-4">
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader>
               <CardTitle>Change Password</CardTitle>
               <CardDescription>Update your password</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Input
-                type="password"
-                placeholder="New password (min 6 chars)"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <Button onClick={changePassword} disabled={changingPassword}>
+              <Input type="password" placeholder="New password (min 6 chars)" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="glass border-border/50 focus:border-primary/50" />
+              <Button onClick={changePassword} disabled={changingPassword} className="shadow-glow">
                 {changingPassword ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Update Password
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="border-destructive/50">
+          <Card className="glass border-destructive/30">
             <CardHeader>
               <CardTitle className="text-destructive flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4" /> Danger Zone
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="destructive" onClick={() => setDeleteOpen(true)}>
-                Delete Account
-              </Button>
+              <Button variant="destructive" onClick={() => setDeleteOpen(true)}>Delete Account</Button>
             </CardContent>
           </Card>
 
           <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-            <DialogContent>
+            <DialogContent className="glass border-border/50">
               <DialogHeader>
                 <DialogTitle>Delete Account</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. All your data will be permanently deleted.
-                </DialogDescription>
+                <DialogDescription>This action cannot be undone. All your data will be permanently deleted.</DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={async () => { await signOut(); toast.success("Account deletion requested"); }}>
-                  Confirm Delete
-                </Button>
+                <Button variant="outline" onClick={() => setDeleteOpen(false)} className="glass border-border/50">Cancel</Button>
+                <Button variant="destructive" onClick={async () => { await signOut(); toast.success("Account deletion requested"); }}>Confirm Delete</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </TabsContent>
 
         <TabsContent value="api-keys" className="mt-4 space-y-4">
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Key className="h-5 w-5" /> Search API Keys</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Key className="h-5 w-5 text-primary" /> Search API Keys</CardTitle>
               <CardDescription>
                 Connect additional search engines to broaden your lead discovery. All keys are stored securely and never exposed client-side.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               {[
-                {
-                  name: "Zenserp",
-                  description: "Google SERP API for organic search results",
-                  url: "https://app.zenserp.com/",
-                  status: "configured" as const,
-                },
-                {
-                  name: "Serpstack",
-                  description: "Alternative Google search API with real-time results",
-                  url: "https://serpstack.com/dashboard",
-                  status: "configured" as const,
-                },
-                {
-                  name: "Jooble",
-                  description: "Job aggregator API — finds hiring companies as warm leads",
-                  url: "https://jooble.org/api/about",
-                  status: "configured" as const,
-                },
-                {
-                  name: "Careerjet",
-                  description: "Job search API — discovers companies actively recruiting",
-                  url: "https://www.careerjet.com/partners/publisher/api/",
-                  status: "configured" as const,
-                },
-                {
-                  name: "WhatJobs",
-                  description: "Job publisher API — identifies businesses with open positions",
-                  url: "https://www.whatjobs.com/contact/publisher",
-                  status: "configured" as const,
-                },
+                { name: "Zenserp", description: "Google SERP API for organic search results", url: "https://app.zenserp.com/", status: "configured" as const },
+                { name: "Serpstack", description: "Alternative Google search API with real-time results", url: "https://serpstack.com/dashboard", status: "configured" as const },
+                { name: "Jooble", description: "Job aggregator API — finds hiring companies as warm leads", url: "https://jooble.org/api/about", status: "configured" as const },
+                { name: "Careerjet", description: "Job search API — discovers companies actively recruiting", url: "https://www.careerjet.com/partners/publisher/api/", status: "configured" as const },
+                { name: "WhatJobs", description: "Job publisher API — identifies businesses with open positions", url: "https://www.whatjobs.com/contact/publisher", status: "configured" as const },
               ].map((api) => (
-                <div key={api.name} className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
+                <div key={api.name} className="flex items-center justify-between p-4 rounded-xl glass border-border/50 hover:border-primary/20 transition-all duration-300">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{api.name}</span>
-                      {api.status === "configured" ? (
-                        <span className="flex items-center gap-1 text-xs text-green-500">
-                          <CheckCircle2 className="h-3 w-3" /> Connected
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <XCircle className="h-3 w-3" /> Not configured
-                        </span>
-                      )}
+                      <span className="flex items-center gap-1 text-xs text-success">
+                        <CheckCircle2 className="h-3 w-3" /> Connected
+                      </span>
                     </div>
                     <p className="text-sm text-muted-foreground">{api.description}</p>
                   </div>
                   <a href={api.url} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="sm" className="gap-1">
+                    <Button variant="outline" size="sm" className="gap-1 glass border-border/50 hover:border-primary/30">
                       <ExternalLink className="h-3 w-3" /> Dashboard
                     </Button>
                   </a>
                 </div>
               ))}
-              <p className="text-xs text-muted-foreground">
-                To update API keys, contact support or reconfigure via project settings. Keys are stored as encrypted secrets and used server-side only.
+              <p className="text-xs text-muted-foreground font-mono">
+                Keys are stored as encrypted secrets and used server-side only.
               </p>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="notifications" className="mt-4">
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader><CardTitle>Email Notifications</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -269,7 +222,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="subscription" className="mt-4">
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader>
               <CardTitle>Current Plan</CardTitle>
               <CardDescription>Manage your subscription</CardDescription>
@@ -277,23 +230,21 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <span className="text-lg font-semibold capitalize">{plan}</span>
-                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">Active</span>
+                <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono">Active</span>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground font-mono">
                   Searches used: {searchesUsed} / {planLimits[plan] || 10}
                 </p>
                 <div className="h-2 bg-muted rounded-full mt-2 overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all"
+                    className="h-full bg-gradient-to-r from-primary to-glow-cyan rounded-full transition-all shadow-glow"
                     style={{ width: `${Math.min(100, (searchesUsed / (planLimits[plan] || 10)) * 100)}%` }}
                   />
                 </div>
               </div>
               {plan === "free" && (
-                <Button onClick={() => window.location.href = "/upgrade"}>
-                  Upgrade Plan
-                </Button>
+                <Button onClick={() => window.location.href = "/upgrade"} className="shadow-glow">Upgrade Plan</Button>
               )}
             </CardContent>
           </Card>

@@ -26,12 +26,8 @@ export default function ClientIntelligence() {
   const [enriched, setEnriched] = useState<EnrichedLead | null>(null);
   const [pipeline, setPipeline] = useState<PipelineWithLead | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // AI email generation state
   const [generatingEmail, setGeneratingEmail] = useState(false);
   const [emailVariants, setEmailVariants] = useState<{ professional: string; friendly: string; aggressive: string } | null>(null);
-
-  // Reply handler state
   const [replyText, setReplyText] = useState("");
   const [classifyingReply, setClassifyingReply] = useState(false);
   const [replyResult, setReplyResult] = useState<{ classification: string; suggestedReply: string } | null>(null);
@@ -41,35 +37,20 @@ export default function ClientIntelligence() {
       if (!id) return;
       setLoading(true);
       try {
-        // Fetch lead
-        const { data: leadData, error } = await supabase
-          .from("leads")
-          .select("*")
-          .eq("id", id)
-          .single();
+        const { data: leadData, error } = await supabase.from("leads").select("*").eq("id", id).single();
         if (error) throw new Error(error.message);
         const l = leadData as unknown as Lead;
         setLead(l);
         setEnriched(enrichLead(l));
-
-        // Fetch pipeline entry
         const pipelineData = await fetchPipeline();
         const entry = pipelineData.find((p) => p.lead_id === id);
         setPipeline(entry || null);
-
-        // Auto-create pipeline entry if missing
         if (!entry) {
           const track = detectServiceTrack(l.industry, l.growth_opportunity);
-          await upsertPipelineEntry(l.id, {
-            pipeline_status: "not_contacted",
-            service_track: track,
-          });
+          await upsertPipelineEntry(l.id, { pipeline_status: "not_contacted", service_track: track });
         }
-      } catch (err: any) {
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
-      }
+      } catch (err: any) { toast.error(err.message); }
+      finally { setLoading(false); }
     }
     loadData();
   }, [id]);
@@ -82,19 +63,11 @@ export default function ClientIntelligence() {
     if (!lead) return;
     setGeneratingEmail(true);
     try {
-      const { data, error } = await supabase.functions.invoke("analyze-client", {
-        body: { lead_id: lead.id },
-      });
+      const { data, error } = await supabase.functions.invoke("analyze-client", { body: { lead_id: lead.id } });
       if (error) throw new Error(error.message);
-      if (data?.emails) {
-        setEmailVariants(data.emails);
-        toast.success("AI emails generated!");
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to generate emails");
-    } finally {
-      setGeneratingEmail(false);
-    }
+      if (data?.emails) { setEmailVariants(data.emails); toast.success("AI emails generated!"); }
+    } catch (err: any) { toast.error(err.message || "Failed to generate emails"); }
+    finally { setGeneratingEmail(false); }
   };
 
   const handleClassifyReply = async () => {
@@ -107,269 +80,264 @@ export default function ClientIntelligence() {
       if (error) throw new Error(error.message);
       setReplyResult(data);
       toast.success("Reply classified!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to classify reply");
-    } finally {
-      setClassifyingReply(false);
-    }
+    } catch (err: any) { toast.error(err.message || "Failed to classify reply"); }
+    finally { setClassifyingReply(false); }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
-  };
+  const copyToClipboard = (text: string) => { navigator.clipboard.writeText(text); toast.success("Copied to clipboard!"); };
 
   if (loading) {
     return (
-      <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="relative">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="absolute inset-0 blur-xl bg-primary/20" />
+        </div>
       </div>
     );
   }
 
   if (!lead || !enriched) {
     return (
-      <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center">
-        <p>Lead not found</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Lead not found</p>
       </div>
     );
   }
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold tracking-tight">
-            <Crosshair className="h-5 w-5 text-primary" />
-            <span>Client Muse</span>
+    <div className="p-6 max-w-5xl mx-auto space-y-6">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+        <div>
+          <Link to="/pipeline" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-2">
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Pipeline
           </Link>
-          <nav className="flex items-center gap-2">
-            <Link to="/pipeline"><Button size="sm" variant="ghost" className="gap-1.5"><ArrowLeft className="h-3.5 w-3.5" /> Pipeline</Button></Link>
-            <Link to="/search"><Button size="sm" variant="ghost" className="gap-1.5"><Search className="h-3.5 w-3.5" /> Search</Button></Link>
-          </nav>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <div className="relative">
+              <Zap className="h-5 w-5 text-primary" />
+              <div className="absolute inset-0 blur-md bg-primary/30" />
+            </div>
+            {lead.business_name}
+          </h1>
         </div>
-      </header>
+      </motion.div>
 
-      <div className="container py-8 space-y-8">
-        {/* SECTION A — Client Brief */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                📋 Client Brief — {lead.business_name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="space-y-2">
+      {/* Client Brief */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300 overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/5 to-transparent" />
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2 font-mono uppercase tracking-wider text-sm">
+              📋 Client Brief
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{lead.city}</span>
+                </div>
+                {lead.website && (
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{lead.city}</span>
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <a href={lead.website} target="_blank" rel="noopener" className="text-sm text-primary hover:underline truncate">{lead.website}</a>
                   </div>
-                  {lead.website && (
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-muted-foreground" />
-                      <a href={lead.website} target="_blank" rel="noopener" className="text-sm text-primary hover:underline truncate">
-                        {lead.website}
-                      </a>
-                    </div>
-                  )}
-                  {lead.email && (
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{lead.email}</span>
-                    </div>
-                  )}
-                  {lead.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{lead.phone}</span>
-                    </div>
-                  )}
-                  {lead.google_rating && (
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-yellow-400" />
-                      <span className="text-sm">{lead.google_rating}/5</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <ConfidenceArc score={enriched.confidence_score} size={100} />
-                  <Badge className={enriched.urgency === "high" ? "bg-red-500/20 text-red-400" : enriched.urgency === "medium" ? "bg-yellow-500/20 text-yellow-400" : "bg-muted text-muted-foreground"}>
-                    {enriched.urgency.toUpperCase()} URGENCY
-                  </Badge>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">Intent Signal</p>
-                  <p className="text-sm font-medium">{enriched.intent_signal}</p>
-                  <p className="text-xs text-muted-foreground mt-2">Why this match?</p>
-                  <p className="text-sm">{enriched.why_match}</p>
-                </div>
+                )}
+                {lead.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-mono">{lead.email}</span>
+                  </div>
+                )}
+                {lead.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-mono">{lead.phone}</span>
+                  </div>
+                )}
+                {lead.google_rating && (
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 text-warning" />
+                    <span className="text-sm">{lead.google_rating}/5</span>
+                  </div>
+                )}
               </div>
-
-              {lead.website_problem && (
-                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
-                  <p className="text-xs font-semibold text-destructive mb-1">Pain Point Detected</p>
-                  <p className="text-sm">{lead.website_problem}</p>
-                </div>
-              )}
-              {lead.growth_opportunity && (
-                <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
-                  <p className="text-xs font-semibold text-primary mb-1">Growth Opportunity</p>
-                  <p className="text-sm">{lead.growth_opportunity}</p>
-                </div>
-              )}
-
-              {/* AI Audit Snapshot */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground mb-2">AI Audit Snapshot</p>
-                <AuditBars ux={enriched.audit_ux} seo={enriched.audit_seo} speed={enriched.audit_speed} />
+              <div className="flex flex-col items-center gap-2">
+                <ConfidenceArc score={enriched.confidence_score} size={100} />
+                <Badge className={`${enriched.urgency === "high" ? "bg-destructive/15 text-destructive border-destructive/30" : enriched.urgency === "medium" ? "bg-warning/15 text-warning border-warning/30" : "bg-muted text-muted-foreground border-border"}`}>
+                  {enriched.urgency.toUpperCase()} URGENCY
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <div className="space-y-2">
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Intent Signal</p>
+                <p className="text-sm font-medium">{enriched.intent_signal}</p>
+                <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider mt-2">Why this match?</p>
+                <p className="text-sm">{enriched.why_match}</p>
+              </div>
+            </div>
 
-        {/* SECTION B — Service Track Detection */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                🎯 Service Track Detection
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {serviceTrack && trackData ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{getTrackEmoji(serviceTrack)}</span>
-                    <div>
-                      <p className="font-semibold">{getTrackLabel(serviceTrack)}</p>
-                      <p className="text-sm text-muted-foreground">{trackData.description}</p>
-                    </div>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    {trackData.packages.map((pkg) => (
-                      <div
-                        key={pkg.name}
-                        className={`rounded-lg border p-4 transition-all ${
-                          pkg.name === recommendedPkg
-                            ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                            : "border-border bg-card"
-                        }`}
-                      >
-                        {pkg.name === recommendedPkg && (
-                          <Badge className="mb-2 bg-primary/20 text-primary text-[10px]">Recommended</Badge>
-                        )}
-                        <p className="font-semibold text-sm">{pkg.name}</p>
-                        <p className="text-xl font-bold text-primary mt-1">${pkg.price.toLocaleString()}</p>
-                        <ul className="mt-2 space-y-1">
-                          {pkg.features.map((f) => (
-                            <li key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3 text-green-400 flex-shrink-0" /> {f}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+            {lead.website_problem && (
+              <div className="rounded-xl bg-destructive/5 border border-destructive/20 p-4">
+                <p className="text-[10px] font-semibold text-destructive mb-1 font-mono uppercase tracking-wider">Pain Point Detected</p>
+                <p className="text-sm">{lead.website_problem}</p>
+              </div>
+            )}
+            {lead.growth_opportunity && (
+              <div className="rounded-xl bg-primary/5 border border-primary/20 p-4">
+                <p className="text-[10px] font-semibold text-primary mb-1 font-mono uppercase tracking-wider">Growth Opportunity</p>
+                <p className="text-sm">{lead.growth_opportunity}</p>
+              </div>
+            )}
+
+            <div>
+              <p className="text-[10px] font-semibold text-muted-foreground mb-2 font-mono uppercase tracking-wider">AI Audit Snapshot</p>
+              <AuditBars ux={enriched.audit_ux} seo={enriched.audit_seo} speed={enriched.audit_speed} />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Service Track */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              🎯 Service Track Detection
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {serviceTrack && trackData ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{getTrackEmoji(serviceTrack)}</span>
+                  <div>
+                    <p className="font-semibold">{getTrackLabel(serviceTrack)}</p>
+                    <p className="text-sm text-muted-foreground">{trackData.description}</p>
                   </div>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No track auto-detected for industry "{lead.industry}". You can manually assign one.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* SECTION D — AI Email Construction */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                ✉️ AI Email Construction
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button onClick={handleGenerateEmail} disabled={generatingEmail} className="gap-2">
-                {generatingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                {generatingEmail ? "AI is researching & writing..." : "Generate Personalized Emails"}
-              </Button>
-
-              {emailVariants && (
-                <div className="grid gap-4 md:grid-cols-3">
-                  {(["professional", "friendly", "aggressive"] as const).map((tone) => (
-                    <div key={tone} className="rounded-lg border border-border bg-card p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="text-[10px] capitalize">{tone}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => copyToClipboard(emailVariants[tone])} className="h-7 w-7 p-0">
-                          <Copy className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <p className="text-xs whitespace-pre-wrap leading-relaxed">{emailVariants[tone]}</p>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {trackData.packages.map((pkg) => (
+                    <div
+                      key={pkg.name}
+                      className={`rounded-xl border p-4 transition-all duration-300 ${
+                        pkg.name === recommendedPkg
+                          ? "border-primary/40 bg-primary/5 glow-border"
+                          : "border-border/50 glass hover:border-primary/20"
+                      }`}
+                    >
+                      {pkg.name === recommendedPkg && (
+                        <Badge className="mb-2 bg-primary/15 text-primary text-[10px] border border-primary/30">Recommended</Badge>
+                      )}
+                      <p className="font-semibold text-sm">{pkg.name}</p>
+                      <p className="text-xl font-bold text-primary mt-1 font-mono">${pkg.price.toLocaleString()}</p>
+                      <ul className="mt-2 space-y-1">
+                        {pkg.features.map((f) => (
+                          <li key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3 text-success flex-shrink-0" /> {f}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </div>
-              )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No track auto-detected for industry "{lead.industry}". You can manually assign one.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
-              {/* Fallback: show existing outreach message */}
-              {!emailVariants && lead.outreach_message && (
-                <div className="rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-muted-foreground">Existing Outreach Message</p>
-                    <Button size="sm" variant="ghost" onClick={() => copyToClipboard(lead.outreach_message!)} className="h-7 w-7 p-0">
-                      <Copy className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                  <p className="text-sm whitespace-pre-wrap">{lead.outreach_message}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+      {/* AI Email Construction */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              ✉️ AI Email Construction
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={handleGenerateEmail} disabled={generatingEmail} className="gap-2 shadow-glow">
+              {generatingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {generatingEmail ? "AI is researching & writing..." : "Generate Personalized Emails"}
+            </Button>
 
-        {/* SECTION E — Reply Handler */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                💬 Reply Handler
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                placeholder="Paste the client's reply here..."
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                rows={4}
-                className="bg-card border-border"
-              />
-              <Button onClick={handleClassifyReply} disabled={classifyingReply || !replyText.trim()} className="gap-2">
-                {classifyingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
-                {classifyingReply ? "Classifying..." : "Classify & Generate Response"}
-              </Button>
-
-              {replyResult && (
-                <div className="space-y-3">
-                  <div className="rounded-lg bg-primary/10 border border-primary/20 p-4">
-                    <p className="text-xs font-semibold text-primary mb-1">Classification</p>
-                    <p className="text-sm font-semibold">{replyResult.classification}</p>
-                  </div>
-                  <div className="rounded-lg border border-border p-4">
+            {emailVariants && (
+              <div className="grid gap-4 md:grid-cols-3">
+                {(["professional", "friendly", "aggressive"] as const).map((tone) => (
+                  <div key={tone} className="rounded-xl glass border-border/50 p-4 hover:border-primary/20 transition-all duration-300">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-semibold text-muted-foreground">Suggested Response</p>
-                      <Button size="sm" variant="ghost" onClick={() => copyToClipboard(replyResult.suggestedReply)} className="h-7 w-7 p-0">
+                      <Badge variant="outline" className="text-[10px] capitalize font-mono">{tone}</Badge>
+                      <Button size="sm" variant="ghost" onClick={() => copyToClipboard(emailVariants[tone])} className="h-7 w-7 p-0 hover:text-primary">
                         <Copy className="h-3.5 w-3.5" />
                       </Button>
                     </div>
-                    <p className="text-sm whitespace-pre-wrap">{replyResult.suggestedReply}</p>
+                    <p className="text-xs whitespace-pre-wrap leading-relaxed">{emailVariants[tone]}</p>
                   </div>
+                ))}
+              </div>
+            )}
+
+            {!emailVariants && lead.outreach_message && (
+              <div className="rounded-xl glass border-border/50 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">Existing Outreach Message</p>
+                  <Button size="sm" variant="ghost" onClick={() => copyToClipboard(lead.outreach_message!)} className="h-7 w-7 p-0 hover:text-primary">
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+                <p className="text-sm whitespace-pre-wrap">{lead.outreach_message}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Reply Handler */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <Card className="glass border-border/50 hover:border-primary/20 transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="text-sm font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              💬 Reply Handler
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Textarea
+              placeholder="Paste the client's reply here..."
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              rows={4}
+              className="glass border-border/50 focus:border-primary/50"
+            />
+            <Button onClick={handleClassifyReply} disabled={classifyingReply || !replyText.trim()} className="gap-2 shadow-glow">
+              {classifyingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+              {classifyingReply ? "Classifying..." : "Classify & Generate Response"}
+            </Button>
+
+            {replyResult && (
+              <div className="space-y-3">
+                <div className="rounded-xl bg-primary/5 border border-primary/20 p-4">
+                  <p className="text-[10px] font-semibold text-primary mb-1 font-mono uppercase tracking-wider">Classification</p>
+                  <p className="text-sm font-semibold">{replyResult.classification}</p>
+                </div>
+                <div className="rounded-xl glass border-border/50 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">Suggested Response</p>
+                    <Button size="sm" variant="ghost" onClick={() => copyToClipboard(replyResult.suggestedReply)} className="h-7 w-7 p-0 hover:text-primary">
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <p className="text-sm whitespace-pre-wrap">{replyResult.suggestedReply}</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }

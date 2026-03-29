@@ -36,25 +36,16 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
-
-    // Check daily limit
-    if (!incrementSearch()) {
-      setShowPaywall(true);
-      return;
-    }
-
+    if (!incrementSearch()) { setShowPaywall(true); return; }
     setLastSearch({ industry, location, service });
     addSearchHistory({ industry, location, service });
-
     try {
       setStep("searching");
       const stepTimers = [
         setTimeout(() => setStep("scraping"), 3000),
         setTimeout(() => setStep("analyzing"), 7000),
       ];
-
       await findLeads({ industry, location, service });
-
       stepTimers.forEach(clearTimeout);
       setStep("complete");
       toast.success("Intelligence report ready!");
@@ -67,16 +58,21 @@ export default function SearchIntake() {
 
   return (
     <>
-      <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center p-6">
+      <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center p-6 relative">
+        {/* Background effects */}
+        <div className="absolute inset-0 grid-pattern opacity-30" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-lg"
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-lg relative"
         >
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 inline-flex rounded-full bg-primary/10 p-3">
-              <Search className="h-6 w-6 text-primary" />
+            <div className="mx-auto mb-4 inline-flex rounded-2xl bg-primary/10 p-4 relative">
+              <Search className="h-7 w-7 text-primary" />
+              <div className="absolute inset-0 rounded-2xl blur-xl bg-primary/20" />
             </div>
             <h1 className="mb-2 text-3xl font-bold tracking-tight">Find your ideal clients</h1>
             <p className="text-muted-foreground">
@@ -86,7 +82,7 @@ export default function SearchIntake() {
 
           {/* Specialization picker */}
           <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium">I'm a...</label>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">I'm a...</label>
             <div className="grid grid-cols-3 gap-2">
               {SPECIALIZATIONS.map((s) => (
                 <button
@@ -94,10 +90,10 @@ export default function SearchIntake() {
                   type="button"
                   onClick={() => setSpecialization(s.key)}
                   disabled={isSearching}
-                  className={`rounded-lg border p-3 text-center text-xs font-medium transition-all ${
+                  className={`rounded-xl border p-3 text-center text-xs font-medium transition-all duration-300 ${
                     specialization === s.key
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-card text-muted-foreground hover:border-primary/40"
+                      ? "border-primary/50 bg-primary/10 text-primary glow-border"
+                      : "border-border/50 glass text-muted-foreground hover:border-primary/30"
                   }`}
                 >
                   <div className="text-lg mb-0.5">{s.label.split(" ")[0]}</div>
@@ -109,33 +105,33 @@ export default function SearchIntake() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="mb-1.5 block text-sm font-medium">Industry / Niche</label>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Industry / Niche</label>
               <Input
                 placeholder='e.g. "Gyms", "Restaurants", "Real Estate Agents"'
                 value={industry}
                 onChange={(e) => setIndustry(e.target.value)}
                 disabled={isSearching}
-                className="h-12 bg-card border-border"
+                className="h-12 glass border-border/50 focus:border-primary/50 focus:glow-border transition-all"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium">Target Country / City</label>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Target Country / City</label>
               <Input
                 placeholder='e.g. "New York", "London", "Delhi"'
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 disabled={isSearching}
-                className="h-12 bg-card border-border"
+                className="h-12 glass border-border/50 focus:border-primary/50 focus:glow-border transition-all"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium">Service You Provide</label>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Service You Provide</label>
               <Input
                 placeholder='e.g. "Web Design", "SEO", "Social Media Marketing"'
                 value={service}
                 onChange={(e) => setService(e.target.value)}
                 disabled={isSearching}
-                className="h-12 bg-card border-border"
+                className="h-12 glass border-border/50 focus:border-primary/50 focus:glow-border transition-all"
               />
             </div>
 
@@ -143,7 +139,7 @@ export default function SearchIntake() {
               type="submit"
               size="lg"
               disabled={isSearching}
-              className="h-14 w-full gap-2 text-base shadow-lg shadow-primary/25"
+              className="h-14 w-full gap-2 text-base shadow-glow-lg animate-glow-pulse"
             >
               {isSearching ? (
                 <>
@@ -172,9 +168,8 @@ export default function SearchIntake() {
                 <div className="flex justify-center mb-4">
                   <StepIndicator currentStep={step} />
                 </div>
-                {/* Deep work simulation */}
-                <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-                  <p className="text-xs text-muted-foreground animate-pulse">
+                <div className="rounded-xl glass border-primary/20 p-4 text-center">
+                  <p className="text-xs text-muted-foreground animate-pulse font-mono">
                     {step === "searching" && "🔍 Scanning Google Maps, directories, and business listings..."}
                     {step === "scraping" && "🕷️ Extracting website data, contact info, and social signals..."}
                     {step === "analyzing" && "🧠 Running AI analysis on marketing gaps and buying intent..."}
@@ -186,9 +181,9 @@ export default function SearchIntake() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="mt-8 rounded-xl border border-[hsl(var(--success))]/30 bg-[hsl(var(--success))]/10 p-4 text-center"
+                className="mt-8 rounded-xl border border-success/30 bg-success/10 p-4 text-center glow-cyan"
               >
-                <p className="font-semibold text-[hsl(var(--success))]">
+                <p className="font-semibold text-success">
                   ✓ Intelligence report ready! Redirecting...
                 </p>
               </motion.div>
@@ -197,7 +192,7 @@ export default function SearchIntake() {
 
           {/* Quick presets */}
           <div className="mt-10 text-center">
-            <p className="mb-3 text-xs text-muted-foreground">Quick start — try a preset:</p>
+            <p className="mb-3 text-xs text-muted-foreground font-mono uppercase tracking-wider">Quick start — try a preset</p>
             <div className="flex flex-wrap justify-center gap-2">
               {[
                 { label: "🏋️ Gyms in NYC", i: "Gyms", l: "New York", s: "Website Design" },
@@ -210,7 +205,7 @@ export default function SearchIntake() {
                   type="button"
                   disabled={isSearching}
                   onClick={() => { setIndustry(p.i); setLocation(p.l); setService(p.s); }}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground disabled:opacity-50"
+                  className="rounded-full glass border-border/50 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/40 hover:text-foreground hover:glow-border disabled:opacity-50"
                 >
                   {p.label}
                 </button>
