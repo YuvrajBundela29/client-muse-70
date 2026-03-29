@@ -24,8 +24,27 @@ export default function Auth() {
     setLoading(true);
     if (mode === "signup") {
       const { error } = await signUp(email, password, fullName);
-      if (error) toast.error(error.message);
-      else toast.success("Check your email to confirm your account!");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        // Apply referral code if provided
+        if (referralCode.trim()) {
+          try {
+            const { data: referrer } = await supabase
+              .from("profiles")
+              .select("id")
+              .eq("referral_code", referralCode.trim().toLowerCase())
+              .single();
+            if (referrer) {
+              // Store referral code in localStorage to apply after email confirmation
+              localStorage.setItem("pending_referral_code", referralCode.trim().toLowerCase());
+            } else {
+              toast.error("Invalid referral code, but your account was created!");
+            }
+          } catch {}
+        }
+        toast.success("Check your email to confirm your account!");
+      }
     } else {
       const { error } = await signIn(email, password);
       if (error) toast.error(error.message);
