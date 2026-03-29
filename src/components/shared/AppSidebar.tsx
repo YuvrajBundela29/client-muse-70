@@ -21,10 +21,8 @@ import {
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Search Clients", url: "/search", icon: Search, pulse: true },
-  { title: "Saved Leads", url: "/saved", icon: Bookmark },
   { title: "Pipeline CRM", url: "/pipeline", icon: GitBranch },
   { title: "Search History", url: "/history", icon: Clock },
-  { title: "Saved Searches", url: "/saved-searches", icon: BookmarkCheck },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
