@@ -65,7 +65,7 @@ export default function ClientIntelligence() {
             service_track: track,
           });
         }
-
+      } catch (err: any) {
         toast.error(err.message);
       } finally {
         setLoading(false);
