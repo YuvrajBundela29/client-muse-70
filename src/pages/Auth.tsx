@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2, Gift } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 
@@ -14,6 +15,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -23,8 +25,27 @@ export default function Auth() {
     setLoading(true);
     if (mode === "signup") {
       const { error } = await signUp(email, password, fullName);
-      if (error) toast.error(error.message);
-      else toast.success("Check your email to confirm your account!");
+      if (error) {
+        toast.error(error.message);
+      } else {
+        // Apply referral code if provided
+        if (referralCode.trim()) {
+          try {
+            const { data: referrer } = await supabase
+              .from("profiles")
+              .select("id")
+              .eq("referral_code", referralCode.trim().toLowerCase())
+              .single();
+            if (referrer) {
+              // Store referral code in localStorage to apply after email confirmation
+              localStorage.setItem("pending_referral_code", referralCode.trim().toLowerCase());
+            } else {
+              toast.error("Invalid referral code, but your account was created!");
+            }
+          } catch {}
+        }
+        toast.success("Check your email to confirm your account!");
+      }
     } else {
       const { error } = await signIn(email, password);
       if (error) toast.error(error.message);
@@ -83,10 +104,16 @@ export default function Auth() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="pl-10 h-11 glass-input" required />
-              </div>
+              <>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="pl-10 h-11 glass-input" required />
+                </div>
+                <div className="relative">
+                  <Gift className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="Referral code (optional)" value={referralCode} onChange={(e) => setReferralCode(e.target.value)} className="pl-10 h-11 glass-input font-mono uppercase" maxLength={8} />
+                </div>
+              </>
             )}
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

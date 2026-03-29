@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Gift, Copy, Users, TrendingUp, Award, CheckCircle2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,15 +59,13 @@ export default function Referrals() {
     load();
   }, [user]);
 
-  const referralLink = `${window.location.origin}/auth?ref=${referralCode}`;
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(referralLink);
-    toast.success("Referral link copied!");
+  const copyCode = () => {
+    navigator.clipboard.writeText(referralCode.toUpperCase());
+    toast.success("Referral code copied!");
   };
 
   const shareWhatsApp = () => {
-    const msg = encodeURIComponent(`I've been using AutoClient AI to find clients and it's amazing! Sign up with my link and get 50 bonus credits: ${referralLink}`);
+    const msg = encodeURIComponent(`I've been using AutoClient AI to find clients and it's amazing! Sign up and use my referral code: ${referralCode.toUpperCase()} to get 50 bonus credits!`);
     window.open(`https://wa.me/?text=${msg}`, "_blank");
   };
 
@@ -107,13 +104,16 @@ export default function Referrals() {
 
       {/* Share Link */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass-card p-5 mb-6">
-        <h3 className="text-sm font-semibold mb-3">Your Referral Link</h3>
-        <div className="flex gap-2 mb-3">
-          <Input value={referralLink} readOnly className="glass-input text-xs font-mono" />
-          <Button size="sm" onClick={copyLink} className="gap-1.5 bg-primary hover:bg-primary/90 shrink-0">
+        <h3 className="text-sm font-semibold mb-3">Your Referral Code</h3>
+        <div className="flex gap-2 mb-3 items-center">
+          <div className="flex-1 h-12 glass-input rounded-lg flex items-center justify-center">
+            <span className="text-2xl font-bold font-mono tracking-[0.3em] text-primary">{referralCode.toUpperCase()}</span>
+          </div>
+          <Button size="sm" onClick={copyCode} className="gap-1.5 bg-primary hover:bg-primary/90 shrink-0 h-12 px-5">
             <Copy className="h-3.5 w-3.5" /> Copy
           </Button>
         </div>
+        <p className="text-[10px] text-muted-foreground mb-3">Share this code with friends — they enter it during signup to get 50 bonus credits!</p>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={shareWhatsApp} className="gap-1.5 glass-input text-xs flex-1">
             <Share2 className="h-3 w-3" /> Share on WhatsApp
@@ -122,7 +122,7 @@ export default function Referrals() {
             size="sm"
             variant="outline"
             onClick={() => {
-              const msg = encodeURIComponent(`Check out AutoClient AI - an AI-powered client finder for freelancers. Use my referral: ${referralLink}`);
+              const msg = encodeURIComponent(`Check out AutoClient AI - an AI-powered client finder for freelancers. Use my referral code: ${referralCode.toUpperCase()} for 50 bonus credits!`);
               window.open(`https://twitter.com/intent/tweet?text=${msg}`, "_blank");
             }}
             className="gap-1.5 glass-input text-xs flex-1"
