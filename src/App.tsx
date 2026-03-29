@@ -58,7 +58,7 @@ const App = () => (
             <Route path="/history" element={<ProtectedWithLayout><History /></ProtectedWithLayout>} />
             <Route path="/pipeline" element={<ProtectedWithLayout><Pipeline /></ProtectedWithLayout>} />
             <Route path="/pipeline/:id" element={<ProtectedWithLayout><ClientIntelligence /></ProtectedWithLayout>} />
-            <Route path="/reel-library" element={<ProtectedWithLayout><ReelLibrary /></ProtectedWithLayout>} />
+            
             <Route path="/analytics" element={<ProtectedWithLayout><Analytics /></ProtectedWithLayout>} />
             <Route path="/settings" element={<ProtectedWithLayout><Settings /></ProtectedWithLayout>} />
             <Route path="/saved-searches" element={<ProtectedWithLayout><SavedSearches /></ProtectedWithLayout>} />
