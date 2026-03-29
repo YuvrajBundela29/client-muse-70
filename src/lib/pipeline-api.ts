@@ -1,5 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 
+async function getCurrentUserId(): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  return user.id;
+}
+
 export interface PipelineEntry {
   id: string;
   lead_id: string;
