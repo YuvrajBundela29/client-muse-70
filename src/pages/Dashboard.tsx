@@ -85,9 +85,9 @@ export default function Dashboard() {
   }, [user]);
 
   const insights = [
-    { title: "Best time to outreach", desc: "9–11am gets 3× reply rates in your timezone", icon: Lightbulb, accent: "hsl(238, 75%, 64%)" },
-    { title: "Top converting niche", desc: "SaaS startups in Germany — 42% response rate", icon: Zap, accent: "hsl(166, 72%, 45%)" },
-    { title: "Pipeline needs attention", desc: `${stats.pipelineActive} leads with no recent activity`, icon: AlertCircle, accent: "hsl(38, 92%, 50%)" },
+    { title: "Best time to outreach", desc: "9–11am gets 3× reply rates in your timezone", icon: Lightbulb, accent: "hsl(238, 75%, 64%)", link: "/search" },
+    { title: "Top converting niche", desc: "SaaS startups in Germany — 42% response rate", icon: Zap, accent: "hsl(166, 72%, 45%)", link: "/analytics" },
+    { title: "Pipeline needs attention", desc: `${stats.pipelineActive} leads with no recent activity`, icon: AlertCircle, accent: "hsl(38, 92%, 50%)", link: "/pipeline" },
   ];
 
   return (
@@ -152,21 +152,22 @@ export default function Dashboard() {
 
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {insights.map((insight) => (
-          <motion.div
-            key={insight.title}
-            variants={item}
-            whileHover={{ y: -4, transition: { type: "spring", stiffness: 400, damping: 30 } }}
-            className="glass-card p-5 cursor-default group"
-          >
-            <div className="flex items-start justify-between mb-2">
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: `${insight.accent}1F` }}>
-                <insight.icon className="h-4 w-4" style={{ color: insight.accent }} />
+          <Link key={insight.title} to={insight.link}>
+            <motion.div
+              variants={item}
+              whileHover={{ y: -4, transition: { type: "spring", stiffness: 400, damping: 30 } }}
+              className="glass-card p-5 cursor-pointer group hover:border-[rgba(255,255,255,0.15)] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-2">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: `${insight.accent}1F` }}>
+                  <insight.icon className="h-4 w-4" style={{ color: insight.accent }} />
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-foreground transition-colors" />
-            </div>
-            <h3 className="text-[15px] font-medium mb-1">{insight.title}</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{insight.desc}</p>
-          </motion.div>
+              <h3 className="text-[15px] font-medium mb-1">{insight.title}</h3>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">{insight.desc}</p>
+            </motion.div>
+          </Link>
         ))}
       </motion.div>
 
