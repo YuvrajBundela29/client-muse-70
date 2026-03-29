@@ -1,0 +1,2 @@
+UPDATE profiles SET plan = 'elite', credits_remaining = 99999 WHERE id = 'f023a483-588f-4308-968f-9a34137221e0';
+INSERT INTO user_subscriptions (user_id, plan, status) VALUES ('f023a483-588f-4308-968f-9a34137221e0', 'elite', 'active') ON CONFLICT (user_id) DO UPDATE SET plan = 'elite', status = 'active';
