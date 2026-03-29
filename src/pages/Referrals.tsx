@@ -66,7 +66,7 @@ export default function Referrals() {
   };
 
   const shareWhatsApp = () => {
-    const msg = encodeURIComponent(`I've been using AutoClient AI to find clients and it's amazing! Sign up with my link and get 50 bonus credits: ${referralLink}`);
+    const msg = encodeURIComponent(`I've been using AutoClient AI to find clients and it's amazing! Sign up and use my referral code: ${referralCode.toUpperCase()} to get 50 bonus credits!`);
     window.open(`https://wa.me/?text=${msg}`, "_blank");
   };
 
