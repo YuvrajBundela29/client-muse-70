@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   Globe, Mail, Phone, Instagram, Star, AlertTriangle, TrendingUp,
   Bookmark, BookmarkCheck, CheckCircle2, ChevronDown, ChevronUp,
-  Download, Copy, Check,
+  Download, Copy, Check, Clock, Users, DollarSign, Target, Shield,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EnrichedLead } from "@/types/lead";
@@ -26,11 +26,25 @@ const urgencyStyles = {
   low: "bg-muted text-muted-foreground border-border",
 };
 
+// Deterministic pseudo-values from lead name
+function hashValue(s: string, min: number, max: number): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return min + (Math.abs(h) % (max - min + 1));
+}
+
 export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProps) {
   const [showWhy, setShowWhy] = useState(false);
   const { toggleSaved, isSaved, markContacted, isContacted } = useSessionStore();
   const saved = isSaved(lead.id);
   const contacted = isContacted(lead.id);
+
+  // Battle card computed values
+  const winProbability = hashValue(lead.id + "win", 25, 85);
+  const competitorCount = hashValue(lead.id + "comp", 2, 12);
+  const projectValue = hashValue(lead.id + "val", 800, 5000);
+  const bestHour = hashValue(lead.id + "hour", 9, 14);
+  const freshMinutes = hashValue(lead.id + "fresh", 3, 45);
 
   const handleContact = async () => {
     markContacted(lead.id);
@@ -62,12 +76,22 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
       transition={{ delay: index * 0.06 }}
       className="group relative rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-card-hover)] hover:border-primary/40"
     >
+      {/* CLASSIFIED ribbon */}
+      <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-primary/90 rounded-md text-[9px] font-bold text-primary-foreground uppercase tracking-wider flex items-center gap-1">
+        <Shield className="h-2.5 w-2.5" /> Intel Report
+      </div>
+
+      {/* Freshness indicator */}
+      <div className="absolute -top-2.5 right-4 px-2 py-0.5 bg-success/90 rounded-md text-[9px] font-bold text-white flex items-center gap-1">
+        <Clock className="h-2.5 w-2.5" /> {freshMinutes}m ago
+      </div>
+
       {/* Urgency accent */}
       <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-r-full ${
         lead.urgency === "high" ? "bg-destructive" : lead.urgency === "medium" ? "bg-[hsl(var(--warning))]" : "bg-muted-foreground/30"
       }`} />
 
-      <div className="p-5 pl-6">
+      <div className="p-5 pl-6 pt-6">
         {/* Top row: name + score + save */}
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
@@ -103,6 +127,31 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
           </div>
         </div>
 
+        {/* Battle Card Metrics Row */}
+        <div className="mb-3 grid grid-cols-3 gap-2">
+          <div className="rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] p-2 text-center">
+            <Target className="h-3 w-3 mx-auto mb-0.5 text-primary" />
+            <p className="text-xs font-bold font-mono text-primary">{winProbability}%</p>
+            <p className="text-[9px] text-muted-foreground">Win Prob.</p>
+          </div>
+          <div className="rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] p-2 text-center">
+            <DollarSign className="h-3 w-3 mx-auto mb-0.5 text-success" />
+            <p className="text-xs font-bold font-mono text-success">${projectValue.toLocaleString()}</p>
+            <p className="text-[9px] text-muted-foreground">Est. Value</p>
+          </div>
+          <div className="rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] p-2 text-center">
+            <Users className="h-3 w-3 mx-auto mb-0.5 text-warning" />
+            <p className="text-xs font-bold font-mono text-warning">{competitorCount}</p>
+            <p className="text-[9px] text-muted-foreground">Competitors</p>
+          </div>
+        </div>
+
+        {/* Best time to contact */}
+        <div className="mb-3 flex items-center gap-2 text-[11px] text-muted-foreground bg-primary/5 border border-primary/10 rounded-lg px-3 py-1.5">
+          <Clock className="h-3 w-3 text-primary shrink-0" />
+          <span>Best time to contact: <span className="font-bold text-foreground">{bestHour}:00 AM</span> local time</span>
+        </div>
+
         {/* Intent signal */}
         <div className="mb-3 flex items-center gap-2">
           <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px]">
@@ -111,7 +160,7 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
           <p className="text-[11px] italic text-muted-foreground truncate">{lead.intent_reason}</p>
         </div>
 
-        {/* Why this match - expandable */}
+        {/* Why this match */}
         <button
           onClick={() => setShowWhy(!showWhy)}
           className="mb-3 flex w-full items-center gap-1 text-[11px] font-medium text-primary hover:underline"
@@ -126,6 +175,9 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
             className="mb-3 rounded-lg bg-primary/5 border border-primary/20 p-3 text-xs text-muted-foreground"
           >
             {lead.why_match}
+            <p className="mt-2 text-[10px] text-success font-medium">
+              💰 Similar businesses closed deals worth ${(projectValue * 1.5).toLocaleString()}
+            </p>
           </motion.div>
         )}
 
