@@ -19,6 +19,7 @@ import ClientIntelligence from "./pages/ClientIntelligence";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
+import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ const App = () => (
             
             <Route path="/analytics" element={<ProtectedWithLayout><Analytics /></ProtectedWithLayout>} />
             <Route path="/settings" element={<ProtectedWithLayout><Settings /></ProtectedWithLayout>} />
+            <Route path="/referrals" element={<ProtectedWithLayout><Referrals /></ProtectedWithLayout>} />
             <Route path="/saved-searches" element={<Navigate to="/history" replace />} />
             <Route path="/upgrade" element={<ProtectedWithLayout><Upgrade /></ProtectedWithLayout>} />
 

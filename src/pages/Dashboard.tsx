@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Search, Bookmark, GitBranch, Clock, Users, Zap, Activity,
+  Search, GitBranch, Clock, Users, Zap, Activity,
   ChevronRight, Lightbulb, AlertCircle, CalendarClock,
   TrendingUp, DollarSign, Timer, Crown, ArrowUpRight,
 } from "lucide-react";
@@ -41,7 +41,6 @@ const ROI_METRICS = [
 
 const STAT_CONFIGS = [
   { label: "TOTAL LEADS", key: "totalLeads" as const, icon: Users, accent: "hsl(238, 75%, 64%)" },
-  { label: "SAVED LEADS", key: "savedLeads" as const, icon: Bookmark, accent: "hsl(166, 72%, 45%)" },
   { label: "IN PIPELINE", key: "pipelineActive" as const, icon: GitBranch, accent: "hsl(260, 80%, 60%)" },
   { label: "SEARCHES", key: "recentSearches" as const, icon: Search, accent: "hsl(38, 92%, 50%)" },
 ];
@@ -73,20 +72,18 @@ function StatCard({ label, value, icon: Icon, accent }: { label: string; value: 
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState({ totalLeads: 0, savedLeads: 0, pipelineActive: 0, recentSearches: 0 });
+  const [stats, setStats] = useState({ totalLeads: 0, pipelineActive: 0, recentSearches: 0 });
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [leads, saved, pipeline, history] = await Promise.all([
+      const [leads, pipeline, history] = await Promise.all([
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
-        supabase.from("saved_leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("client_pipeline").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("search_history").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
       ]);
       setStats({
         totalLeads: leads.count || 0,
-        savedLeads: saved.count || 0,
         pipelineActive: pipeline.count || 0,
         recentSearches: history.count || 0,
       });
@@ -176,7 +173,7 @@ export default function Dashboard() {
       <RevenueFlow />
 
       {/* Data Stats */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
         {STAT_CONFIGS.map((m) => (
           <StatCard key={m.key} label={m.label} value={stats[m.key]} icon={m.icon} accent={m.accent} />
         ))}

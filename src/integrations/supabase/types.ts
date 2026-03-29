@@ -163,6 +163,8 @@ export type Database = {
           industry: string | null
           onboarding_complete: boolean | null
           plan: string
+          referral_code: string | null
+          referred_by: string | null
           service: string | null
           updated_at: string
         }
@@ -177,6 +179,8 @@ export type Database = {
           industry?: string | null
           onboarding_complete?: boolean | null
           plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
           service?: string | null
           updated_at?: string
         }
@@ -191,10 +195,20 @@ export type Database = {
           industry?: string | null
           onboarding_complete?: boolean | null
           plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
           service?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reel_library: {
         Row: {
@@ -225,6 +239,48 @@ export type Database = {
           reel_code?: string
         }
         Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string | null
+          id: string
+          referee_id: string
+          referrer_id: string
+          reward_credits: number
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          referee_id: string
+          referrer_id: string
+          reward_credits?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          referee_id?: string
+          referrer_id?: string
+          reward_credits?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referee_id_fkey"
+            columns: ["referee_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_leads: {
         Row: {

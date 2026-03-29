@@ -1,12 +1,13 @@
+import { useEffect, useState } from "react";
 import {
   Search, LayoutDashboard, Clock, GitBranch,
-  LogOut, BarChart3, Settings, Zap, Command,
+  LogOut, BarChart3, Settings, Zap, Gift, Crown, Diamond,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
-import logoHorizontal from "@/assets/logo-horizontal-white.png";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -24,6 +25,7 @@ const mainItems = [
   { title: "Pipeline CRM", url: "/pipeline", icon: GitBranch },
   { title: "Search History", url: "/history", icon: Clock },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Referrals", url: "/referrals", icon: Gift },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -42,11 +44,35 @@ function UserAvatar({ email }: { email: string }) {
   );
 }
 
+function PlanBadge({ plan }: { plan: string }) {
+  if (plan === "elite") return (
+    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">
+      <Diamond className="h-2.5 w-2.5" /> Elite
+    </span>
+  );
+  if (plan === "pro") return (
+    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">
+      <Crown className="h-2.5 w-2.5" /> Pro
+    </span>
+  );
+  return null;
+}
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const [plan, setPlan] = useState("free");
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("plan").eq("id", user.id).single().then(({ data }) => {
+      if (data) setPlan(data.plan);
+    });
+  }, [user]);
+
+  const isPaid = ["starter", "pro", "elite", "agency"].includes(plan);
 
   return (
     <Sidebar collapsible="icon">
@@ -115,24 +141,29 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3 border-t border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.95)]">
-        <NavLink
-          to="/upgrade"
-          className="relative flex items-center gap-2 px-3 py-2.5 text-sm rounded-xl bg-[rgba(91,95,239,0.1)] text-primary hover:bg-[rgba(91,95,239,0.18)] transition-all duration-300 border border-primary/20 mb-3 font-medium overflow-hidden gradient-border"
-          activeClassName=""
-        >
-          <Zap className="h-4 w-4" />
-          {!collapsed && "Upgrade to Pro"}
-        </NavLink>
+        {!isPaid && (
+          <NavLink
+            to="/upgrade"
+            className="relative flex items-center gap-2 px-3 py-2.5 text-sm rounded-xl bg-[rgba(91,95,239,0.1)] text-primary hover:bg-[rgba(91,95,239,0.18)] transition-all duration-300 border border-primary/20 mb-3 font-medium overflow-hidden gradient-border"
+            activeClassName=""
+          >
+            <Zap className="h-4 w-4" />
+            {!collapsed && "Upgrade to Pro"}
+          </NavLink>
+        )}
 
         {!collapsed && user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg w-full hover:bg-[rgba(255,255,255,0.04)] transition-colors">
                 <UserAvatar email={user.email || ""} />
-                <div className="min-w-0 text-left">
-                  <p className="text-xs font-medium text-foreground truncate">
-                    {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                  </p>
+                <div className="min-w-0 text-left flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-medium text-foreground truncate">
+                      {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                    </p>
+                    <PlanBadge plan={plan} />
+                  </div>
                   <p className="text-[10px] text-muted-foreground truncate font-mono">{user.email}</p>
                 </div>
               </button>
