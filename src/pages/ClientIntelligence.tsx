@@ -147,7 +147,6 @@ export default function ClientIntelligence() {
           <nav className="flex items-center gap-2">
             <Link to="/pipeline"><Button size="sm" variant="ghost" className="gap-1.5"><ArrowLeft className="h-3.5 w-3.5" /> Pipeline</Button></Link>
             <Link to="/search"><Button size="sm" variant="ghost" className="gap-1.5"><Search className="h-3.5 w-3.5" /> Search</Button></Link>
-            <Link to="/reel-library"><Button size="sm" variant="ghost" className="gap-1.5"><Film className="h-3.5 w-3.5" /> Reels</Button></Link>
           </nav>
         </div>
       </header>
