@@ -60,7 +60,7 @@ export default function Onboarding() {
       .eq("id", user.id);
 
     if (error) { toast.error("Failed to save profile"); setSaving(false); return; }
-    toast.success("Welcome to Client Muse!");
+    toast.success("Welcome to AutoClient AI!");
     navigate("/dashboard");
   };
 

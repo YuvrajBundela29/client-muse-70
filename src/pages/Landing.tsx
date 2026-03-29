@@ -57,10 +57,10 @@ export default function Landing() {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5 font-semibold tracking-tight">
             <div className="relative">
-              <img src={logoWhite} alt="Client Muse" className="h-6 w-6" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-6 w-6" />
               <div className="absolute inset-0 blur-lg bg-[#5B5FEF]/30" />
             </div>
-            <span className="text-gradient">Client Muse</span>
+            <span className="text-gradient">AutoClient AI</span>
           </div>
           <Link to="/search">
             <Button size="sm" className="gap-1.5 bg-[#5B5FEF] hover:bg-[#5B5FEF]/90 shadow-glow">
