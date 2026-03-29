@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair, ArrowLeft, Mail, Globe, Phone, MapPin, Star, Copy,
-  CheckCircle2, Film, Send, Loader2, MessageSquare, Clock, Zap, Search,
+  CheckCircle2, Send, Loader2, MessageSquare, Clock, Zap, Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
