@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Search, Bookmark, GitBranch, Clock, Users, Zap, Activity,
+  Search, GitBranch, Clock, Users, Zap, Activity,
   ChevronRight, Lightbulb, AlertCircle, CalendarClock,
   TrendingUp, DollarSign, Timer, Crown, ArrowUpRight,
 } from "lucide-react";
