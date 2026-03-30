@@ -203,9 +203,10 @@ export default function SearchIntake() {
                     <span className="animate-pulse">●●●</span>
                   </>
                 ) : (
-                  <>
+                 <>
                     <Search className="h-4 w-4" />
                     Find Clients Now
+                    <span className="text-[10px] opacity-70 ml-1">({1} credit)</span>
                   </>
                 )}
               </Button>
