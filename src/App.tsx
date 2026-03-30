@@ -23,6 +23,7 @@ import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Contact from "./pages/Contact";
 import { CookieConsent } from "@/components/shared/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/signup" element={<Navigate to="/auth" replace />} />
 
             {/* Onboarding (protected but no sidebar) */}
