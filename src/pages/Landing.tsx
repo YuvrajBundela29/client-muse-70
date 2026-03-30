@@ -446,6 +446,10 @@ export default function Landing() {
             <img src={logoWhite} alt="AutoClient AI" className="h-4 w-4" />
             <span className="font-mono">AutoClient AI</span>
           </div>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          </div>
           <span>Made with ❤️ for Indian Freelancers 🇮🇳</span>
         </div>
       </footer>
