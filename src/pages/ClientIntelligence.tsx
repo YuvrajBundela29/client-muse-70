@@ -63,11 +63,19 @@ export default function ClientIntelligence() {
 
   const handleGenerateEmail = async () => {
     if (!lead) return;
+    if (!canAfford("ai_email")) {
+      toast.error(`Not enough credits. AI email costs ${CREDIT_COSTS.ai_email} credits.`, {
+        action: { label: "Buy Credits", onClick: () => window.location.href = "/upgrade" },
+      });
+      return;
+    }
     setGeneratingEmail(true);
     try {
+      const ok = await deductCredits("ai_email");
+      if (!ok) { setGeneratingEmail(false); return; }
       const { data, error } = await supabase.functions.invoke("analyze-client", { body: { lead_id: lead.id } });
       if (error) throw new Error(error.message);
-      if (data?.emails) { setEmailVariants(data.emails); toast.success("AI emails generated!"); }
+      if (data?.emails) { setEmailVariants(data.emails); toast.success("AI emails generated! (2 credits used)"); }
     } catch (err: any) { toast.error(err.message || "Failed to generate emails"); }
     finally { setGeneratingEmail(false); }
   };
