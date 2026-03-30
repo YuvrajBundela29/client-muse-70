@@ -90,6 +90,108 @@ async function fetchWhatJobs(industry: string, location: string): Promise<Search
   } catch (e) { console.error("WhatJobs error:", e); return []; }
 }
 
+// --- Contact scraping via Firecrawl ---
+
+interface ScrapedContact {
+  url: string;
+  emails: string[];
+  phones: string[];
+}
+
+async function scrapeContactsFromWebsites(urls: string[]): Promise<Map<string, ScrapedContact>> {
+  const firecrawlKey = Deno.env.get("FIRECRAWL_API_KEY");
+  const contacts = new Map<string, ScrapedContact>();
+  if (!firecrawlKey || urls.length === 0) return contacts;
+
+  // Scrape up to 10 sites in parallel to stay within limits
+  const toScrape = urls.slice(0, 10);
+  console.log(`Scraping ${toScrape.length} websites for contact info...`);
+
+  const scrapePromises = toScrape.map(async (url) => {
+    try {
+      // Try contact/about pages first, fall back to homepage
+      const contactUrl = url.replace(/\/$/, "");
+      const pagesToTry = [
+        `${contactUrl}/contact`,
+        `${contactUrl}/contact-us`,
+        `${contactUrl}/about`,
+        contactUrl,
+      ];
+
+      let markdown = "";
+      for (const pageUrl of pagesToTry) {
+        try {
+          const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${firecrawlKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: pageUrl,
+              formats: ["markdown"],
+              onlyMainContent: false,
+              waitFor: 2000,
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const content = data?.data?.markdown || data?.markdown || "";
+            if (content) {
+              markdown += "\n" + content;
+              break; // Got content, stop trying more pages
+            }
+          } else {
+            await res.text();
+          }
+        } catch {
+          // Try next page
+        }
+      }
+
+      if (!markdown) return;
+
+      // Extract emails with regex
+      const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+      const rawEmails = markdown.match(emailRegex) || [];
+      // Filter out common non-business emails
+      const filteredEmails = [...new Set(rawEmails)].filter(
+        (e) =>
+          !e.endsWith(".png") &&
+          !e.endsWith(".jpg") &&
+          !e.endsWith(".svg") &&
+          !e.includes("example.com") &&
+          !e.includes("sentry.io") &&
+          !e.includes("wixpress.com") &&
+          !e.includes("webpack") &&
+          e.length < 60
+      );
+
+      // Extract phone numbers with regex (international formats)
+      const phoneRegex = /(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/g;
+      const rawPhones = markdown.match(phoneRegex) || [];
+      const filteredPhones = [...new Set(rawPhones)]
+        .map((p) => p.trim())
+        .filter((p) => p.replace(/\D/g, "").length >= 7 && p.replace(/\D/g, "").length <= 15);
+
+      if (filteredEmails.length > 0 || filteredPhones.length > 0) {
+        contacts.set(url.replace(/\/$/, "").toLowerCase(), {
+          url,
+          emails: filteredEmails.slice(0, 3),
+          phones: filteredPhones.slice(0, 2),
+        });
+        console.log(`Found contacts for ${url}: ${filteredEmails.length} emails, ${filteredPhones.length} phones`);
+      }
+    } catch (e) {
+      console.error(`Scrape error for ${url}:`, e);
+    }
+  });
+
+  await Promise.allSettled(scrapePromises);
+  console.log(`Scraped contacts from ${contacts.size}/${toScrape.length} websites`);
+  return contacts;
+}
+
 // --- Main handler ---
 
 Deno.serve(async (req) => {
@@ -128,7 +230,7 @@ Deno.serve(async (req) => {
     ]);
 
     const combined: SearchResult[] = allResults.flat();
-    console.log(`Total results from all sources: ${combined.length} (${allResults.map((r, i) => `${["zenserp","serpstack","jooble","careerjet","whatjobs"][i]}:${r.length}`).join(", ")})`);
+    console.log(`Total results from all sources: ${combined.length}`);
 
     // Deduplicate by URL
     const seen = new Set<string>();
@@ -141,10 +243,17 @@ Deno.serve(async (req) => {
 
     if (unique.length === 0) {
       return new Response(
-        JSON.stringify({ success: true, leads: [], sources_queried: allResults.map((r, i) => ({ source: ["zenserp","serpstack","jooble","careerjet","whatjobs"][i], count: r.length })) }),
+        JSON.stringify({ success: true, leads: [] }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Step 1.5: Scrape business websites for contact info in parallel with AI analysis prep
+    const websiteUrls = unique
+      .map((r) => r.url)
+      .filter((u) => u.startsWith("http") && !u.includes("jooble") && !u.includes("careerjet") && !u.includes("indeed") && !u.includes("linkedin"));
+
+    const contactsPromise = scrapeContactsFromWebsites(websiteUrls);
 
     // Step 2: AI analysis
     const businessSummaries = unique.slice(0, 30)
@@ -161,8 +270,8 @@ Service being offered to them: ${service}
 For each REAL business found, return a JSON array element with:
 - "business_name": string
 - "website": string or null
-- "email": string or null
-- "phone": string or null
+- "email": string or null (extract from the search result text if visible)
+- "phone": string or null (extract from the search result text if visible)
 - "instagram_url": string or null
 - "google_rating": number or null
 - "website_problem": string (identify a specific problem)
@@ -225,6 +334,27 @@ Return ONLY a valid JSON array. No markdown. If no real businesses found, return
       );
     }
 
+    // Wait for scraped contacts
+    const scrapedContacts = await contactsPromise;
+
+    // Merge scraped contacts into AI-analyzed leads
+    for (const lead of leads) {
+      const website = ((lead.website as string) || "").replace(/\/$/, "").toLowerCase();
+      if (website) {
+        const scraped = scrapedContacts.get(website);
+        if (scraped) {
+          if (!lead.email && scraped.emails.length > 0) {
+            lead.email = scraped.emails[0];
+          }
+          if (!lead.phone && scraped.phones.length > 0) {
+            lead.phone = scraped.phones[0];
+          }
+        }
+      }
+    }
+
+    console.log(`Enriched leads with scraped contacts from ${scrapedContacts.size} websites`);
+
     // Step 3: Extract user ID from auth header
     const authHeader = req.headers.get("authorization") || "";
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -268,7 +398,7 @@ Return ONLY a valid JSON array. No markdown. If no real businesses found, return
       );
     }
 
-    console.log(`Saved ${insertedLeads?.length} leads from ${unique.length} unique results`);
+    console.log(`Saved ${insertedLeads?.length} leads (${scrapedContacts.size} enriched with scraped contacts)`);
 
     return new Response(
       JSON.stringify({ success: true, leads: insertedLeads }),
