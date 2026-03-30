@@ -331,7 +331,7 @@ export default function ClientIntelligence() {
             />
             <Button onClick={handleClassifyReply} disabled={classifyingReply || !replyText.trim()} className="gap-2 shadow-glow">
               {classifyingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
-              {classifyingReply ? "Classifying..." : "Classify & Generate Response"}
+              {classifyingReply ? "Classifying..." : `Classify & Generate Response (${CREDIT_COSTS.ai_email} credits)`}
             </Button>
 
             {replyResult && (
