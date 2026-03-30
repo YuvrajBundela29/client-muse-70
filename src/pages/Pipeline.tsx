@@ -2,9 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  Upload, RefreshCw, Search, Plus,
+  Upload, RefreshCw, Search, Plus, Globe, Copy,
   Mail, MailX, MessageSquare, Phone, CheckCircle2, XCircle, AlertCircle,
-  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown,
+  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown, Instagram,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
