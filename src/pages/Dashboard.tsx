@@ -258,13 +258,39 @@ export default function Dashboard() {
       {/* Upcoming Follow-ups */}
       <div className="flex items-center gap-2 mb-4">
         <CalendarClock className="h-4 w-4 text-muted-foreground" />
-        <h2 className="section-label">Upcoming Follow-ups</h2>
+        <h2 className="section-label">Active Follow-ups</h2>
       </div>
-      <div className="glass-card p-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          No follow-ups scheduled — add reminders from client profiles
-        </p>
-      </div>
+      {followUps.length === 0 ? (
+        <div className="glass-card p-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            No active follow-ups — move leads to "Email Sent" or "Replied" status to track them here.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {followUps.map((fu) => (
+            <Link key={fu.id} to={`/pipeline/${fu.id}`}>
+              <div className="glass-card p-4 flex items-center justify-between hover:border-[rgba(255,255,255,0.15)] transition-all cursor-pointer group">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+                    {fu.business_name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{fu.business_name}</p>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                      <span className="capitalize">{fu.pipeline_status.replace(/_/g, " ")}</span>
+                      {fu.email && (
+                        <span className="flex items-center gap-0.5"><Mail className="h-2.5 w-2.5" /> {fu.email}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
