@@ -23,6 +23,7 @@ import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import { CookieConsent } from "@/components/shared/CookieConsent";
 
 const queryClient = new QueryClient();
 
