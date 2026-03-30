@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Save, Loader2, AlertTriangle, Key, ExternalLink, CheckCircle2, XCircle, Settings as SettingsIcon, Lock, Eye, EyeOff } from "lucide-react";
+import { Save, Loader2, AlertTriangle, Key, CheckCircle2, Settings as SettingsIcon, Lock, Eye, EyeOff, CreditCard, IndianRupee, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Link } from "react-router-dom";
 
 const INDUSTRIES = [
   "Technology", "Design", "Marketing", "Writing", "Video",
@@ -20,12 +21,22 @@ const INDUSTRIES = [
 ];
 
 const API_INTEGRATIONS = [
-  { name: "Brave Search API", description: "Web discovery engine. Finds businesses matching your niche.", category: "Primary", status: "configured" as const },
-  { name: "Bing Web Search", description: "Microsoft's search index. Fallback discovery source.", category: "Secondary", status: "configured" as const },
-  { name: "Hunter.io", description: "Email finder. Get contact details for discovered leads.", category: "Enrichment", status: "configured" as const },
-  { name: "OpenCorporates", description: "Business registry. Verify company legitimacy and get official data.", category: "Verification", status: "configured" as const },
-  { name: "OpenAI", description: "Powers AI features: fit scoring, outreach generation, lead ranking.", category: "AI Engine", status: "configured" as const },
+  { name: "Brave Search API", description: "Web discovery engine. Finds businesses matching your niche.", category: "Primary" },
+  { name: "Bing Web Search", description: "Microsoft's search index. Fallback discovery source.", category: "Secondary" },
+  { name: "Hunter.io", description: "Email finder. Get contact details for discovered leads.", category: "Enrichment" },
+  { name: "OpenCorporates", description: "Business registry. Verify company legitimacy and get official data.", category: "Verification" },
+  { name: "OpenAI", description: "Powers AI features: fit scoring, outreach generation, lead ranking.", category: "AI Engine" },
 ];
+
+interface Transaction {
+  id: string;
+  type: string;
+  amount_inr: number;
+  credits: number;
+  description: string;
+  status: string;
+  created_at: string;
+}
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -38,8 +49,10 @@ export default function Settings() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [plan, setPlan] = useState("free");
+  const [creditsRemaining, setCreditsRemaining] = useState(0);
   const [searchesUsed, setSearchesUsed] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -50,12 +63,20 @@ export default function Settings() {
         setIndustry((profile as Record<string, unknown>).industry as string || "");
         setCountry((profile as Record<string, unknown>).country as string || "");
         setService((profile as Record<string, unknown>).service as string || "");
+        setPlan(profile.plan || "free");
+        setCreditsRemaining(profile.credits_remaining || 0);
       }
       const { data: sub } = await (supabase as any).from("user_subscriptions").select("*").eq("user_id", user.id).single();
       if (sub) {
-        setPlan((sub as Record<string, unknown>).plan as string || "free");
         setSearchesUsed((sub as Record<string, unknown>).searches_used_this_month as number || 0);
       }
+      const { data: txns } = await (supabase as any)
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (txns) setTransactions(txns);
     };
     load();
   }, [user]);
@@ -78,6 +99,7 @@ export default function Settings() {
   };
 
   const planLimits: Record<string, number> = { free: 10, trial: 25, starter: 200, solo: 100, pro: 600, elite: 99999, agency: 99999 };
+  const isPaid = ["starter", "pro", "elite", "agency"].includes(plan);
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
@@ -90,14 +112,15 @@ export default function Settings() {
         <TabsList className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-full p-1 flex-wrap">
           <TabsTrigger value="profile" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Profile</TabsTrigger>
           <TabsTrigger value="account" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Account</TabsTrigger>
+          <TabsTrigger value="subscription" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Subscription</TabsTrigger>
+          <TabsTrigger value="transactions" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Transactions</TabsTrigger>
           <TabsTrigger value="api-keys" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">API Integrations</TabsTrigger>
           <TabsTrigger value="notifications" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Notifications</TabsTrigger>
-          <TabsTrigger value="subscription" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Subscription</TabsTrigger>
         </TabsList>
 
+        {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-4 mt-6">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-            {/* Avatar */}
             <div className="flex items-center gap-4 mb-6">
               <div className="h-20 w-20 rounded-full bg-primary/15 flex items-center justify-center text-2xl font-bold text-primary border border-primary/20">
                 {(fullName || user?.email || "U").charAt(0).toUpperCase()}
@@ -105,6 +128,9 @@ export default function Settings() {
               <div>
                 <p className="font-medium">{fullName || "Your Name"}</p>
                 <p className="text-sm text-muted-foreground font-mono">{user?.email}</p>
+                <Badge className={`mt-1 text-[9px] uppercase ${isPaid ? "bg-primary/15 text-primary border-primary/20" : "bg-muted text-muted-foreground"}`}>
+                  {plan} plan
+                </Badge>
               </div>
             </div>
             <div className="glass-card rounded-2xl p-6 space-y-4">
@@ -137,6 +163,7 @@ export default function Settings() {
           </motion.div>
         </TabsContent>
 
+        {/* Account Tab */}
         <TabsContent value="account" className="space-y-4 mt-6">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <div className="glass-card rounded-2xl p-6 space-y-4">
@@ -181,6 +208,92 @@ export default function Settings() {
           </Dialog>
         </TabsContent>
 
+        {/* Subscription Tab */}
+        <TabsContent value="subscription" className="mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-4">
+            <div className="glass-card rounded-2xl p-6 space-y-4">
+              <h3 className="font-medium">Current Plan</h3>
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-semibold capitalize">{plan}</span>
+                <span className="text-[10px] px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono">Active</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] p-4">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Credits Remaining</p>
+                  <p className="text-2xl font-bold font-mono text-primary">{plan === "elite" || plan === "agency" ? "∞" : creditsRemaining}</p>
+                </div>
+                <div className="rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] p-4">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Searches Used</p>
+                  <p className="text-2xl font-bold font-mono">{searchesUsed}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground font-mono">
+                  Searches: {searchesUsed} / {["elite", "agency"].includes(plan) ? "∞" : planLimits[plan] || 10}
+                </p>
+                <div className="h-2 bg-[rgba(255,255,255,0.06)] rounded-full mt-2 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-primary to-glow-cyan rounded-full transition-all shadow-glow"
+                    style={{ width: `${["elite", "agency"].includes(plan) ? 5 : Math.min(100, (searchesUsed / (planLimits[plan] || 10)) * 100)}%` }}
+                  />
+                </div>
+              </div>
+              {!isPaid && (
+                <Link to="/upgrade">
+                  <Button className="bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow gap-2">
+                    <Zap className="h-4 w-4" /> Upgrade Plan
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Transactions Tab */}
+        <TabsContent value="transactions" className="mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <div className="glass-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <CreditCard className="h-5 w-5 text-primary" />
+                <h3 className="font-medium">Transaction History</h3>
+              </div>
+              {transactions.length === 0 ? (
+                <div className="text-center py-8">
+                  <IndianRupee className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No transactions yet</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">Your payment history will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {transactions.map((txn) => (
+                    <div key={txn.id} className="flex items-center justify-between p-3 rounded-xl bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)]">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${txn.type === "subscription" ? "bg-primary/10" : "bg-success/10"}`}>
+                          {txn.type === "subscription" ? <Zap className="h-4 w-4 text-primary" /> : <IndianRupee className="h-4 w-4 text-success" />}
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium">{txn.description}</p>
+                          <p className="text-[10px] text-muted-foreground">{new Date(txn.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-bold font-mono">₹{txn.amount_inr.toLocaleString("en-IN")}</p>
+                        {txn.credits > 0 && (
+                          <p className="text-[10px] text-success font-mono">+{txn.credits} credits</p>
+                        )}
+                        <Badge className="text-[8px] bg-success/15 text-success border-success/20 mt-0.5">
+                          {txn.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* API Integrations Tab */}
         <TabsContent value="api-keys" className="mt-6">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <div className="glass-card rounded-2xl p-6">
@@ -219,6 +332,7 @@ export default function Settings() {
           </motion.div>
         </TabsContent>
 
+        {/* Notifications Tab */}
         <TabsContent value="notifications" className="mt-6">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             <div className="glass-card rounded-2xl p-6 space-y-5">
@@ -235,32 +349,6 @@ export default function Settings() {
                 <Label>Weekly pipeline summary</Label>
                 <Switch />
               </div>
-            </div>
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="subscription" className="mt-6">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-            <div className="glass-card rounded-2xl p-6 space-y-4">
-              <h3 className="font-medium">Current Plan</h3>
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-semibold capitalize">{plan}</span>
-                <span className="text-[10px] px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-mono">Active</span>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-mono">
-                  Searches used: {searchesUsed} / {planLimits[plan] || 10}
-                </p>
-                <div className="h-2 bg-[rgba(255,255,255,0.06)] rounded-full mt-2 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-glow-cyan rounded-full transition-all shadow-glow"
-                    style={{ width: `${Math.min(100, (searchesUsed / (planLimits[plan] || 10)) * 100)}%` }}
-                  />
-                </div>
-              </div>
-              {plan === "free" && (
-                <Button onClick={() => window.location.href = "/upgrade"} className="bg-primary hover:bg-primary/90">Upgrade Plan</Button>
-              )}
             </div>
           </motion.div>
         </TabsContent>
