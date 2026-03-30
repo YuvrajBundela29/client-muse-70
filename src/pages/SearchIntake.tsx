@@ -13,7 +13,7 @@ import { SearchStep } from "@/types/lead";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useSessionStore } from "@/lib/session-store";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useCredits } from "@/hooks/useCredits";
 import { PaywallModal } from "@/components/results/PaywallModal";
 
 const STATUS_MESSAGES = [
@@ -55,7 +55,7 @@ export default function SearchIntake() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { lastSearch, setLastSearch, specialization, addSearchHistory } = useSessionStore();
-  const { canSearch, plan } = useSubscription();
+  const { canAfford, deductCredits, credits } = useCredits();
   const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
   const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
   const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
@@ -77,7 +77,11 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
-    if (!canSearch) { setShowPaywall(true); return; }
+    if (!canAfford("search")) { setShowPaywall(true); return; }
+    
+    const ok = await deductCredits("search");
+    if (!ok) return;
+    
     setLastSearch({ industry, location, service });
     addSearchHistory({ industry, location, service });
     try {
@@ -89,7 +93,7 @@ export default function SearchIntake() {
       await findLeads({ industry, location, service });
       stepTimers.forEach(clearTimeout);
       setStep("complete");
-      toast.success("Intelligence report ready!");
+      toast.success("Intelligence report ready! (1 credit used)");
       setTimeout(() => navigate("/results"), 1200);
     } catch (err: any) {
       setStep("error");
@@ -199,9 +203,10 @@ export default function SearchIntake() {
                     <span className="animate-pulse">●●●</span>
                   </>
                 ) : (
-                  <>
+                 <>
                     <Search className="h-4 w-4" />
                     Find Clients Now
+                    <span className="text-[10px] opacity-70 ml-1">({1} credit)</span>
                   </>
                 )}
               </Button>

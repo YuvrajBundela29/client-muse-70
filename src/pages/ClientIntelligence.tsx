@@ -19,6 +19,7 @@ import { detectServiceTrack, getTrackLabel, getTrackEmoji } from "@/lib/service-
 import { SERVICE_TRACKS, getRecommendedPackage } from "@/lib/pricing";
 import { ConfidenceArc } from "@/components/results/ConfidenceArc";
 import { AuditBars } from "@/components/results/AuditBars";
+import { useCredits, CREDIT_COSTS } from "@/hooks/useCredits";
 
 export default function ClientIntelligence() {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +32,7 @@ export default function ClientIntelligence() {
   const [replyText, setReplyText] = useState("");
   const [classifyingReply, setClassifyingReply] = useState(false);
   const [replyResult, setReplyResult] = useState<{ classification: string; suggestedReply: string } | null>(null);
+  const { deductCredits, canAfford, credits } = useCredits();
 
   useEffect(() => {
     async function loadData() {
@@ -61,25 +63,39 @@ export default function ClientIntelligence() {
 
   const handleGenerateEmail = async () => {
     if (!lead) return;
+    if (!canAfford("ai_email")) {
+      toast.error(`Not enough credits. AI email costs ${CREDIT_COSTS.ai_email} credits.`, {
+        action: { label: "Buy Credits", onClick: () => window.location.href = "/upgrade" },
+      });
+      return;
+    }
     setGeneratingEmail(true);
     try {
+      const ok = await deductCredits("ai_email");
+      if (!ok) { setGeneratingEmail(false); return; }
       const { data, error } = await supabase.functions.invoke("analyze-client", { body: { lead_id: lead.id } });
       if (error) throw new Error(error.message);
-      if (data?.emails) { setEmailVariants(data.emails); toast.success("AI emails generated!"); }
+      if (data?.emails) { setEmailVariants(data.emails); toast.success("AI emails generated! (2 credits used)"); }
     } catch (err: any) { toast.error(err.message || "Failed to generate emails"); }
     finally { setGeneratingEmail(false); }
   };
 
   const handleClassifyReply = async () => {
     if (!replyText.trim() || !lead) return;
+    if (!canAfford("ai_email")) {
+      toast.error(`Not enough credits. Reply classification costs ${CREDIT_COSTS.ai_email} credits.`);
+      return;
+    }
     setClassifyingReply(true);
     try {
+      const ok = await deductCredits("ai_email");
+      if (!ok) { setClassifyingReply(false); return; }
       const { data, error } = await supabase.functions.invoke("classify-reply", {
         body: { reply_text: replyText, lead_context: { business_name: lead.business_name, industry: lead.industry } },
       });
       if (error) throw new Error(error.message);
       setReplyResult(data);
-      toast.success("Reply classified!");
+      toast.success("Reply classified! (2 credits used)");
     } catch (err: any) { toast.error(err.message || "Failed to classify reply"); }
     finally { setClassifyingReply(false); }
   };
@@ -263,7 +279,7 @@ export default function ClientIntelligence() {
           <CardContent className="space-y-4">
             <Button onClick={handleGenerateEmail} disabled={generatingEmail} className="gap-2 shadow-glow">
               {generatingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {generatingEmail ? "AI is researching & writing..." : "Generate Personalized Emails"}
+              {generatingEmail ? "AI is researching & writing..." : `Generate Personalized Emails (${CREDIT_COSTS.ai_email} credits)`}
             </Button>
 
             {emailVariants && (
@@ -315,7 +331,7 @@ export default function ClientIntelligence() {
             />
             <Button onClick={handleClassifyReply} disabled={classifyingReply || !replyText.trim()} className="gap-2 shadow-glow">
               {classifyingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
-              {classifyingReply ? "Classifying..." : "Classify & Generate Response"}
+              {classifyingReply ? "Classifying..." : `Classify & Generate Response (${CREDIT_COSTS.ai_email} credits)`}
             </Button>
 
             {replyResult && (
