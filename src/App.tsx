@@ -21,6 +21,8 @@ import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
 import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/login" element={<Navigate to="/auth" replace />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
             <Route path="/signup" element={<Navigate to="/auth" replace />} />
 
             {/* Onboarding (protected but no sidebar) */}
