@@ -73,20 +73,23 @@ function StatCard({ label, value, icon: Icon, accent }: { label: string; value: 
 export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ totalLeads: 0, pipelineActive: 0, recentSearches: 0 });
+  const [plan, setPlan] = useState("free");
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [leads, pipeline, history] = await Promise.all([
+      const [leads, pipeline, history, profile] = await Promise.all([
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("client_pipeline").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("search_history").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+        supabase.from("profiles").select("plan").eq("id", user!.id).single(),
       ]);
       setStats({
         totalLeads: leads.count || 0,
         pipelineActive: pipeline.count || 0,
         recentSearches: history.count || 0,
       });
+      if (profile.data) setPlan(profile.data.plan);
     }
     load();
   }, [user]);
@@ -179,35 +182,37 @@ export default function Dashboard() {
         ))}
       </motion.div>
 
-      {/* Upgrade CTA */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mb-8"
-      >
-        <Link to="/upgrade">
-          <div className="glass-card p-5 border-primary/20 hover:border-primary/40 transition-all cursor-pointer group relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-glow-violet/5" />
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center animate-glow-pulse">
-                  <Crown className="h-5 w-5 text-primary" />
+      {/* Upgrade CTA - only show for free/trial users */}
+      {!["starter", "pro", "elite", "agency"].includes(plan) && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mb-8"
+        >
+          <Link to="/upgrade">
+            <div className="glass-card p-5 border-primary/20 hover:border-primary/40 transition-all cursor-pointer group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-glow-violet/5" />
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center animate-glow-pulse">
+                    <Crown className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Unlock unlimited searches & AI emails</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      You've missed <span className="text-warning font-medium">12 perfect leads</span> this week (Free plan limit)
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-sm">Unlock unlimited searches & AI emails</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    You've missed <span className="text-warning font-medium">12 perfect leads</span> this week (Free plan limit)
-                  </p>
-                </div>
+                <Button size="sm" className="gap-1.5 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow group-hover:scale-105 transition-transform">
+                  <Zap className="h-3.5 w-3.5" /> Upgrade Now
+                </Button>
               </div>
-              <Button size="sm" className="gap-1.5 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow group-hover:scale-105 transition-transform">
-                <Zap className="h-3.5 w-3.5" /> Upgrade Now
-              </Button>
             </div>
-          </div>
-        </Link>
-      </motion.div>
+          </Link>
+        </motion.div>
+      )}
 
       {/* AI Intelligence Feed */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>

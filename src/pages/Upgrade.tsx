@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { initiatePayment } from "@/lib/razorpay";
+import { useSubscription } from "@/hooks/useSubscription";
 
 /* ── Testimonials ──────────────────────────────────────── */
 const TESTIMONIALS = [
@@ -369,8 +371,10 @@ function CreditComparisonBar() {
 /* ── Main Upgrade Page ─────────────────────────────────── */
 export default function Upgrade() {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const { plan: currentPlan, refresh: refreshSub } = useSubscription();
   const spotsRef = useRef(47);
   const [spots, setSpots] = useState(47);
+  const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -382,8 +386,64 @@ export default function Upgrade() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleUpgrade = (planName: string) => {
-    toast.info(`Payment integration coming soon! Selected: ${planName}`);
+  const planLevels: Record<string, number> = { trial: 0, free: 0, starter: 1, pro: 2, elite: 3, agency: 4 };
+  const userLevel = planLevels[currentPlan] || 0;
+
+  const handleUpgrade = (planName: string, price?: number) => {
+    const planKey = planName.toLowerCase();
+    const targetLevel = planLevels[planKey] || 0;
+    if (targetLevel <= userLevel) {
+      toast.info("You already have this plan or higher!");
+      return;
+    }
+
+    // Get the price for the plan
+    const planPrices: Record<string, number> = { trial: 0, starter: 499, pro: 1299, elite: 2999 };
+    const amount = price || planPrices[planKey] || 0;
+    
+    if (amount === 0) {
+      toast.info("Trial is free — you're already on it!");
+      return;
+    }
+
+    const finalAmount = billing === "annual" ? Math.round(amount * 0.75 * 12) : amount;
+    setProcessing(planKey);
+
+    initiatePayment({
+      amount: finalAmount,
+      planName,
+      onSuccess: (data) => {
+        setProcessing(null);
+        refreshSub();
+        toast.success(`🎉 Welcome to ${planName}! Your account has been upgraded.`);
+      },
+      onFailure: (error) => {
+        setProcessing(null);
+        if (error !== "Payment cancelled") {
+          toast.error("Payment failed: " + error);
+        }
+      },
+    });
+  };
+
+  const handleCreditPurchase = (credits: number, price: number) => {
+    setProcessing(`credits-${credits}`);
+    initiatePayment({
+      amount: price,
+      planName: `${credits} Credits`,
+      credits,
+      onSuccess: (data) => {
+        setProcessing(null);
+        refreshSub();
+        toast.success(`🎉 ${credits} credits added to your account!`);
+      },
+      onFailure: (error) => {
+        setProcessing(null);
+        if (error !== "Payment cancelled") {
+          toast.error("Payment failed: " + error);
+        }
+      },
+    });
   };
 
   return (
@@ -572,16 +632,23 @@ export default function Upgrade() {
 
                   <Button
                     className={`w-full text-sm h-11 ${
-                      plan.popular
+                      planLevels[plan.tier] <= userLevel
+                        ? "opacity-50 cursor-not-allowed"
+                        : plan.popular
                         ? "bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow animate-glow-pulse font-bold"
                         : plan.tier === "elite"
                         ? "bg-gradient-to-r from-glow-cyan/80 to-success hover:brightness-110"
                         : "glass-input hover:border-primary/30"
                     }`}
                     variant={plan.popular || plan.tier === "elite" ? "default" : "outline"}
-                    onClick={() => handleUpgrade(plan.name)}
+                    disabled={planLevels[plan.tier] <= userLevel || processing === plan.tier.toLowerCase()}
+                    onClick={() => handleUpgrade(plan.name, plan.price)}
                   >
-                    {plan.cta}
+                    {processing === plan.tier.toLowerCase()
+                      ? "Processing..."
+                      : planLevels[plan.tier] <= userLevel
+                      ? "✓ Current Plan"
+                      : plan.cta}
                   </Button>
 
                   {plan.tier !== "trial" && (
@@ -607,7 +674,7 @@ export default function Upgrade() {
               key={pack.credits}
               whileHover={{ y: -4 }}
               className="glass-card p-4 text-center cursor-pointer hover:border-primary/30 transition-all relative"
-              onClick={() => handleUpgrade(`${pack.credits} credits`)}
+              onClick={() => handleCreditPurchase(pack.credits, pack.price)}
             >
               {pack.badge && (
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary/10 border border-primary/20 text-[9px] font-bold text-primary rounded-full whitespace-nowrap">
@@ -620,6 +687,9 @@ export default function Upgrade() {
               <p className="text-[10px] text-muted-foreground">{pack.perCredit}/credit</p>
               {pack.save && (
                 <p className="text-[10px] text-success font-bold mt-1">SAVE {pack.save}</p>
+              )}
+              {processing === `credits-${pack.credits}` && (
+                <p className="text-[10px] text-primary font-bold mt-1 animate-pulse">Processing...</p>
               )}
             </motion.div>
           ))}
