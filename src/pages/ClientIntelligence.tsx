@@ -19,6 +19,7 @@ import { detectServiceTrack, getTrackLabel, getTrackEmoji } from "@/lib/service-
 import { SERVICE_TRACKS, getRecommendedPackage } from "@/lib/pricing";
 import { ConfidenceArc } from "@/components/results/ConfidenceArc";
 import { AuditBars } from "@/components/results/AuditBars";
+import { useCredits, CREDIT_COSTS } from "@/hooks/useCredits";
 
 export default function ClientIntelligence() {
   const { id } = useParams<{ id: string }>();
