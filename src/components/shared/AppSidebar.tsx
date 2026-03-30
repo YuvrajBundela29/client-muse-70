@@ -72,7 +72,7 @@ export function AppSidebar() {
     });
   }, [user]);
 
-  const isPaid = ["starter", "pro", "elite", "agency"].includes(plan);
+  const isPaid = ["micro", "starter", "pro", "elite", "agency"].includes(plan);
 
   return (
     <Sidebar collapsible="icon">
