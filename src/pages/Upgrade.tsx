@@ -371,8 +371,10 @@ function CreditComparisonBar() {
 /* ── Main Upgrade Page ─────────────────────────────────── */
 export default function Upgrade() {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const { plan: currentPlan, refresh: refreshSub } = useSubscription();
   const spotsRef = useRef(47);
   const [spots, setSpots] = useState(47);
+  const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -384,8 +386,64 @@ export default function Upgrade() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleUpgrade = (planName: string) => {
-    toast.info(`Payment integration coming soon! Selected: ${planName}`);
+  const planLevels: Record<string, number> = { trial: 0, free: 0, starter: 1, pro: 2, elite: 3, agency: 4 };
+  const userLevel = planLevels[currentPlan] || 0;
+
+  const handleUpgrade = (planName: string, price?: number) => {
+    const planKey = planName.toLowerCase();
+    const targetLevel = planLevels[planKey] || 0;
+    if (targetLevel <= userLevel) {
+      toast.info("You already have this plan or higher!");
+      return;
+    }
+
+    // Get the price for the plan
+    const planPrices: Record<string, number> = { trial: 0, starter: 499, pro: 1299, elite: 2999 };
+    const amount = price || planPrices[planKey] || 0;
+    
+    if (amount === 0) {
+      toast.info("Trial is free — you're already on it!");
+      return;
+    }
+
+    const finalAmount = billing === "annual" ? Math.round(amount * 0.75 * 12) : amount;
+    setProcessing(planKey);
+
+    initiatePayment({
+      amount: finalAmount,
+      planName,
+      onSuccess: (data) => {
+        setProcessing(null);
+        refreshSub();
+        toast.success(`🎉 Welcome to ${planName}! Your account has been upgraded.`);
+      },
+      onFailure: (error) => {
+        setProcessing(null);
+        if (error !== "Payment cancelled") {
+          toast.error("Payment failed: " + error);
+        }
+      },
+    });
+  };
+
+  const handleCreditPurchase = (credits: number, price: number) => {
+    setProcessing(`credits-${credits}`);
+    initiatePayment({
+      amount: price,
+      planName: `${credits} Credits`,
+      credits,
+      onSuccess: (data) => {
+        setProcessing(null);
+        refreshSub();
+        toast.success(`🎉 ${credits} credits added to your account!`);
+      },
+      onFailure: (error) => {
+        setProcessing(null);
+        if (error !== "Payment cancelled") {
+          toast.error("Payment failed: " + error);
+        }
+      },
+    });
   };
 
   return (
