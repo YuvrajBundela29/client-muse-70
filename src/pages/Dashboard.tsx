@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Search, GitBranch, Clock, Users, Zap, Activity,
   ChevronRight, Lightbulb, AlertCircle, CalendarClock,
-  TrendingUp, DollarSign, Timer, Crown, ArrowUpRight,
+  TrendingUp, DollarSign, Timer, Crown, ArrowUpRight, Mail, Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
