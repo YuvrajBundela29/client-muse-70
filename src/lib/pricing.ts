@@ -55,6 +55,13 @@ export const SERVICE_TRACKS: Record<string, ServiceTrack> = {
   },
 };
 
+export const PLAN_PRICES: Record<string, { monthly: number; annual: number }> = {
+  micro: { monthly: 50, annual: 39 },
+  starter: { monthly: 99, annual: 79 },
+  pro: { monthly: 299, annual: 199 },
+  elite: { monthly: 799, annual: 599 },
+};
+
 export function getRecommendedPackage(confidence: number): string {
   if (confidence >= 90) return "Pro";
   if (confidence >= 75) return "Starter";
