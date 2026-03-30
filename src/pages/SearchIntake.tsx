@@ -13,7 +13,7 @@ import { SearchStep } from "@/types/lead";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useSessionStore } from "@/lib/session-store";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useCredits } from "@/hooks/useCredits";
 import { PaywallModal } from "@/components/results/PaywallModal";
 
 const STATUS_MESSAGES = [
