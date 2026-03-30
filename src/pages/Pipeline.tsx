@@ -215,9 +215,19 @@ export default function Pipeline() {
                             {enriched.confidence_score}%
                           </span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground font-mono truncate">
-                          {entry.lead.industry} · {entry.lead.city}
-                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono truncate">
+                          <span>{entry.lead.industry} · {entry.lead.city}</span>
+                          {entry.lead.email && (
+                            <a href={`mailto:${entry.lead.email}`} onClick={(e) => e.stopPropagation()} className="hidden sm:inline-flex items-center gap-0.5 hover:text-primary transition-colors">
+                              <Mail className="h-2.5 w-2.5" /> {entry.lead.email}
+                            </a>
+                          )}
+                          {entry.lead.phone && (
+                            <a href={`tel:${entry.lead.phone}`} onClick={(e) => e.stopPropagation()} className="hidden md:inline-flex items-center gap-0.5 hover:text-primary transition-colors">
+                              <Phone className="h-2.5 w-2.5" /> {entry.lead.phone}
+                            </a>
+                          )}
+                        </div>
                       </div>
 
                       {/* Win probability bar */}
