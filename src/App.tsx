@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/signup" element={<Navigate to="/auth" replace />} />
 
             {/* Onboarding (protected but no sidebar) */}
