@@ -674,7 +674,7 @@ export default function Upgrade() {
               key={pack.credits}
               whileHover={{ y: -4 }}
               className="glass-card p-4 text-center cursor-pointer hover:border-primary/30 transition-all relative"
-              onClick={() => handleUpgrade(`${pack.credits} credits`)}
+              onClick={() => handleCreditPurchase(pack.credits, pack.price)}
             >
               {pack.badge && (
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary/10 border border-primary/20 text-[9px] font-bold text-primary rounded-full whitespace-nowrap">
@@ -687,6 +687,9 @@ export default function Upgrade() {
               <p className="text-[10px] text-muted-foreground">{pack.perCredit}/credit</p>
               {pack.save && (
                 <p className="text-[10px] text-success font-bold mt-1">SAVE {pack.save}</p>
+              )}
+              {processing === `credits-${pack.credits}` && (
+                <p className="text-[10px] text-primary font-bold mt-1 animate-pulse">Processing...</p>
               )}
             </motion.div>
           ))}
