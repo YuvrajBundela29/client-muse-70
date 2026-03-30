@@ -82,14 +82,20 @@ export default function ClientIntelligence() {
 
   const handleClassifyReply = async () => {
     if (!replyText.trim() || !lead) return;
+    if (!canAfford("ai_email")) {
+      toast.error(`Not enough credits. Reply classification costs ${CREDIT_COSTS.ai_email} credits.`);
+      return;
+    }
     setClassifyingReply(true);
     try {
+      const ok = await deductCredits("ai_email");
+      if (!ok) { setClassifyingReply(false); return; }
       const { data, error } = await supabase.functions.invoke("classify-reply", {
         body: { reply_text: replyText, lead_context: { business_name: lead.business_name, industry: lead.industry } },
       });
       if (error) throw new Error(error.message);
       setReplyResult(data);
-      toast.success("Reply classified!");
+      toast.success("Reply classified! (2 credits used)");
     } catch (err: any) { toast.error(err.message || "Failed to classify reply"); }
     finally { setClassifyingReply(false); }
   };
