@@ -279,7 +279,7 @@ export default function ClientIntelligence() {
           <CardContent className="space-y-4">
             <Button onClick={handleGenerateEmail} disabled={generatingEmail} className="gap-2 shadow-glow">
               {generatingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {generatingEmail ? "AI is researching & writing..." : "Generate Personalized Emails"}
+              {generatingEmail ? "AI is researching & writing..." : `Generate Personalized Emails (${CREDIT_COSTS.ai_email} credits)`}
             </Button>
 
             {emailVariants && (
