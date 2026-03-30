@@ -329,13 +329,13 @@ export default function Landing() {
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl mb-3">
             Not a Cost. An <span className="text-gradient">Investment</span> With 95× ROI
           </h2>
-          <p className="text-[#8892B0]">Plans starting at ₹499/month — less than ₹17/day</p>
+          <p className="text-[#8892B0]">Plans starting at just ₹50/month — less than ₹2/day</p>
         </motion.div>
         <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
           {[
-            { name: "Starter", price: "₹499", credits: "200 credits/mo", highlight: false },
-            { name: "Pro", price: "₹1,299", credits: "600 credits/mo", highlight: true },
-            { name: "Elite", price: "₹2,999", credits: "Unlimited", highlight: false },
+            { name: "Starter", price: "₹99", credits: "200 credits/mo", highlight: false },
+            { name: "Pro", price: "₹299", credits: "600 credits/mo", highlight: true },
+            { name: "Elite", price: "₹799", credits: "Unlimited", highlight: false },
           ].map((p) => (
             <div key={p.name} className={`glass-card p-6 text-center ${p.highlight ? "border-[#5B5FEF]/30 shadow-[0_0_30px_hsl(238,75%,64%,0.1)]" : ""}`}>
               {p.highlight && <p className="text-[10px] font-bold text-[#5B5FEF] mb-2">⭐ MOST POPULAR</p>}
