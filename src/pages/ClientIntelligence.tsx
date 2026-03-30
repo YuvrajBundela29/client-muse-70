@@ -32,6 +32,7 @@ export default function ClientIntelligence() {
   const [replyText, setReplyText] = useState("");
   const [classifyingReply, setClassifyingReply] = useState(false);
   const [replyResult, setReplyResult] = useState<{ classification: string; suggestedReply: string } | null>(null);
+  const { deductCredits, canAfford, credits } = useCredits();
 
   useEffect(() => {
     async function loadData() {
