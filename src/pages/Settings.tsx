@@ -98,8 +98,8 @@ export default function Settings() {
     setChangingPassword(false);
   };
 
-  const planLimits: Record<string, number> = { free: 10, trial: 25, starter: 200, solo: 100, pro: 600, elite: 99999, agency: 99999 };
-  const isPaid = ["starter", "pro", "elite", "agency"].includes(plan);
+  const planLimits: Record<string, number> = { free: 10, trial: 25, micro: 50, starter: 200, solo: 100, pro: 600, elite: 99999, agency: 99999 };
+  const isPaid = ["micro", "starter", "pro", "elite", "agency"].includes(plan);
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-6">

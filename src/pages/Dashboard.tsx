@@ -183,7 +183,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Upgrade CTA - only show for free/trial users */}
-      {!["starter", "pro", "elite", "agency"].includes(plan) && (
+      {!["micro", "starter", "pro", "elite", "agency"].includes(plan) && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
