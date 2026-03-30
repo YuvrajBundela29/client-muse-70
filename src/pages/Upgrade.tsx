@@ -5,7 +5,7 @@ import {
   ArrowRight, Lock, ChevronDown, ChevronUp, Sparkles,
   MessageSquare, Bell, Headphones, BarChart3, Mail, Target,
   CreditCard, Award, BadgeCheck, X, Gift, Flame, Diamond,
-  Building2, IndianRupee,
+  Building2, IndianRupee, Rocket, Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,37 +27,69 @@ const plans = [
     tier: "trial",
     name: "Trial",
     badge: null,
-    tagline: "Test drive the system",
-    price: 0,
-    originalPrice: null,
+    tagline: "Test drive the system — no card needed",
+    monthlyPrice: 0,
+    annualPrice: 0,
+    originalMonthly: null,
     period: "",
-    periodNote: "25 credits • One-time • Expires in 14 days",
     credits: "25 credits",
+    creditsNum: 25,
     color: "hsl(222, 15%, 56%)",
     colorBg: "rgba(136, 146, 176, 0.08)",
     features: [
-      { text: "25 credits (search 5 leads + 1 full report)", highlight: true },
+      { text: "25 one-time credits", highlight: true },
+      { text: "Search up to 5 leads", highlight: false },
+      { text: "1 full AI intelligence report", highlight: false },
       { text: "3-stage pipeline board", highlight: false },
       { text: "Basic analytics", highlight: false },
       { text: "Email support", highlight: false },
     ],
     cta: "Start Free Trial",
-    disabled: false,
     popular: false,
-    roiNote: "Most users close ₹15,000+ deals in week 1",
-    valueTotal: null,
+    roiNote: "Most users close ₹15K+ deals in week 1",
     dailyCost: null,
+    bonuses: null,
+  },
+  {
+    tier: "micro",
+    name: "Starter Lite",
+    badge: "🎯 JUST ₹50",
+    tagline: "Perfect to get your first paying client",
+    monthlyPrice: 50,
+    annualPrice: 39,
+    originalMonthly: 149,
+    period: "/month",
+    credits: "50 credits/mo",
+    creditsNum: 50,
+    color: "hsl(200, 70%, 55%)",
+    colorBg: "hsl(200, 70%, 55%, 0.08)",
+    features: [
+      { text: "50 credits/month (~10 searches)", highlight: true },
+      { text: "5-stage pipeline board", highlight: false },
+      { text: "5 AI cold emails/month", highlight: true },
+      { text: "Basic analytics", highlight: false },
+      { text: "Search history (14 days)", highlight: false },
+      { text: "Email support (48hr response)", highlight: false },
+    ],
+    cta: "Get Started — ₹50",
+    popular: false,
+    roiNote: "Close ONE ₹5K gig → 100× ROI",
+    dailyCost: "₹1.6/day — literally the price of a candy 🍬",
+    bonuses: [
+      "+25 bonus credits on signup (worth ₹75)",
+    ],
   },
   {
     tier: "starter",
     name: "Starter",
     badge: "🔥 BEST FOR BEGINNERS",
-    tagline: "Everything to land your first clients",
-    price: 499,
-    originalPrice: 799,
+    tagline: "Everything to land your first clients consistently",
+    monthlyPrice: 99,
+    annualPrice: 79,
+    originalMonthly: 299,
     period: "/month",
-    periodNote: "₹5,988/year (save ₹1,000)",
     credits: "200 credits/mo",
+    creditsNum: 200,
     color: "hsl(238, 75%, 64%)",
     colorBg: "hsl(238, 75%, 64%, 0.08)",
     features: [
@@ -66,14 +98,13 @@ const plans = [
       { text: "20 AI cold emails/month", highlight: true },
       { text: "Basic analytics dashboard", highlight: false },
       { text: "Search history (30 days)", highlight: false },
+      { text: "CSV export", highlight: false },
       { text: "Email support (24hr response)", highlight: false },
     ],
-    cta: "Get Starter",
-    disabled: false,
+    cta: "Get Starter — ₹99",
     popular: false,
-    roiNote: "Close ONE ₹20K project → paid for 40 months",
-    valueTotal: null,
-    dailyCost: "₹17/day — less than a chai at Starbucks",
+    roiNote: "Close ONE ₹10K project → paid for 100 months",
+    dailyCost: "₹3.3/day — less than a cutting chai ☕",
     bonuses: [
       "+100 bonus credits on signup (worth ₹299)",
       "Freelancer's Pitch Pack — 50 templates (worth ₹499)",
@@ -84,11 +115,12 @@ const plans = [
     name: "Pro",
     badge: "⭐ MOST POPULAR",
     tagline: "The unfair advantage serious freelancers use",
-    price: 1299,
-    originalPrice: 1999,
+    monthlyPrice: 299,
+    annualPrice: 199,
+    originalMonthly: 799,
     period: "/month",
-    periodNote: "₹13,990/year (save ₹2,598)",
     credits: "600 credits/mo",
+    creditsNum: 600,
     color: "hsl(260, 80%, 60%)",
     colorBg: "hsl(260, 80%, 60%, 0.08)",
     features: [
@@ -100,14 +132,12 @@ const plans = [
       { text: "Follow-up automation (3-touch sequence)", highlight: true },
       { text: "WhatsApp support (2hr response)", highlight: false },
       { text: "Win probability scores", highlight: true },
-      { text: "CSV export", highlight: false },
+      { text: "Saved searches & alerts", highlight: false },
     ],
-    cta: "Join Pro",
-    disabled: false,
+    cta: "Join Pro — ₹299",
     popular: true,
-    roiNote: "Members average ₹1,24,000 extra in 6 months — 95× ROI",
-    valueTotal: "₹8,000/month value → You pay ₹1,299",
-    dailyCost: "₹43/day — cost of lunch, returns of a month",
+    roiNote: "Members average ₹1,24,000 extra in 6 months — 414× ROI",
+    dailyCost: "₹10/day — cost of a samosa, returns of a salary 💰",
     bonuses: [
       "+300 bonus credits on signup (worth ₹897)",
       "Private Telegram group (500+ freelancers)",
@@ -117,17 +147,18 @@ const plans = [
   {
     tier: "elite",
     name: "Elite",
-    badge: "💎 FOR SERIOUS OPERATORS",
-    tagline: "Scale to ₹10L+/year with unlimited power",
-    price: 2999,
-    originalPrice: 4999,
+    badge: "💎 UNLIMITED POWER",
+    tagline: "Scale to ₹10L+/year with zero limits",
+    monthlyPrice: 799,
+    annualPrice: 599,
+    originalMonthly: 2999,
     period: "/month",
-    periodNote: "₹29,990/year (save ₹6,000)",
     credits: "UNLIMITED",
+    creditsNum: 99999,
     color: "hsl(166, 72%, 45%)",
     colorBg: "hsl(166, 72%, 45%, 0.08)",
     features: [
-      { text: "UNLIMITED credits — no limits", highlight: true },
+      { text: "UNLIMITED credits — no limits ever", highlight: true },
       { text: "Everything in Pro", highlight: false },
       { text: "AI voice cold calling (20 calls/mo)", highlight: true },
       { text: "Revenue forecasting & analytics", highlight: true },
@@ -137,12 +168,10 @@ const plans = [
       { text: "Pitch deck generator", highlight: true },
       { text: "Quarterly business review", highlight: false },
     ],
-    cta: "Apply for Elite",
-    disabled: false,
+    cta: "Go Elite — ₹799",
     popular: false,
     roiNote: "Elite members average ₹8.7L additional revenue annually",
-    valueTotal: null,
-    dailyCost: "₹99/day — less than a movie ticket for an empire",
+    dailyCost: "₹26/day — less than a pizza for an empire 🍕",
     bonuses: [
       "Lifetime access to all future features",
       "1-on-1 onboarding call (90 min, worth ₹5,000)",
@@ -153,11 +182,11 @@ const plans = [
 
 /* ── Credit Top-Up Packs ───────────────────────────────── */
 const CREDIT_PACKS = [
-  { credits: 50, price: 299, perCredit: "₹5.98", save: null },
-  { credits: 100, price: 499, perCredit: "₹4.99", save: "17%", badge: null },
-  { credits: 250, price: 999, perCredit: "₹4.00", save: "33%", badge: "🔥 POPULAR" },
-  { credits: 500, price: 1799, perCredit: "₹3.60", save: "40%", badge: null },
-  { credits: 1000, price: 2999, perCredit: "₹3.00", save: "50%", badge: "⭐ BEST VALUE" },
+  { credits: 50, price: 49, perCredit: "₹0.98", save: null, badge: null },
+  { credits: 100, price: 89, perCredit: "₹0.89", save: "9%", badge: null },
+  { credits: 250, price: 199, perCredit: "₹0.80", save: "18%", badge: "🔥 POPULAR" },
+  { credits: 500, price: 349, perCredit: "₹0.70", save: "29%", badge: null },
+  { credits: 1000, price: 599, perCredit: "₹0.60", save: "39%", badge: "⭐ BEST VALUE" },
 ];
 
 /* ── FAQ ───────────────────────────────────────────────── */
@@ -167,7 +196,8 @@ const FAQ = [
   { q: "How is this different from just Googling?", a: "Google: 2 hours for 10 outdated leads. AutoClient AI: 5 minutes for 50 verified leads with contact info and AI intelligence. That's 288× faster." },
   { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available data. Email accuracy: 94%. Phone accuracy: 87%. We verify everything." },
   { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel with one click. Keep unused credits for 90 days." },
-  { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure. We never see your card details." },
+  { q: "Why is this so cheap compared to others?", a: "We're in early-access mode and want Indian freelancers to succeed. These prices will increase 3-5× after launch. Lock in now!" },
+  { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure via Razorpay. We never see your card details." },
 ];
 
 /* ── Countdown Timer ───────────────────────────────────── */
@@ -193,7 +223,7 @@ function CountdownTimer() {
   );
 }
 
-/* ── Live Signup Notification ──────────────────────────── */
+/* ── Live Signup Notification — fixed z-index & positioning ── */
 const SIGNUP_NAMES = ["Priya R.", "Amit T.", "Sneha L.", "Vikram C.", "Kavita K.", "Rohan B.", "Neha J.", "Arjun S."];
 const SIGNUP_CITIES = ["Mumbai", "Delhi", "Bangalore", "Pune", "Hyderabad", "Chennai", "Kolkata", "Jaipur"];
 
@@ -209,8 +239,8 @@ function LiveSignupPopup() {
       setShow(true);
       setTimeout(() => setShow(false), 4000);
     };
-    const interval = setInterval(trigger, 12000);
-    const initial = setTimeout(trigger, 6000);
+    const interval = setInterval(trigger, 15000);
+    const initial = setTimeout(trigger, 8000);
     return () => { clearInterval(interval); clearTimeout(initial); };
   }, []);
 
@@ -218,10 +248,10 @@ function LiveSignupPopup() {
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 40 }}
-          className="fixed bottom-6 left-6 z-50 glass-card p-3 flex items-center gap-3 border-success/20 max-w-xs"
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          className="fixed bottom-20 left-4 z-[100] rounded-xl bg-card/95 backdrop-blur-lg border border-border p-3 flex items-center gap-3 max-w-[260px] shadow-lg"
         >
           <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center shrink-0">
             <BadgeCheck className="h-4 w-4 text-success" />
@@ -267,7 +297,7 @@ function TestimonialCarousel() {
       </AnimatePresence>
       <div className="flex justify-center gap-1.5 mt-4">
         {TESTIMONIALS.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)} className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary" : "w-1.5 bg-[rgba(255,255,255,0.1)]"}`} />
+          <button key={i} onClick={() => setIdx(i)} className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary" : "w-1.5 bg-muted"}`} />
         ))}
       </div>
     </div>
@@ -278,9 +308,9 @@ function TestimonialCarousel() {
 function ROICalculator() {
   const [target, setTarget] = useState("50000");
   const targetNum = parseInt(target) || 0;
-  const recommended = targetNum <= 30000 ? "Starter" : targetNum <= 100000 ? "Pro" : "Elite";
-  const recommendedColor = targetNum <= 30000 ? "hsl(238, 75%, 64%)" : targetNum <= 100000 ? "hsl(260, 80%, 60%)" : "hsl(166, 72%, 45%)";
-  const monthlyCost = targetNum <= 30000 ? 499 : targetNum <= 100000 ? 1299 : 2999;
+  const recommended = targetNum <= 10000 ? "Starter Lite" : targetNum <= 30000 ? "Starter" : targetNum <= 100000 ? "Pro" : "Elite";
+  const recommendedColor = targetNum <= 10000 ? "hsl(200, 70%, 55%)" : targetNum <= 30000 ? "hsl(238, 75%, 64%)" : targetNum <= 100000 ? "hsl(260, 80%, 60%)" : "hsl(166, 72%, 45%)";
+  const monthlyCost = targetNum <= 10000 ? 50 : targetNum <= 30000 ? 99 : targetNum <= 100000 ? 299 : 799;
   const roi = targetNum > 0 ? Math.round(targetNum / monthlyCost) : 0;
 
   return (
@@ -309,7 +339,7 @@ function ROICalculator() {
             <p className="text-xs text-muted-foreground mb-1">Recommended Plan</p>
             <p className="text-xl font-bold" style={{ color: recommendedColor }}>{recommended}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Invest <span className="font-bold text-foreground">₹{monthlyCost.toLocaleString("en-IN")}/mo</span> → Target <span className="font-bold text-success">₹{targetNum.toLocaleString("en-IN")}/mo</span> = <span className="font-bold text-warning">{roi}× ROI</span>
+              Invest <span className="font-bold text-foreground">₹{monthlyCost}/mo</span> → Target <span className="font-bold text-success">₹{targetNum.toLocaleString("en-IN")}/mo</span> = <span className="font-bold text-warning">{roi}× ROI</span>
             </p>
           </div>
           <p className="text-[11px] text-muted-foreground text-center">
@@ -336,7 +366,7 @@ function FAQSection() {
             onClick={() => setOpen(open === i ? null : i)}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-[rgba(255,255,255,0.02)] transition-colors"
           >
-            <span className="text-sm font-medium">{item.q}</span>
+            <span className="text-sm font-medium pr-4">{item.q}</span>
             {open === i ? <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" /> : <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />}
           </button>
           <AnimatePresence>
@@ -352,17 +382,67 @@ function FAQSection() {
   );
 }
 
-/* ── Credit Comparison Bar ─────────────────────────────── */
-function CreditComparisonBar() {
+/* ── Feature Comparison Table ──────────────────────────── */
+function FeatureComparisonTable() {
+  const features = [
+    { name: "Monthly Credits", trial: "25 one-time", micro: "50", starter: "200", pro: "600", elite: "Unlimited" },
+    { name: "AI Cold Emails", trial: "—", micro: "5/mo", starter: "20/mo", pro: "Unlimited", elite: "Unlimited" },
+    { name: "Pipeline Board", trial: "3-stage", micro: "5-stage", starter: "6-stage", pro: "6-stage", elite: "6-stage" },
+    { name: "Search History", trial: "—", micro: "14 days", starter: "30 days", pro: "Unlimited", elite: "Unlimited" },
+    { name: "CSV Export", trial: "—", micro: "—", starter: "✓", pro: "✓", elite: "✓" },
+    { name: "Priority Search", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
+    { name: "Competitor Alerts", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
+    { name: "Follow-up Automation", trial: "—", micro: "—", starter: "—", pro: "3-touch", elite: "Unlimited" },
+    { name: "Win Probability", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
+    { name: "Saved Searches & Alerts", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
+    { name: "AI Voice Calling", trial: "—", micro: "—", starter: "—", pro: "—", elite: "20/mo" },
+    { name: "Revenue Forecasting", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
+    { name: "WhatsApp Auto", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
+    { name: "Dedicated Manager", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
+    { name: "Support", trial: "Email", micro: "Email 48hr", starter: "Email 24hr", pro: "WhatsApp 2hr", elite: "Priority 1hr" },
+  ];
+
   return (
-    <div className="glass-card p-4 mb-6 border-warning/15">
-      <div className="flex items-center gap-3 text-xs">
-        <IndianRupee className="h-4 w-4 text-warning shrink-0" />
-        <span className="text-muted-foreground">
-          Pay-as-you-go: <span className="text-warning font-bold">₹5.98/credit</span>.
-          Pro members: <span className="text-success font-bold">₹2.16/credit</span>.
-          <span className="text-foreground font-medium"> Save 64% by upgrading.</span>
-        </span>
+    <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="p-5 border-b border-border">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          Full Feature Comparison
+        </h3>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left p-3 font-medium text-muted-foreground">Feature</th>
+              <th className="p-3 font-medium text-muted-foreground text-center">Trial</th>
+              <th className="p-3 font-medium text-center" style={{ color: "hsl(200, 70%, 55%)" }}>Starter Lite</th>
+              <th className="p-3 font-medium text-center" style={{ color: "hsl(238, 75%, 64%)" }}>Starter</th>
+              <th className="p-3 font-bold text-center" style={{ color: "hsl(260, 80%, 60%)" }}>Pro ⭐</th>
+              <th className="p-3 font-medium text-center" style={{ color: "hsl(166, 72%, 45%)" }}>Elite</th>
+            </tr>
+          </thead>
+          <tbody>
+            {features.map((f, i) => (
+              <tr key={f.name} className={`border-b border-border/50 ${i % 2 === 0 ? "bg-muted/5" : ""}`}>
+                <td className="p-3 font-medium">{f.name}</td>
+                <td className="p-3 text-center text-muted-foreground">{f.trial}</td>
+                <td className="p-3 text-center">{f.micro}</td>
+                <td className="p-3 text-center">{f.starter}</td>
+                <td className="p-3 text-center font-medium">{f.pro}</td>
+                <td className="p-3 text-center">{f.elite}</td>
+              </tr>
+            ))}
+            <tr className="border-t border-border">
+              <td className="p-3 font-bold">Price</td>
+              <td className="p-3 text-center font-bold">₹0</td>
+              <td className="p-3 text-center font-bold" style={{ color: "hsl(200, 70%, 55%)" }}>₹50/mo</td>
+              <td className="p-3 text-center font-bold" style={{ color: "hsl(238, 75%, 64%)" }}>₹99/mo</td>
+              <td className="p-3 text-center font-bold" style={{ color: "hsl(260, 80%, 60%)" }}>₹299/mo</td>
+              <td className="p-3 text-center font-bold" style={{ color: "hsl(166, 72%, 45%)" }}>₹799/mo</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -372,8 +452,8 @@ function CreditComparisonBar() {
 export default function Upgrade() {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const { plan: currentPlan, refresh: refreshSub } = useSubscription();
-  const spotsRef = useRef(47);
-  const [spots, setSpots] = useState(47);
+  const spotsRef = useRef(347);
+  const [spots, setSpots] = useState(347);
   const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
@@ -382,40 +462,34 @@ export default function Upgrade() {
         spotsRef.current -= 1;
         setSpots(spotsRef.current);
       }
-    }, 45000);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  const planLevels: Record<string, number> = { trial: 0, free: 0, starter: 1, pro: 2, elite: 3, agency: 4 };
+  const planLevels: Record<string, number> = { trial: 0, free: 0, micro: 1, starter: 2, pro: 3, elite: 4, agency: 5 };
   const userLevel = planLevels[currentPlan] || 0;
 
-  const handleUpgrade = (planName: string, price?: number) => {
-    const planKey = planName.toLowerCase();
-    const targetLevel = planLevels[planKey] || 0;
+  const handleUpgrade = (tier: string, price: number) => {
+    const targetLevel = planLevels[tier] || 0;
     if (targetLevel <= userLevel) {
       toast.info("You already have this plan or higher!");
       return;
     }
-
-    // Get the price for the plan
-    const planPrices: Record<string, number> = { trial: 0, starter: 499, pro: 1299, elite: 2999 };
-    const amount = price || planPrices[planKey] || 0;
-    
-    if (amount === 0) {
+    if (price === 0) {
       toast.info("Trial is free — you're already on it!");
       return;
     }
 
-    const finalAmount = billing === "annual" ? Math.round(amount * 0.75 * 12) : amount;
-    setProcessing(planKey);
+    const finalAmount = billing === "annual" ? Math.round(price * 0.75 * 12) : price;
+    setProcessing(tier);
 
     initiatePayment({
       amount: finalAmount,
-      planName,
-      onSuccess: (data) => {
+      planName: tier.charAt(0).toUpperCase() + tier.slice(1),
+      onSuccess: () => {
         setProcessing(null);
         refreshSub();
-        toast.success(`🎉 Welcome to ${planName}! Your account has been upgraded.`);
+        toast.success(`🎉 Welcome to ${tier}! Your account has been upgraded.`);
       },
       onFailure: (error) => {
         setProcessing(null);
@@ -432,7 +506,7 @@ export default function Upgrade() {
       amount: price,
       planName: `${credits} Credits`,
       credits,
-      onSuccess: (data) => {
+      onSuccess: () => {
         setProcessing(null);
         refreshSub();
         toast.success(`🎉 ${credits} credits added to your account!`);
@@ -447,7 +521,7 @@ export default function Upgrade() {
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto pb-24">
       <LiveSignupPopup />
 
       {/* ── Launch Offer Banner ── */}
@@ -458,10 +532,10 @@ export default function Upgrade() {
       >
         <Zap className="h-4 w-4 text-warning shrink-0 animate-pulse" />
         <span className="text-xs text-center">
-          <span className="text-warning font-bold">⚡ LAUNCH OFFER:</span>
-          <span className="text-muted-foreground"> First 500 users get lifetime 40% off • </span>
-          <span className="text-destructive font-bold">347 spots left</span>
-          <span className="text-muted-foreground"> • Offer ends in </span>
+          <span className="text-warning font-bold">⚡ EARLY-ACCESS PRICING:</span>
+          <span className="text-muted-foreground"> Prices will increase 3-5× after launch • </span>
+          <span className="text-destructive font-bold">{spots} spots left</span>
+          <span className="text-muted-foreground"> • Ends in </span>
           <CountdownTimer />
         </span>
       </motion.div>
@@ -470,45 +544,37 @@ export default function Upgrade() {
       <div className="text-center mb-8">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <p className="section-label mb-2">Not a Cost. An Investment.</p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-            Invest <span className="text-primary">₹1,299/month</span> → Average Return: <span className="text-success">₹1,24,000</span> in 6 months
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
+            Start at just <span className="text-primary">₹50/month</span> → Average Return: <span className="text-success">₹1,24,000</span> in 6 months
           </h1>
-          <p className="text-lg text-muted-foreground">
-            That's a <span className="font-bold text-warning">95× ROI</span>. Most hedge funds can't beat that.
+          <p className="text-base sm:text-lg text-muted-foreground">
+            That's up to <span className="font-bold text-warning">2,480× ROI</span>. No hedge fund even comes close.
           </p>
         </motion.div>
 
         {/* Billing toggle */}
-        <div className="mt-6 inline-flex items-center gap-1 rounded-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-1">
+        <div className="mt-6 inline-flex items-center gap-1 rounded-full bg-muted/30 border border-border p-1">
           <button
             onClick={() => setBilling("monthly")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${billing === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${billing === "monthly" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
           >
             Monthly
           </button>
           <button
             onClick={() => setBilling("annual")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${billing === "annual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${billing === "annual" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
           >
-            Annual <span className="text-success text-[10px] font-bold ml-1">SAVE 25%</span>
+            Annual <span className="text-[10px] font-bold ml-1 text-success">SAVE 25%</span>
           </button>
         </div>
       </div>
 
       {/* ── Social proof bar ── */}
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[11px] text-muted-foreground mb-6">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-muted-foreground mb-6">
         <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,847+ Indian freelancers</span>
         <span className="flex items-center gap-1"><Star className="h-3 w-3 text-warning" /> 4.8/5 from 1,847 reviews</span>
         <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> 60-day money-back guarantee</span>
         <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> Bank-grade security</span>
-      </div>
-
-      {/* ── Scarcity indicator ── */}
-      <div className="text-center mb-6">
-        <span className="inline-flex items-center gap-2 rounded-full bg-destructive/5 border border-destructive/20 px-4 py-1.5 text-xs">
-          <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
-          <span className="text-muted-foreground">Only <span className="font-bold text-destructive">{spots} Pro spots</span> left at launch price</span>
-        </span>
       </div>
 
       {/* ── Value Comparison ── */}
@@ -520,69 +586,71 @@ export default function Upgrade() {
           <p className="text-[10px] text-destructive mt-1">Inconsistent leads, high turnover</p>
         </div>
         <div className="glass-card p-4 border-success/20">
-          <p className="text-xs font-bold text-success mb-2">✅ NEW WAY (AutoClient AI Pro)</p>
-          <p className="text-2xl font-bold font-mono">₹1,299<span className="text-sm text-muted-foreground">/month</span></p>
-          <p className="text-[11px] text-muted-foreground mt-1">= ₹15,588/year — consistent 24/7</p>
-          <p className="text-[10px] text-success font-bold mt-1">You SAVE: ₹1,64,412/year 🤯</p>
+          <p className="text-xs font-bold text-success mb-2">✅ NEW WAY (AutoClient AI)</p>
+          <p className="text-2xl font-bold font-mono">₹50 – ₹799<span className="text-sm text-muted-foreground">/month</span></p>
+          <p className="text-[11px] text-muted-foreground mt-1">= ₹600 – ₹9,588/year — consistent 24/7</p>
+          <p className="text-[10px] text-success font-bold mt-1">You SAVE: up to ₹1,70,412/year 🤯</p>
         </div>
       </div>
 
       {/* ── Pricing Grid ── */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
         {plans.map((plan, i) => {
-          const displayPrice = billing === "annual" && plan.price > 0
-            ? Math.round(plan.price * 0.75)
-            : plan.price;
-          const displayOriginal = plan.originalPrice
-            ? (billing === "annual" ? Math.round(plan.originalPrice * 0.75) : plan.originalPrice)
-            : null;
+          const displayPrice = billing === "annual" ? plan.annualPrice : plan.monthlyPrice;
+          const displayOriginal = plan.originalMonthly;
 
           return (
             <motion.div
               key={plan.tier}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.08 }}
               whileHover={{ y: -6, transition: { type: "spring", stiffness: 400, damping: 30 } }}
               className="relative"
             >
               <div className={`glass-card rounded-2xl h-full flex flex-col relative overflow-hidden ${
-                plan.popular ? "border-[hsl(260,80%,60%)]/40 shadow-[0_0_30px_hsl(260,80%,60%,0.12)]" : ""
+                plan.popular ? "border-primary/40 shadow-[0_0_30px_hsl(260,80%,60%,0.12)]" : ""
               }`}>
                 {plan.popular && (
-                  <div className="absolute -top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-glow-violet to-glow-cyan" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-glow-violet to-glow-cyan" />
                 )}
                 {plan.badge && (
-                  <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-white text-[10px] font-bold rounded-full flex items-center gap-1 uppercase tracking-wider whitespace-nowrap ${
-                    plan.popular ? "bg-gradient-to-r from-primary to-glow-violet" : "bg-[rgba(255,255,255,0.1)]"
-                  }`}>
-                    {plan.badge}
+                  <div className={`text-center pt-3 pb-0`}>
+                    <span className={`inline-block px-3 py-1 text-[9px] font-bold rounded-full uppercase tracking-wider ${
+                      plan.popular ? "bg-gradient-to-r from-primary to-glow-violet text-white" : "bg-muted/50 text-foreground border border-border"
+                    }`}>
+                      {plan.badge}
+                    </span>
                   </div>
                 )}
 
-                <div className="p-6 pb-3">
+                <div className="p-5 pb-3">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="h-6 w-6 rounded-lg flex items-center justify-center" style={{ background: plan.colorBg }}>
                       {plan.tier === "trial" && <Gift className="h-3 w-3" style={{ color: plan.color }} />}
+                      {plan.tier === "micro" && <Heart className="h-3 w-3" style={{ color: plan.color }} />}
                       {plan.tier === "starter" && <Flame className="h-3 w-3" style={{ color: plan.color }} />}
                       {plan.tier === "pro" && <Crown className="h-3 w-3" style={{ color: plan.color }} />}
                       {plan.tier === "elite" && <Diamond className="h-3 w-3" style={{ color: plan.color }} />}
                     </div>
-                    <h3 className="text-lg font-bold">{plan.name}</h3>
+                    <h3 className="text-base font-bold">{plan.name}</h3>
                   </div>
-                  <p className="text-[11px] text-muted-foreground mb-3">{plan.tagline}</p>
+                  <p className="text-[10px] text-muted-foreground mb-3 leading-relaxed">{plan.tagline}</p>
 
                   {/* Price */}
-                  <div className="flex items-baseline gap-2">
-                    {displayOriginal && (
-                      <span className="text-lg font-mono text-muted-foreground/50 line-through">₹{displayOriginal.toLocaleString("en-IN")}</span>
+                  <div className="flex items-baseline gap-1.5 flex-wrap">
+                    {displayOriginal && displayOriginal > 0 && (
+                      <span className="text-sm font-mono text-muted-foreground/50 line-through">₹{displayOriginal}</span>
                     )}
-                    <span className="text-4xl font-bold font-mono">
-                      {plan.price === 0 ? "₹0" : `₹${displayPrice.toLocaleString("en-IN")}`}
+                    <span className="text-3xl font-bold font-mono">
+                      {plan.monthlyPrice === 0 ? "₹0" : `₹${displayPrice}`}
                     </span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    <span className="text-muted-foreground text-xs">{plan.period}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1">{plan.periodNote}</p>
+
+                  {billing === "annual" && plan.monthlyPrice > 0 && (
+                    <p className="text-[10px] text-success mt-0.5">₹{plan.annualPrice * 12}/year (save {Math.round((1 - plan.annualPrice / plan.monthlyPrice) * 100)}%)</p>
+                  )}
 
                   {/* Daily cost */}
                   {plan.dailyCost && (
@@ -590,29 +658,23 @@ export default function Upgrade() {
                   )}
 
                   {/* Credits badge */}
-                  <div className="mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold" style={{ background: plan.colorBg, color: plan.color }}>
-                    <Zap className="h-3 w-3" /> {plan.credits}
+                  <div className="mt-2 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold" style={{ background: plan.colorBg, color: plan.color }}>
+                    <Zap className="h-2.5 w-2.5" /> {plan.credits}
                   </div>
 
                   {/* ROI note */}
                   {plan.roiNote && (
-                    <div className="mt-2 rounded-lg px-2.5 py-1.5 text-[10px] font-medium" style={{ background: plan.colorBg, color: plan.color }}>
+                    <div className="mt-2 rounded-lg px-2 py-1 text-[9px] font-medium" style={{ background: plan.colorBg, color: plan.color }}>
                       💰 {plan.roiNote}
                     </div>
                   )}
                 </div>
 
-                <div className="px-6 pb-6 flex-1 flex flex-col">
-                  {plan.valueTotal && (
-                    <p className="text-[10px] text-success font-medium mb-3 pb-3 border-b border-[rgba(255,255,255,0.06)]">
-                      {plan.valueTotal}
-                    </p>
-                  )}
-
-                  <ul className="space-y-2 flex-1 mb-4">
+                <div className="px-5 pb-5 flex-1 flex flex-col">
+                  <ul className="space-y-1.5 flex-1 mb-3">
                     {plan.features.map((f) => (
-                      <li key={f.text} className="flex items-start gap-2 text-[13px]">
-                        <Check className={`h-4 w-4 shrink-0 mt-0.5 ${f.highlight ? "text-success" : "text-muted-foreground/60"}`} />
+                      <li key={f.text} className="flex items-start gap-1.5 text-[11px]">
+                        <Check className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${f.highlight ? "text-success" : "text-muted-foreground/60"}`} />
                         <span className={f.highlight ? "text-foreground font-medium" : "text-muted-foreground"}>{f.text}</span>
                       </li>
                     ))}
@@ -620,10 +682,10 @@ export default function Upgrade() {
 
                   {/* Bonuses */}
                   {plan.bonuses && (
-                    <div className="mb-4 space-y-1.5">
-                      <p className="text-[10px] font-bold text-warning uppercase tracking-wider">🎁 Launch Bonuses:</p>
+                    <div className="mb-3 space-y-1">
+                      <p className="text-[9px] font-bold text-warning uppercase tracking-wider">🎁 Launch Bonuses:</p>
                       {plan.bonuses.map((b) => (
-                        <p key={b} className="text-[11px] text-warning/80 flex items-start gap-1.5">
+                        <p key={b} className="text-[10px] text-warning/80 flex items-start gap-1">
                           <Check className="h-3 w-3 shrink-0 mt-0.5" /> {b}
                         </p>
                       ))}
@@ -631,20 +693,20 @@ export default function Upgrade() {
                   )}
 
                   <Button
-                    className={`w-full text-sm h-11 ${
+                    className={`w-full text-xs h-10 ${
                       planLevels[plan.tier] <= userLevel
                         ? "opacity-50 cursor-not-allowed"
                         : plan.popular
-                        ? "bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow animate-glow-pulse font-bold"
+                        ? "bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow font-bold"
                         : plan.tier === "elite"
                         ? "bg-gradient-to-r from-glow-cyan/80 to-success hover:brightness-110"
                         : "glass-input hover:border-primary/30"
                     }`}
                     variant={plan.popular || plan.tier === "elite" ? "default" : "outline"}
-                    disabled={planLevels[plan.tier] <= userLevel || processing === plan.tier.toLowerCase()}
-                    onClick={() => handleUpgrade(plan.name, plan.price)}
+                    disabled={planLevels[plan.tier] <= userLevel || processing === plan.tier}
+                    onClick={() => handleUpgrade(plan.tier, billing === "annual" ? plan.annualPrice : plan.monthlyPrice)}
                   >
-                    {processing === plan.tier.toLowerCase()
+                    {processing === plan.tier
                       ? "Processing..."
                       : planLevels[plan.tier] <= userLevel
                       ? "✓ Current Plan"
@@ -652,7 +714,7 @@ export default function Upgrade() {
                   </Button>
 
                   {plan.tier !== "trial" && (
-                    <p className="text-[10px] text-muted-foreground text-center mt-2">
+                    <p className="text-[9px] text-muted-foreground text-center mt-1.5">
                       Cancel anytime • No hidden fees
                     </p>
                   )}
@@ -663,11 +725,15 @@ export default function Upgrade() {
         })}
       </div>
 
+      {/* ── Feature Comparison ── */}
+      <div className="mb-10">
+        <FeatureComparisonTable />
+      </div>
+
       {/* ── Credit Top-Up Section ── */}
       <div className="mb-10">
         <h3 className="text-lg font-semibold mb-1 text-center">Pay-As-You-Go Credits</h3>
-        <p className="text-xs text-muted-foreground text-center mb-4">Don't want a subscription? Buy credits directly.</p>
-        <CreditComparisonBar />
+        <p className="text-xs text-muted-foreground text-center mb-4">Don't want a subscription? Buy credits directly — insanely cheap.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {CREDIT_PACKS.map((pack) => (
             <motion.div
@@ -683,7 +749,7 @@ export default function Upgrade() {
               )}
               <p className="text-2xl font-bold font-mono">{pack.credits}</p>
               <p className="text-[10px] text-muted-foreground">credits</p>
-              <p className="text-lg font-bold mt-1">₹{pack.price.toLocaleString("en-IN")}</p>
+              <p className="text-lg font-bold mt-1">₹{pack.price}</p>
               <p className="text-[10px] text-muted-foreground">{pack.perCredit}/credit</p>
               {pack.save && (
                 <p className="text-[10px] text-success font-bold mt-1">SAVE {pack.save}</p>
@@ -697,33 +763,35 @@ export default function Upgrade() {
         <p className="text-[10px] text-muted-foreground text-center mt-2">Credits valid for 90 days from purchase</p>
       </div>
 
-      {/* ── Loss Aversion Banner ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="glass-card p-5 mb-8 border-destructive/15 bg-destructive/[0.02]"
-      >
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
-            <Target className="h-5 w-5 text-destructive" />
+      {/* ── Loss Aversion Banner — only for non-paid users ── */}
+      {userLevel < 3 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="glass-card p-5 mb-8 border-destructive/15 bg-destructive/[0.02]"
+        >
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+              <Target className="h-5 w-5 text-destructive" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">You're missing 43 qualified leads right now</p>
+              <p className="text-xs text-muted-foreground">
+                Free users miss <span className="text-destructive font-bold">87%</span> of the best opportunities.
+                Your competitors <span className="text-warning font-medium">ARE</span> using paid plans.
+              </p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => handleUpgrade("pro", 299)}
+              className="gap-1.5 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow shrink-0"
+            >
+              <Zap className="h-3.5 w-3.5" /> Unlock All Leads
+            </Button>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold">You're missing 43 qualified leads right now</p>
-            <p className="text-xs text-muted-foreground">
-              Free users miss <span className="text-destructive font-bold">87%</span> of the best opportunities.
-              Your competitors <span className="text-warning font-medium">ARE</span> using paid plans.
-            </p>
-          </div>
-          <Button
-            size="sm"
-            onClick={() => handleUpgrade("Pro")}
-            className="gap-1.5 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow shrink-0"
-          >
-            <Zap className="h-3.5 w-3.5" /> Unlock All Leads
-          </Button>
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
 
       {/* ── ROI Calculator + Testimonials ── */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -753,23 +821,25 @@ export default function Upgrade() {
       </div>
 
       {/* ── Lock-in CTA ── */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center mb-8">
-        <div className="glass-card p-6 border-primary/15 inline-block">
-          <p className="text-xs text-muted-foreground mb-1">
-            <Lock className="h-3 w-3 inline -mt-0.5 mr-1" />
-            1,243 users locked in early adopter pricing
-          </p>
-          <p className="text-sm font-semibold mb-3">
-            Lock in <span className="text-primary">₹1,299/month forever</span> before it increases to ₹1,999
-          </p>
-          <Button
-            onClick={() => handleUpgrade("Pro")}
-            className="gap-2 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow"
-          >
-            <Lock className="h-4 w-4" /> Lock In My Price
-          </Button>
-        </div>
-      </motion.div>
+      {userLevel < 3 && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center mb-8">
+          <div className="glass-card p-6 border-primary/15 inline-block">
+            <p className="text-xs text-muted-foreground mb-1">
+              <Lock className="h-3 w-3 inline -mt-0.5 mr-1" />
+              1,243 users locked in early adopter pricing
+            </p>
+            <p className="text-sm font-semibold mb-3">
+              Lock in <span className="text-primary">₹299/month forever</span> before it increases to ₹799
+            </p>
+            <Button
+              onClick={() => handleUpgrade("pro", 299)}
+              className="gap-2 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow"
+            >
+              <Lock className="h-4 w-4" /> Lock In My Price
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
       {/* ── Trust footer ── */}
       <div className="text-center pb-4">
