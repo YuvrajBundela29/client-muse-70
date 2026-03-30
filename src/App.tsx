@@ -21,6 +21,8 @@ import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
 import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 
