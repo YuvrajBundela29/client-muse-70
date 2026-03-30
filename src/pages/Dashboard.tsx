@@ -73,20 +73,23 @@ function StatCard({ label, value, icon: Icon, accent }: { label: string; value: 
 export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ totalLeads: 0, pipelineActive: 0, recentSearches: 0 });
+  const [plan, setPlan] = useState("free");
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [leads, pipeline, history] = await Promise.all([
+      const [leads, pipeline, history, profile] = await Promise.all([
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("client_pipeline").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("search_history").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+        supabase.from("profiles").select("plan").eq("id", user!.id).single(),
       ]);
       setStats({
         totalLeads: leads.count || 0,
         pipelineActive: pipeline.count || 0,
         recentSearches: history.count || 0,
       });
+      if (profile.data) setPlan(profile.data.plan);
     }
     load();
   }, [user]);
