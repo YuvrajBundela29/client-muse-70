@@ -632,16 +632,23 @@ export default function Upgrade() {
 
                   <Button
                     className={`w-full text-sm h-11 ${
-                      plan.popular
+                      planLevels[plan.tier] <= userLevel
+                        ? "opacity-50 cursor-not-allowed"
+                        : plan.popular
                         ? "bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow animate-glow-pulse font-bold"
                         : plan.tier === "elite"
                         ? "bg-gradient-to-r from-glow-cyan/80 to-success hover:brightness-110"
                         : "glass-input hover:border-primary/30"
                     }`}
                     variant={plan.popular || plan.tier === "elite" ? "default" : "outline"}
-                    onClick={() => handleUpgrade(plan.name)}
+                    disabled={planLevels[plan.tier] <= userLevel || processing === plan.tier.toLowerCase()}
+                    onClick={() => handleUpgrade(plan.name, plan.price)}
                   >
-                    {plan.cta}
+                    {processing === plan.tier.toLowerCase()
+                      ? "Processing..."
+                      : planLevels[plan.tier] <= userLevel
+                      ? "✓ Current Plan"
+                      : plan.cta}
                   </Button>
 
                   {plan.tier !== "trial" && (
