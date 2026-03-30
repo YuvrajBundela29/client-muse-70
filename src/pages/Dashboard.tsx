@@ -74,15 +74,17 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ totalLeads: 0, pipelineActive: 0, recentSearches: 0 });
   const [plan, setPlan] = useState("free");
+  const [followUps, setFollowUps] = useState<{ id: string; business_name: string; pipeline_status: string; email: string | null; phone: string | null; updated_at: string }[]>([]);
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [leads, pipeline, history, profile] = await Promise.all([
+      const [leads, pipeline, history, profile, pipelineEntries] = await Promise.all([
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("client_pipeline").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("search_history").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("profiles").select("plan").eq("id", user!.id).single(),
+        supabase.from("client_pipeline").select("id, lead_id, pipeline_status, updated_at, leads(business_name, email, phone)").eq("user_id", user!.id).in("pipeline_status", ["email_sent", "replied", "call_booked"]).order("updated_at", { ascending: false }).limit(5),
       ]);
       setStats({
         totalLeads: leads.count || 0,
@@ -90,6 +92,16 @@ export default function Dashboard() {
         recentSearches: history.count || 0,
       });
       if (profile.data) setPlan(profile.data.plan);
+      if (pipelineEntries.data) {
+        setFollowUps(pipelineEntries.data.map((e: any) => ({
+          id: e.lead_id,
+          business_name: e.leads?.business_name || "Unknown",
+          pipeline_status: e.pipeline_status,
+          email: e.leads?.email || null,
+          phone: e.leads?.phone || null,
+          updated_at: e.updated_at,
+        })));
+      }
     }
     load();
   }, [user]);
