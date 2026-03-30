@@ -215,17 +215,38 @@ export default function Pipeline() {
                             {enriched.confidence_score}%
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono truncate">
-                          <span>{entry.lead.industry} · {entry.lead.city}</span>
-                          {entry.lead.email && (
-                            <a href={`mailto:${entry.lead.email}`} onClick={(e) => e.stopPropagation()} className="hidden sm:inline-flex items-center gap-0.5 hover:text-primary transition-colors">
-                              <Mail className="h-2.5 w-2.5" /> {entry.lead.email}
+                        <p className="text-[10px] text-muted-foreground font-mono truncate">
+                          {entry.lead.industry} · {entry.lead.city}
+                        </p>
+                        {/* Contact row */}
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap" onClick={(e) => e.preventDefault()}>
+                          {entry.lead.website && (
+                            <a href={entry.lead.website.startsWith("http") ? entry.lead.website : `https://${entry.lead.website}`} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors font-mono">
+                              <Globe className="h-2.5 w-2.5" /> Website
                             </a>
                           )}
+                          {entry.lead.email && (
+                            <>
+                              <a href={`mailto:${entry.lead.email}`} onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:text-primary/80 transition-colors font-mono">
+                                <Mail className="h-2.5 w-2.5" /> {entry.lead.email}
+                              </a>
+                              <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); navigator.clipboard.writeText(entry.lead.email!); toast.success("Email copied!"); }} className="inline-flex items-center gap-0.5 text-[9px] text-muted-foreground hover:text-primary transition-colors">
+                                <Copy className="h-2.5 w-2.5" />
+                              </button>
+                            </>
+                          )}
                           {entry.lead.phone && (
-                            <a href={`tel:${entry.lead.phone}`} onClick={(e) => e.stopPropagation()} className="hidden md:inline-flex items-center gap-0.5 hover:text-primary transition-colors">
+                            <a href={`tel:${entry.lead.phone}`} onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors font-mono">
                               <Phone className="h-2.5 w-2.5" /> {entry.lead.phone}
                             </a>
+                          )}
+                          {entry.lead.instagram_url && (
+                            <a href={entry.lead.instagram_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors font-mono">
+                              <Instagram className="h-2.5 w-2.5" /> IG
+                            </a>
+                          )}
+                          {!entry.lead.email && !entry.lead.phone && !entry.lead.website && !entry.lead.instagram_url && (
+                            <span className="text-[9px] text-muted-foreground/50 italic">No contact info</span>
                           )}
                         </div>
                       </div>
