@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Search, GitBranch, Clock, Users, Zap, Activity,
   ChevronRight, Lightbulb, AlertCircle, CalendarClock,
-  TrendingUp, DollarSign, Timer, Crown, ArrowUpRight,
+  TrendingUp, DollarSign, Timer, Crown, ArrowUpRight, Mail, Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,15 +74,17 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ totalLeads: 0, pipelineActive: 0, recentSearches: 0 });
   const [plan, setPlan] = useState("free");
+  const [followUps, setFollowUps] = useState<{ id: string; business_name: string; pipeline_status: string; email: string | null; phone: string | null; updated_at: string }[]>([]);
 
   useEffect(() => {
     if (!user) return;
     async function load() {
-      const [leads, pipeline, history, profile] = await Promise.all([
+      const [leads, pipeline, history, profile, pipelineEntries] = await Promise.all([
         supabase.from("leads").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("client_pipeline").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("search_history").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
         supabase.from("profiles").select("plan").eq("id", user!.id).single(),
+        supabase.from("client_pipeline").select("id, lead_id, pipeline_status, updated_at, leads(business_name, email, phone)").eq("user_id", user!.id).in("pipeline_status", ["email_sent", "replied", "call_booked"]).order("updated_at", { ascending: false }).limit(5),
       ]);
       setStats({
         totalLeads: leads.count || 0,
@@ -90,6 +92,16 @@ export default function Dashboard() {
         recentSearches: history.count || 0,
       });
       if (profile.data) setPlan(profile.data.plan);
+      if (pipelineEntries.data) {
+        setFollowUps(pipelineEntries.data.map((e: any) => ({
+          id: e.lead_id,
+          business_name: e.leads?.business_name || "Unknown",
+          pipeline_status: e.pipeline_status,
+          email: e.leads?.email || null,
+          phone: e.leads?.phone || null,
+          updated_at: e.updated_at,
+        })));
+      }
     }
     load();
   }, [user]);
@@ -246,13 +258,39 @@ export default function Dashboard() {
       {/* Upcoming Follow-ups */}
       <div className="flex items-center gap-2 mb-4">
         <CalendarClock className="h-4 w-4 text-muted-foreground" />
-        <h2 className="section-label">Upcoming Follow-ups</h2>
+        <h2 className="section-label">Active Follow-ups</h2>
       </div>
-      <div className="glass-card p-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          No follow-ups scheduled — add reminders from client profiles
-        </p>
-      </div>
+      {followUps.length === 0 ? (
+        <div className="glass-card p-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            No active follow-ups — move leads to "Email Sent" or "Replied" status to track them here.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {followUps.map((fu) => (
+            <Link key={fu.id} to={`/pipeline/${fu.id}`}>
+              <div className="glass-card p-4 flex items-center justify-between hover:border-[rgba(255,255,255,0.15)] transition-all cursor-pointer group">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+                    {fu.business_name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{fu.business_name}</p>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                      <span className="capitalize">{fu.pipeline_status.replace(/_/g, " ")}</span>
+                      {fu.email && (
+                        <span className="flex items-center gap-0.5"><Mail className="h-2.5 w-2.5" /> {fu.email}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

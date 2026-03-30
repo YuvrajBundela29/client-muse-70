@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/signup" element={<Navigate to="/auth" replace />} />
 
             {/* Onboarding (protected but no sidebar) */}
-            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+            <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
 
             {/* Protected with sidebar layout */}
             <Route path="/dashboard" element={<ProtectedWithLayout><Dashboard /></ProtectedWithLayout>} />
