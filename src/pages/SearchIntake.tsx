@@ -77,7 +77,11 @@ export default function SearchIntake() {
       toast.error("Please fill in all three fields");
       return;
     }
-    if (!canSearch) { setShowPaywall(true); return; }
+    if (!canAfford("search")) { setShowPaywall(true); return; }
+    
+    const ok = await deductCredits("search");
+    if (!ok) return;
+    
     setLastSearch({ industry, location, service });
     addSearchHistory({ industry, location, service });
     try {
@@ -89,7 +93,7 @@ export default function SearchIntake() {
       await findLeads({ industry, location, service });
       stepTimers.forEach(clearTimeout);
       setStep("complete");
-      toast.success("Intelligence report ready!");
+      toast.success("Intelligence report ready! (1 credit used)");
       setTimeout(() => navigate("/results"), 1200);
     } catch (err: any) {
       setStep("error");
