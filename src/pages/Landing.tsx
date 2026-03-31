@@ -104,11 +104,11 @@ export default function Landing() {
               Get 25 free credits — no card required
             </motion.div>
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-              Indian Freelancers Are Making
+              Find Your Next Clients
               <br />
-              <span className="text-gradient">₹2.4 Lakhs Extra</span>
+              <span className="text-gradient">On Autopilot</span>
               <br />
-              This Month
+              With AI
             </h1>
             <p className="mb-10 text-lg text-[#8892B0] md:text-xl max-w-2xl mx-auto">
               While you're cold-calling 50 leads, AI is finding you
