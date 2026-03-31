@@ -715,10 +715,9 @@ export default function Upgrade() {
               <Target className="h-5 w-5 text-destructive" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">You're missing 43 qualified leads right now</p>
+              <p className="text-sm font-semibold">Upgrade to unlock all features</p>
               <p className="text-xs text-muted-foreground">
-                Free users miss <span className="text-destructive font-bold">87%</span> of the best opportunities.
-                Your competitors <span className="text-warning font-medium">ARE</span> using paid plans.
+                Free users have limited credits. Upgrade for more leads, AI emails, and analytics.
               </p>
             </div>
             <Button
