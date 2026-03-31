@@ -15,10 +15,10 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 /* ── Testimonials ──────────────────────────────────────── */
 const TESTIMONIALS = [
-  { name: "Priya M.", city: "Mumbai", text: "Closed ₹3.2L deal in my first month. The Pro plan intelligence reports are insane.", revenue: "₹3,20,000", avatar: "PM" },
-  { name: "Rahul K.", city: "Pune", text: "Scaled from ₹30K/month to ₹2.1L/month in 4 months. This tool is an unfair advantage.", revenue: "₹2,10,000", avatar: "RK" },
-  { name: "Sneha T.", city: "Bangalore", text: "Found 5 clients in week 1. Now I'm booked for 3 months straight.", revenue: "₹1,45,000", avatar: "ST" },
-  { name: "Amit V.", city: "Delhi", text: "Was skeptical but closed my first client in 5 days. The ROI is unreal.", revenue: "₹85,000", avatar: "AV" },
+  { name: "Early User", city: "Web Designer", text: "The AI intelligence reports helped me understand exactly what to pitch. Much more efficient than manual research.", revenue: "Saved hours", avatar: "EU" },
+  { name: "Beta Tester", city: "Digital Marketer", text: "Searching across 5 data sources in one place is a massive time saver. Love the pipeline CRM.", revenue: "Time saved", avatar: "BT" },
+  { name: "Early Adopter", city: "SEO Consultant", text: "The personalized outreach messages are great starting points. Helps me focus on closing instead of writing.", revenue: "Better leads", avatar: "EA" },
+  { name: "Power User", city: "Freelancer", text: "Having leads auto-synced to the pipeline keeps everything organized. No more spreadsheet chaos.", revenue: "More organized", avatar: "PU" },
 ];
 
 /* ── Plans (INR + Credits) ─────────────────────────────── */
