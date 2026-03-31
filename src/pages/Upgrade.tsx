@@ -103,7 +103,7 @@ const plans = [
     ],
     cta: "Get Starter — ₹99",
     popular: false,
-    roiNote: "Close ONE ₹10K project → paid for 100 months",
+    roiNote: "200 credits = up to 200 lead searches",
     dailyCost: "₹3.3/day — less than a cutting chai ☕",
     bonuses: null,
   },
