@@ -54,14 +54,12 @@ export default function Admin() {
   const [editPlan, setEditPlan] = useState("");
   const [editCredits, setEditCredits] = useState(0);
 
-  // Hard gate — only the GOD admin email can see this page
-  if (!user || !isGodAdmin(user.email)) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  const isAuthorized = !!user && isGodAdmin(user.email);
 
   useEffect(() => {
+    if (!isAuthorized) return;
     loadData();
-  }, []);
+  }, [isAuthorized]);
 
   const loadData = async () => {
     setLoading(true);
