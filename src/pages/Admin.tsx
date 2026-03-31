@@ -31,7 +31,7 @@ export default function Admin() {
   useEffect(() => {
     if (!user) return;
     // Check admin role
-    supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => {
+    (supabase.rpc as any)("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }: any) => {
       setIsAdmin(data === true);
     });
   }, [user]);
