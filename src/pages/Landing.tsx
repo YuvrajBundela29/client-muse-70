@@ -284,7 +284,7 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              Join <span className="text-gradient">12,847</span> Indian Freelancers Winning
+              What Our <span className="text-gradient">Early Users</span> Are Saying
             </h2>
           </motion.div>
 
