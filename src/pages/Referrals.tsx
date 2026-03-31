@@ -16,10 +16,10 @@ interface Referral {
 }
 
 const MILESTONES = [
-  { count: 5, reward: "500 bonus credits", icon: "🎯" },
-  { count: 10, reward: "Free Pro for 3 months", icon: "⭐" },
-  { count: 25, reward: "Free Elite for 6 months", icon: "💎" },
-  { count: 50, reward: "Lifetime Elite + 10% rev share", icon: "👑" },
+  { count: 5, reward: "250 bonus credits", icon: "🎯" },
+  { count: 10, reward: "500 bonus credits", icon: "⭐" },
+  { count: 25, reward: "1,000 bonus credits + priority support", icon: "💎" },
+  { count: 50, reward: "2,500 bonus credits + feature requests priority", icon: "👑" },
 ];
 
 export default function Referrals() {
