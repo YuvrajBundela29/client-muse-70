@@ -6,10 +6,10 @@ import {
   ChevronDown, ChevronUp, Target, X, Check, IndianRupee,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
-import { LiveActivity } from "@/components/landing/LiveActivity";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const painPoints = [
   {
