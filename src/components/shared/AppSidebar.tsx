@@ -65,11 +65,15 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [plan, setPlan] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("plan").eq("id", user.id).single().then(({ data }) => {
       if (data) setPlan(data.plan);
+    });
+    supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => {
+      setIsAdmin(data === true);
     });
   }, [user]);
 
