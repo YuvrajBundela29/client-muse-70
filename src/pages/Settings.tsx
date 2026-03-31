@@ -307,13 +307,11 @@ export default function Settings() {
                   />
                 </div>
               </div>
-              {!isPaid && (
-                <Link to="/upgrade">
-                  <Button className="bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow gap-2">
-                    <Zap className="h-4 w-4" /> Upgrade Plan
-                  </Button>
-                </Link>
-              )}
+              <Link to="/upgrade">
+                <Button className="bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow gap-2">
+                  <Zap className="h-4 w-4" /> {isPaid ? "Change Plan" : "Upgrade Plan"}
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </TabsContent>
