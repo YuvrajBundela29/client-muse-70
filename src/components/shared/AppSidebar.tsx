@@ -106,7 +106,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="px-2 space-y-0.5">
-              {mainItems.map((item) => {
+              {mainItems.filter(item => !(item as any).adminOnly || isAdmin).map((item) => {
                 const isActive = location.pathname === item.url || location.pathname.startsWith(item.url + "/");
                 return (
                   <SidebarMenuItem key={item.title}>
