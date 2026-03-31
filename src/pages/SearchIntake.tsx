@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { useSessionStore } from "@/lib/session-store";
 import { useCredits } from "@/hooks/useCredits";
 import { PaywallModal } from "@/components/results/PaywallModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const STATUS_MESSAGES = [
   "Analyzing your niche...",
