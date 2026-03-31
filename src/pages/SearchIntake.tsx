@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { useSessionStore } from "@/lib/session-store";
 import { useCredits } from "@/hooks/useCredits";
 import { PaywallModal } from "@/components/results/PaywallModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const STATUS_MESSAGES = [
   "Analyzing your niche...",
@@ -90,8 +91,22 @@ export default function SearchIntake() {
         setTimeout(() => setStep("scraping"), 3000),
         setTimeout(() => setStep("analyzing"), 7000),
       ];
-      await findLeads({ industry, location, service });
+      const leads = await findLeads({ industry, location, service });
       stepTimers.forEach(clearTimeout);
+
+      // Save to search_history in database
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("search_history").insert({
+          user_id: user.id,
+          industry,
+          location,
+          service,
+          result_count: leads.length,
+          results_json: leads as any,
+        });
+      }
+
       setStep("complete");
       toast.success("Intelligence report ready! (1 credit used)");
       setTimeout(() => navigate("/results"), 1200);
