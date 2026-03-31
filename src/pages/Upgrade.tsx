@@ -150,23 +150,16 @@ const plans = [
     features: [
       { text: "UNLIMITED credits — no limits ever", highlight: true },
       { text: "Everything in Pro", highlight: false },
-      { text: "AI voice cold calling (20 calls/mo)", highlight: true },
-      { text: "Revenue forecasting & analytics", highlight: true },
-      { text: "CRM integrations (Zoho, HubSpot)", highlight: false },
-      { text: "WhatsApp API auto-messages", highlight: true },
-      { text: "Dedicated account manager", highlight: true },
-      { text: "Pitch deck generator", highlight: true },
-      { text: "Quarterly business review", highlight: false },
+      { text: "Unlimited AI intelligence reports", highlight: true },
+      { text: "Full analytics & revenue tracking", highlight: true },
+      { text: "Priority support (2hr response)", highlight: true },
+      { text: "All future features included", highlight: false },
     ],
     cta: "Go Elite — ₹799",
     popular: false,
     roiNote: "Elite members average ₹8.7L additional revenue annually",
     dailyCost: "₹26/day — less than a pizza for an empire 🍕",
-    bonuses: [
-      "Lifetime access to all future features",
-      "1-on-1 onboarding call (90 min, worth ₹5,000)",
-      "₹10L Freelancer Roadmap course (worth ₹9,999)",
-    ],
+    bonuses: null,
   },
 ];
 
