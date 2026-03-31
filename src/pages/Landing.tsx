@@ -47,7 +47,7 @@ const testimonials = [
 const faq = [
   { q: "I'm not tech-savvy. Is this complicated?", a: "If you can use WhatsApp, you can use this. Average setup: 5 minutes. We have Hindi video tutorials and live support." },
   { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. We're confident in the value because the tool saves you hours of manual searching every week." },
-  { q: "How is this different from just Googling?", a: "Google: 2 hours for 10 outdated leads. AutoClient AI: 5 minutes for 50 verified leads with contact info. That's 288× faster." },
+  { q: "How is this different from just Googling?", a: "We aggregate 5 data sources simultaneously and use AI to score, rank, and generate personalized outreach — saving you hours of manual work." },
   { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available data. Email accuracy: 94%. Phone accuracy: 87%." },
   { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel with one click. Keep unused credits for 90 days." },
   { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure. We never see your card details." },
