@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Upload, RefreshCw, Search, Plus, Globe, Copy,
   Mail, MailX, MessageSquare, Phone, CheckCircle2, XCircle, AlertCircle,
-  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown, Instagram,
+  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown, Instagram, MessageCircle, Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
