@@ -74,7 +74,7 @@ const plans = [
     ],
     cta: "Get Started — ₹50",
     popular: false,
-    roiNote: "Close ONE ₹5K gig → 100× ROI",
+    roiNote: "One client covers months of subscription",
     dailyCost: "₹1.6/day — literally the price of a candy 🍬",
     bonuses: null,
   },
