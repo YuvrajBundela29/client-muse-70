@@ -90,8 +90,22 @@ export default function SearchIntake() {
         setTimeout(() => setStep("scraping"), 3000),
         setTimeout(() => setStep("analyzing"), 7000),
       ];
-      await findLeads({ industry, location, service });
+      const leads = await findLeads({ industry, location, service });
       stepTimers.forEach(clearTimeout);
+
+      // Save to search_history in database
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("search_history").insert({
+          user_id: user.id,
+          industry,
+          location,
+          service,
+          result_count: leads.length,
+          results_json: leads,
+        });
+      }
+
       setStep("complete");
       toast.success("Intelligence report ready! (1 credit used)");
       setTimeout(() => navigate("/results"), 1200);
