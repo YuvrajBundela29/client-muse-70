@@ -485,10 +485,10 @@ export default function Upgrade() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <p className="section-label mb-2">Not a Cost. An Investment.</p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
-            Start at just <span className="text-primary">₹50/month</span> → Average Return: <span className="text-success">₹1,24,000</span> in 6 months
+            Start at just <span className="text-primary">₹50/month</span> — Find Clients Faster With AI
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground">
-            That's up to <span className="font-bold text-warning">2,480× ROI</span>. No hedge fund even comes close.
+            Spend less time searching, more time closing. Plans for every budget.
           </p>
         </motion.div>
 
