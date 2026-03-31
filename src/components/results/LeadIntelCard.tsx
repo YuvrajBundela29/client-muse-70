@@ -10,6 +10,7 @@ import { EnrichedLead } from "@/types/lead";
 import { ConfidenceArc } from "./ConfidenceArc";
 import { AuditBars } from "./AuditBars";
 import { MessageTabs } from "./MessageTabs";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 import { useSessionStore } from "@/lib/session-store";
 import { updateLeadStatusInDb } from "@/lib/lead-api";
 import { toast } from "sonner";
@@ -241,6 +242,7 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
               <Instagram className="h-3 w-3" /> Instagram
             </a>
           )}
+          <WhatsAppButton phone={lead.phone} businessName={lead.business_name} />
         </div>
 
         {/* Action buttons */}

@@ -6,10 +6,10 @@ import {
   ChevronDown, ChevronUp, Target, X, Check, IndianRupee,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
-import { LiveActivity } from "@/components/landing/LiveActivity";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const painPoints = [
   {
@@ -57,11 +57,55 @@ const faq = [
 export default function Landing() {
   const [testIdx, setTestIdx] = useState(0);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [dbTestimonials, setDbTestimonials] = useState<typeof testimonials>([]);
+
+  // A/B variant assignment
+  const [variant] = useState(() => {
+    const saved = localStorage.getItem("ab_variant");
+    if (saved) return saved;
+    const v = Math.random() < 0.5 ? "A" : "B";
+    localStorage.setItem("ab_variant", v);
+    return v;
+  });
 
   useEffect(() => {
-    const interval = setInterval(() => setTestIdx((i) => (i + 1) % testimonials.length), 6000);
+    // Track page view for A/B
+    supabase.from("ab_events" as any).insert({ variant, event_type: "view" } as any).then(() => {});
+
+    // Fetch real testimonials
+    supabase.from("testimonials" as any).select("*").eq("is_approved", true).order("created_at", { ascending: false }).limit(10).then(({ data }: any) => {
+      if (data && data.length > 0) {
+        setDbTestimonials(data.map((t: any) => ({
+          name: t.name,
+          city: t.role || "Freelancer",
+          text: t.content,
+          stars: t.rating || 5,
+        })));
+      }
+    });
+
+    const interval = setInterval(() => setTestIdx((i) => (i + 1) % (displayTestimonials.length || 1)), 6000);
     return () => clearInterval(interval);
   }, []);
+
+  const displayTestimonials = dbTestimonials.length > 0 ? dbTestimonials : testimonials;
+
+  // A/B variant: Variant B has a different hero headline
+  const heroTitle = variant === "B" ? (
+    <>
+      AI Finds Clients.
+      <br />
+      <span className="text-gradient">You Close Deals.</span>
+    </>
+  ) : (
+    <>
+      Find Your Next Clients
+      <br />
+      <span className="text-gradient">On Autopilot</span>
+      <br />
+      With AI
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-[hsl(228,50%,8%)] text-[#F0F4FF]">
@@ -104,11 +148,7 @@ export default function Landing() {
               Get 25 free credits — no card required
             </motion.div>
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-              Find Your Next Clients
-              <br />
-              <span className="text-gradient">On Autopilot</span>
-              <br />
-              With AI
+              {heroTitle}
             </h1>
             <p className="mb-10 text-lg text-[#8892B0] md:text-xl max-w-2xl mx-auto">
               While you're cold-calling 50 leads, AI is finding you
@@ -269,9 +309,9 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              What <span className="text-gradient">Early Users</span> Are Saying
+              What <span className="text-gradient">{dbTestimonials.length > 0 ? "Users" : "Early Users"}</span> Are Saying
             </h2>
-            <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>
+            {dbTestimonials.length === 0 && <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>}
           </motion.div>
 
           {/* Testimonial carousel */}
@@ -280,14 +320,14 @@ export default function Landing() {
               <motion.div key={testIdx} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                 className="glass-card p-8 text-center">
                 <div className="flex items-center justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-[#F59E0B] text-[#F59E0B]" />)}
+                  {[...Array(displayTestimonials[testIdx]?.stars || 5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-[#F59E0B] text-[#F59E0B]" />)}
                 </div>
-                <blockquote className="mb-4 text-lg font-medium italic leading-relaxed">"{testimonials[testIdx].text}"</blockquote>
-                <p className="text-sm"><span className="font-semibold text-[#F0F4FF]">{testimonials[testIdx].name}</span> — <span className="text-[#8892B0]">{testimonials[testIdx].city}</span></p>
+                <blockquote className="mb-4 text-lg font-medium italic leading-relaxed">"{displayTestimonials[testIdx]?.text}"</blockquote>
+                <p className="text-sm"><span className="font-semibold text-[#F0F4FF]">{displayTestimonials[testIdx]?.name}</span> — <span className="text-[#8892B0]">{displayTestimonials[testIdx]?.city}</span></p>
               </motion.div>
             </AnimatePresence>
             <div className="flex justify-center gap-2 mt-4">
-              {testimonials.map((_, i) => (
+              {displayTestimonials.map((_, i) => (
                 <button key={i} onClick={() => setTestIdx(i)} className={`h-2 rounded-full transition-all ${i === testIdx ? "w-8 bg-[#5B5FEF]" : "w-2 bg-[rgba(255,255,255,0.1)]"}`} />
               ))}
             </div>

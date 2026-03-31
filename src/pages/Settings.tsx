@@ -156,6 +156,7 @@ export default function Settings() {
           <TabsTrigger value="account" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Account</TabsTrigger>
           <TabsTrigger value="subscription" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Subscription</TabsTrigger>
           <TabsTrigger value="transactions" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Transactions</TabsTrigger>
+          <TabsTrigger value="portfolio" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Portfolio</TabsTrigger>
           <TabsTrigger value="notifications" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Notifications</TabsTrigger>
         </TabsList>
 
@@ -313,6 +314,30 @@ export default function Settings() {
                   </Button>
                 </Link>
               )}
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Portfolio Tab */}
+        <TabsContent value="portfolio" className="mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            <div className="glass-card rounded-2xl p-6">
+              <h3 className="text-base font-semibold mb-4">Public Portfolio</h3>
+              <p className="text-sm text-muted-foreground mb-4">Share your portfolio page with potential clients to build trust and credibility.</p>
+              <div className="flex items-center gap-2 mb-4">
+                <Input
+                  readOnly
+                  value={user ? `${window.location.origin}/portfolio/${user.id}` : ""}
+                  className="glass-input font-mono text-xs"
+                />
+                <Button size="sm" variant="outline" onClick={() => {
+                  if (user) {
+                    navigator.clipboard.writeText(`${window.location.origin}/portfolio/${user.id}`);
+                    toast.success("Portfolio link copied!");
+                  }
+                }}>Copy</Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Your portfolio shows your name, service, industry, and deal stats publicly.</p>
             </div>
           </motion.div>
         </TabsContent>

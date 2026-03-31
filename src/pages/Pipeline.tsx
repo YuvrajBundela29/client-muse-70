@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   Upload, RefreshCw, Search, Plus, Globe, Copy,
   Mail, MailX, MessageSquare, Phone, CheckCircle2, XCircle, AlertCircle,
-  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown, Instagram,
+  ChevronRight, Zap, MoreHorizontal, TrendingUp, Crown, Instagram, MessageCircle, Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { enrichLead } from "@/lib/enrich-lead";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 
 const STATUS_OPTIONS = [
   { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, color: "text-muted-foreground", bg: "bg-muted/30", dot: "bg-muted-foreground" },
@@ -245,6 +246,7 @@ export default function Pipeline() {
                               <Instagram className="h-2.5 w-2.5" /> IG
                             </a>
                           )}
+                          <WhatsAppButton phone={entry.lead.phone} businessName={entry.lead.business_name} />
                           {!entry.lead.email && !entry.lead.phone && !entry.lead.website && !entry.lead.instagram_url && (
                             <span className="text-[9px] text-muted-foreground/50 italic">No contact info</span>
                           )}

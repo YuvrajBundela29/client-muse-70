@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { I18nProvider } from "@/lib/i18n";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DashboardLayout } from "@/components/shared/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -16,7 +17,9 @@ import Results from "./pages/Results";
 import History from "./pages/History";
 import Pipeline from "./pages/Pipeline";
 import ClientIntelligence from "./pages/ClientIntelligence";
-
+import Admin from "./pages/Admin";
+import Portfolio from "./pages/Portfolio";
+import ClientPortal from "./pages/ClientPortal";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
@@ -40,47 +43,53 @@ function ProtectedWithLayout({ children }: { children: React.ReactNode }) {
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              {/* Public */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/login" element={<Navigate to="/auth" replace />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/signup" element={<Navigate to="/auth" replace />} />
+      <I18nProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                {/* Public */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/login" element={<Navigate to="/auth" replace />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/signup" element={<Navigate to="/auth" replace />} />
 
-              {/* Onboarding (protected but no sidebar) */}
-              <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
+                {/* Public pages */}
+                <Route path="/portfolio/:id" element={<Portfolio />} />
+                <Route path="/portal/:token" element={<ClientPortal />} />
 
-              {/* Protected with sidebar layout */}
-              <Route path="/dashboard" element={<ProtectedWithLayout><Dashboard /></ProtectedWithLayout>} />
-              <Route path="/search" element={<ProtectedWithLayout><SearchIntake /></ProtectedWithLayout>} />
-              <Route path="/results" element={<ProtectedWithLayout><Results /></ProtectedWithLayout>} />
-              <Route path="/saved" element={<Navigate to="/history" replace />} />
-              <Route path="/history" element={<ProtectedWithLayout><History /></ProtectedWithLayout>} />
-              <Route path="/pipeline" element={<ProtectedWithLayout><Pipeline /></ProtectedWithLayout>} />
-              <Route path="/pipeline/:id" element={<ProtectedWithLayout><ClientIntelligence /></ProtectedWithLayout>} />
-              
-              <Route path="/analytics" element={<ProtectedWithLayout><Analytics /></ProtectedWithLayout>} />
-              <Route path="/settings" element={<ProtectedWithLayout><Settings /></ProtectedWithLayout>} />
-              <Route path="/referrals" element={<ProtectedWithLayout><Referrals /></ProtectedWithLayout>} />
-              <Route path="/saved-searches" element={<Navigate to="/history" replace />} />
-              <Route path="/upgrade" element={<ProtectedWithLayout><Upgrade /></ProtectedWithLayout>} />
+                {/* Onboarding (protected but no sidebar) */}
+                <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
 
-              {/* Redirects */}
-              <Route path="/finder" element={<Navigate to="/search" replace />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-      <CookieConsent />
+                {/* Protected with sidebar layout */}
+                <Route path="/dashboard" element={<ProtectedWithLayout><Dashboard /></ProtectedWithLayout>} />
+                <Route path="/search" element={<ProtectedWithLayout><SearchIntake /></ProtectedWithLayout>} />
+                <Route path="/results" element={<ProtectedWithLayout><Results /></ProtectedWithLayout>} />
+                <Route path="/saved" element={<Navigate to="/history" replace />} />
+                <Route path="/history" element={<ProtectedWithLayout><History /></ProtectedWithLayout>} />
+                <Route path="/pipeline" element={<ProtectedWithLayout><Pipeline /></ProtectedWithLayout>} />
+                <Route path="/pipeline/:id" element={<ProtectedWithLayout><ClientIntelligence /></ProtectedWithLayout>} />
+                <Route path="/admin" element={<ProtectedWithLayout><Admin /></ProtectedWithLayout>} />
+                <Route path="/analytics" element={<ProtectedWithLayout><Analytics /></ProtectedWithLayout>} />
+                <Route path="/settings" element={<ProtectedWithLayout><Settings /></ProtectedWithLayout>} />
+                <Route path="/referrals" element={<ProtectedWithLayout><Referrals /></ProtectedWithLayout>} />
+                <Route path="/saved-searches" element={<Navigate to="/history" replace />} />
+                <Route path="/upgrade" element={<ProtectedWithLayout><Upgrade /></ProtectedWithLayout>} />
+
+                {/* Redirects */}
+                <Route path="/finder" element={<Navigate to="/search" replace />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+        <CookieConsent />
+      </I18nProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );

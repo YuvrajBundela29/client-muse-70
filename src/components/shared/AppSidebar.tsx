@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Search, LayoutDashboard, Clock, GitBranch,
-  LogOut, BarChart3, Settings, Zap, Gift, Crown, Diamond,
+  LogOut, BarChart3, Settings, Zap, Gift, Crown, Diamond, ShieldCheck,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 import { NavLink } from "@/components/NavLink";
@@ -27,6 +27,7 @@ const mainItems = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Referrals", url: "/referrals", icon: Gift },
   { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Admin", url: "/admin", icon: ShieldCheck, adminOnly: true },
 ];
 
 function UserAvatar({ email }: { email: string }) {
@@ -64,11 +65,15 @@ export function AppSidebar() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [plan, setPlan] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("plan").eq("id", user.id).single().then(({ data }) => {
       if (data) setPlan(data.plan);
+    });
+    (supabase.rpc as any)("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }: any) => {
+      setIsAdmin(data === true);
     });
   }, [user]);
 
@@ -101,7 +106,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="px-2 space-y-0.5">
-              {mainItems.map((item) => {
+              {mainItems.filter(item => !(item as any).adminOnly || isAdmin).map((item) => {
                 const isActive = location.pathname === item.url || location.pathname.startsWith(item.url + "/");
                 return (
                   <SidebarMenuItem key={item.title}>
