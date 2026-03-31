@@ -8,6 +8,7 @@ const corsHeaders = {
 // Plan credit mappings
 const PLAN_CREDITS: Record<string, number> = {
   trial: 25,
+  micro: 50,
   starter: 200,
   pro: 600,
   elite: 99999,
