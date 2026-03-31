@@ -46,7 +46,7 @@ const plans = [
     ],
     cta: "Start Free Trial",
     popular: false,
-    roiNote: "Most users close ₹15K+ deals in week 1",
+    roiNote: null,
     dailyCost: null,
     bonuses: null,
   },
