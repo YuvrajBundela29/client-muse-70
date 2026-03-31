@@ -462,7 +462,7 @@ export default function Upgrade() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto pb-24">
-      <LiveSignupPopup />
+      {/* LiveSignupPopup removed */}
 
       {/* ── Launch Offer Banner ── */}
       <motion.div
