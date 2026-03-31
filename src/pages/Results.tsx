@@ -58,7 +58,7 @@ export default function Results() {
           .single();
 
         if (historyEntry?.results_json && Array.isArray(historyEntry.results_json) && historyEntry.results_json.length > 0) {
-          const rawLeads = historyEntry.results_json as Lead[];
+          const rawLeads = historyEntry.results_json as unknown as Lead[];
           setLeads(rawLeads.map(enrichLead));
           setLoading(false);
           return;
