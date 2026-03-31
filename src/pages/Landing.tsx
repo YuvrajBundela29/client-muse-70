@@ -53,21 +53,6 @@ const faq = [
   { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure. We never see your card details." },
 ];
 
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(current));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target]);
-  return <>{count.toLocaleString("en-IN")}{suffix}</>;
-}
 
 export default function Landing() {
   const [testIdx, setTestIdx] = useState(0);
