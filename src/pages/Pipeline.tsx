@@ -246,6 +246,7 @@ export default function Pipeline() {
                               <Instagram className="h-2.5 w-2.5" /> IG
                             </a>
                           )}
+                          <WhatsAppButton phone={entry.lead.phone} businessName={entry.lead.business_name} />
                           {!entry.lead.email && !entry.lead.phone && !entry.lead.website && !entry.lead.instagram_url && (
                             <span className="text-[9px] text-muted-foreground/50 italic">No contact info</span>
                           )}

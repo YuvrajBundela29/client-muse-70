@@ -50,7 +50,7 @@ export default function ClientPortal() {
 
   const loadPortal = async () => {
     const { data: link, error } = await supabase
-      .from("client_portal_links")
+      .from("client_portal_links" as any)
       .select("id, message, is_active, user_id, lead_id")
       .eq("token", token)
       .eq("is_active", true)
