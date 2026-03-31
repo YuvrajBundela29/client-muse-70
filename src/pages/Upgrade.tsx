@@ -386,20 +386,14 @@ function FAQSection() {
 function FeatureComparisonTable() {
   const features = [
     { name: "Monthly Credits", trial: "25 one-time", micro: "50", starter: "200", pro: "600", elite: "Unlimited" },
-    { name: "AI Cold Emails", trial: "—", micro: "5/mo", starter: "20/mo", pro: "Unlimited", elite: "Unlimited" },
-    { name: "Pipeline Board", trial: "3-stage", micro: "5-stage", starter: "6-stage", pro: "6-stage", elite: "6-stage" },
-    { name: "Search History", trial: "—", micro: "14 days", starter: "30 days", pro: "Unlimited", elite: "Unlimited" },
-    { name: "CSV Export", trial: "—", micro: "—", starter: "✓", pro: "✓", elite: "✓" },
-    { name: "Priority Search", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
-    { name: "Competitor Alerts", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
-    { name: "Follow-up Automation", trial: "—", micro: "—", starter: "—", pro: "3-touch", elite: "Unlimited" },
-    { name: "Win Probability", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
-    { name: "Saved Searches & Alerts", trial: "—", micro: "—", starter: "—", pro: "✓", elite: "✓" },
-    { name: "AI Voice Calling", trial: "—", micro: "—", starter: "—", pro: "—", elite: "20/mo" },
-    { name: "Revenue Forecasting", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
-    { name: "WhatsApp Auto", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
-    { name: "Dedicated Manager", trial: "—", micro: "—", starter: "—", pro: "—", elite: "✓" },
-    { name: "Support", trial: "Email", micro: "Email 48hr", starter: "Email 24hr", pro: "WhatsApp 2hr", elite: "Priority 1hr" },
+    { name: "AI Lead Search", trial: "✓", micro: "✓", starter: "✓", pro: "✓", elite: "✓" },
+    { name: "AI Intelligence Reports", trial: "✓", micro: "✓", starter: "✓", pro: "✓", elite: "Unlimited" },
+    { name: "AI Cold Emails", trial: "✓", micro: "✓", starter: "✓", pro: "Unlimited", elite: "Unlimited" },
+    { name: "Pipeline Board", trial: "✓", micro: "✓", starter: "✓", pro: "✓", elite: "✓" },
+    { name: "Search History", trial: "✓", micro: "✓", starter: "✓", pro: "✓", elite: "✓" },
+    { name: "Saved Searches & Alerts", trial: "—", micro: "—", starter: "✓", pro: "✓", elite: "✓" },
+    { name: "Full Analytics", trial: "Basic", micro: "Basic", starter: "Basic", pro: "✓", elite: "✓" },
+    { name: "Support", trial: "Email", micro: "Email", starter: "Email 24hr", pro: "Priority", elite: "Priority 2hr" },
   ];
 
   return (
