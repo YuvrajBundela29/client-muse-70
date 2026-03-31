@@ -27,6 +27,7 @@ const mainItems = [
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Referrals", url: "/referrals", icon: Gift },
   { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Admin", url: "/admin", icon: ShieldCheck, adminOnly: true },
 ];
 
 function UserAvatar({ email }: { email: string }) {

@@ -18,6 +18,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <header className="h-12 flex items-center border-b border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.8)] backdrop-blur-[20px] px-4 shrink-0 sticky top-0 z-40">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-3">
+              <LanguageToggle />
               <kbd className="hidden sm:inline-flex items-center gap-1 rounded-md border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] px-2 py-0.5 text-[10px] font-mono text-muted-foreground">
                 ⌘K
               </kbd>

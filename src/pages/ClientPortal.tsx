@@ -102,10 +102,10 @@ export default function ClientPortal() {
 
     setSending(true);
     try {
-      const { error } = await supabase.from("client_responses").insert({
+      const { error } = await supabase.from("client_responses" as any).insert({
         portal_link_id: portal!.id,
         ...parsed.data,
-      });
+      } as any);
       if (error) throw error;
       setSubmitted(true);
       toast.success("Response sent successfully!");
