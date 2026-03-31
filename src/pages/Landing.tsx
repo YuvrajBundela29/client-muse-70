@@ -309,9 +309,9 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              What <span className="text-gradient">Early Users</span> Are Saying
+              What <span className="text-gradient">{dbTestimonials.length > 0 ? "Users" : "Early Users"}</span> Are Saying
             </h2>
-            <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>
+            {dbTestimonials.length === 0 && <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>}
           </motion.div>
 
           {/* Testimonial carousel */}
@@ -320,14 +320,14 @@ export default function Landing() {
               <motion.div key={testIdx} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                 className="glass-card p-8 text-center">
                 <div className="flex items-center justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-[#F59E0B] text-[#F59E0B]" />)}
+                  {[...Array(displayTestimonials[testIdx]?.stars || 5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-[#F59E0B] text-[#F59E0B]" />)}
                 </div>
-                <blockquote className="mb-4 text-lg font-medium italic leading-relaxed">"{testimonials[testIdx].text}"</blockquote>
-                <p className="text-sm"><span className="font-semibold text-[#F0F4FF]">{testimonials[testIdx].name}</span> — <span className="text-[#8892B0]">{testimonials[testIdx].city}</span></p>
+                <blockquote className="mb-4 text-lg font-medium italic leading-relaxed">"{displayTestimonials[testIdx]?.text}"</blockquote>
+                <p className="text-sm"><span className="font-semibold text-[#F0F4FF]">{displayTestimonials[testIdx]?.name}</span> — <span className="text-[#8892B0]">{displayTestimonials[testIdx]?.city}</span></p>
               </motion.div>
             </AnimatePresence>
             <div className="flex justify-center gap-2 mt-4">
-              {testimonials.map((_, i) => (
+              {displayTestimonials.map((_, i) => (
                 <button key={i} onClick={() => setTestIdx(i)} className={`h-2 rounded-full transition-all ${i === testIdx ? "w-8 bg-[#5B5FEF]" : "w-2 bg-[rgba(255,255,255,0.1)]"}`} />
               ))}
             </div>
