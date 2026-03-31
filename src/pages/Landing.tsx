@@ -57,11 +57,55 @@ const faq = [
 export default function Landing() {
   const [testIdx, setTestIdx] = useState(0);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [dbTestimonials, setDbTestimonials] = useState<typeof testimonials>([]);
+
+  // A/B variant assignment
+  const [variant] = useState(() => {
+    const saved = localStorage.getItem("ab_variant");
+    if (saved) return saved;
+    const v = Math.random() < 0.5 ? "A" : "B";
+    localStorage.setItem("ab_variant", v);
+    return v;
+  });
 
   useEffect(() => {
-    const interval = setInterval(() => setTestIdx((i) => (i + 1) % testimonials.length), 6000);
+    // Track page view for A/B
+    supabase.from("ab_events" as any).insert({ variant, event_type: "view" } as any).then(() => {});
+
+    // Fetch real testimonials
+    supabase.from("testimonials" as any).select("*").eq("is_approved", true).order("created_at", { ascending: false }).limit(10).then(({ data }: any) => {
+      if (data && data.length > 0) {
+        setDbTestimonials(data.map((t: any) => ({
+          name: t.name,
+          city: t.role || "Freelancer",
+          text: t.content,
+          stars: t.rating || 5,
+        })));
+      }
+    });
+
+    const interval = setInterval(() => setTestIdx((i) => (i + 1) % (displayTestimonials.length || 1)), 6000);
     return () => clearInterval(interval);
   }, []);
+
+  const displayTestimonials = dbTestimonials.length > 0 ? dbTestimonials : testimonials;
+
+  // A/B variant: Variant B has a different hero headline
+  const heroTitle = variant === "B" ? (
+    <>
+      AI Finds Clients.
+      <br />
+      <span className="text-gradient">You Close Deals.</span>
+    </>
+  ) : (
+    <>
+      Find Your Next Clients
+      <br />
+      <span className="text-gradient">On Autopilot</span>
+      <br />
+      With AI
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-[hsl(228,50%,8%)] text-[#F0F4FF]">
