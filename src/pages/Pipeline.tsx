@@ -14,6 +14,7 @@ import { enrichLead } from "@/lib/enrich-lead";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 
 const STATUS_OPTIONS = [
   { key: "not_contacted", label: "Not Contacted", icon: AlertCircle, color: "text-muted-foreground", bg: "bg-muted/30", dot: "bg-muted-foreground" },
