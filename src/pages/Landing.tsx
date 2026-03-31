@@ -15,20 +15,20 @@ const painPoints = [
   {
     icon: Clock,
     title: "⏰ Time Wasted",
-    stat: "40 hours/month",
-    description: "Finding & researching leads manually = ₹20,000 in lost billable time",
+    stat: "Hours/week",
+    description: "Manually searching Google, LinkedIn, and directories for leads eats your billable time",
   },
   {
     icon: Target,
-    title: "💔 Opportunities Missed",
-    stat: "47 vs 8 leads",
-    description: "Your competitors found 47 leads while you found 8 = ₹3.2L in lost revenue",
+    title: "💔 Missed Opportunities",
+    stat: "Scattered data",
+    description: "Leads are spread across 5+ platforms. Without aggregation, you miss the best ones",
   },
   {
     icon: TrendingDown,
-    title: "📉 Conversion Rate",
-    stat: "2% vs 23%",
-    description: "Cold outreach: 2% response. AI-powered: 23%. You're working 11.5× harder",
+    title: "📉 Generic Outreach",
+    stat: "Low response",
+    description: "Copy-paste pitches get ignored. Personalized AI outreach gets replies",
   },
 ];
 
