@@ -130,7 +130,7 @@ const plans = [
     ],
     cta: "Join Pro — ₹299",
     popular: true,
-    roiNote: "Members average ₹1,24,000 extra in 6 months",
+    roiNote: "600 credits/mo + unlimited AI emails",
     dailyCost: "₹10/day — cost of a samosa, returns of a salary 💰",
     bonuses: null,
   },
