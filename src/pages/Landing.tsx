@@ -393,7 +393,7 @@ export default function Landing() {
               Ready to 10× Your Client Pipeline?
             </h2>
             <p className="mb-6 text-lg text-white/80 max-w-xl mx-auto">
-              Join 12,847 Indian freelancers who stopped struggling and started winning.
+              Start with 25 free credits. No credit card required. See results in minutes.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
               <Link to="/search">
