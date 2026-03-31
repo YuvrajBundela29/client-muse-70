@@ -310,9 +310,9 @@ export default function Landing() {
           {/* Stats banner */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
             {[
-              { label: "Average rating", value: "4.8/5", sub: "1,847 reviews" },
-              { label: "Revenue unlocked", value: "₹142 Cr", sub: "total value" },
-              { label: "Would recommend", value: "94%", sub: "to a friend" },
+              { label: "Data sources", value: "5+", sub: "aggregated APIs" },
+              { label: "AI models", value: "Gemini", sub: "powered analysis" },
+              { label: "Money-back", value: "60 days", sub: "full guarantee" },
             ].map((s) => (
               <div key={s.label} className="glass-card p-4 text-center">
                 <p className="text-2xl font-bold font-mono text-gradient">{s.value}</p>
