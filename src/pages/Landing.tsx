@@ -152,9 +152,9 @@ export default function Landing() {
               </Link>
             </div>
             <p className="mt-4 text-xs text-[#8892B0] flex items-center justify-center gap-3 flex-wrap">
-              <span>⭐ 4.8/5 from 1,847 users</span>
               <span>🔒 Bank-grade security</span>
               <span>✓ No credit card for trial</span>
+              <span>✓ 60-day money-back guarantee</span>
             </p>
           </motion.div>
         </div>
