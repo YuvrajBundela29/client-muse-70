@@ -131,11 +131,11 @@ export default function Landing() {
               Ready or not, the game changed.
             </p>
 
-            {/* Live counters */}
+            {/* Value props */}
             <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm">
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">🔥</span> <span className="font-mono font-bold text-[#F0F4FF]"><AnimatedCounter target={12847} /></span> <span className="text-[#8892B0]">leads found today</span></span>
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">💰</span> <span className="font-mono font-bold text-[#F0F4FF]">₹<AnimatedCounter target={142} /> Cr</span> <span className="text-[#8892B0]">revenue unlocked</span></span>
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">⚡</span> <span className="font-mono font-bold text-[#F0F4FF]"><AnimatedCounter target={247} /></span> <span className="text-[#8892B0]">joined today</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">🔥</span> <span className="font-mono font-bold text-[#F0F4FF]">5 Data Sources</span> <span className="text-[#8892B0]">aggregated</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">⚡</span> <span className="font-mono font-bold text-[#F0F4FF]">AI-Powered</span> <span className="text-[#8892B0]">lead scoring</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">💰</span> <span className="font-mono font-bold text-[#F0F4FF]">₹50/mo</span> <span className="text-[#8892B0]">starting price</span></span>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
