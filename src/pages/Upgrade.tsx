@@ -157,7 +157,7 @@ const plans = [
     ],
     cta: "Go Elite — ₹799",
     popular: false,
-    roiNote: "Elite members average ₹8.7L additional revenue annually",
+    roiNote: "Unlimited everything — no limits ever",
     dailyCost: "₹26/day — less than a pizza for an empire 🍕",
     bonuses: null,
   },
