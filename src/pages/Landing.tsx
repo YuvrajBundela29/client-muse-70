@@ -269,8 +269,9 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              What Our <span className="text-gradient">Early Users</span> Are Saying
+              What <span className="text-gradient">Early Users</span> Are Saying
             </h2>
+            <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>
           </motion.div>
 
           {/* Testimonial carousel */}
