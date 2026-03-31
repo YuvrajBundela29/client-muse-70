@@ -53,21 +53,6 @@ const faq = [
   { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure. We never see your card details." },
 ];
 
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(current));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target]);
-  return <>{count.toLocaleString("en-IN")}{suffix}</>;
-}
 
 export default function Landing() {
   const [testIdx, setTestIdx] = useState(0);
@@ -131,11 +116,11 @@ export default function Landing() {
               Ready or not, the game changed.
             </p>
 
-            {/* Live counters */}
+            {/* Value props */}
             <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm">
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">🔥</span> <span className="font-mono font-bold text-[#F0F4FF]"><AnimatedCounter target={12847} /></span> <span className="text-[#8892B0]">leads found today</span></span>
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">💰</span> <span className="font-mono font-bold text-[#F0F4FF]">₹<AnimatedCounter target={142} /> Cr</span> <span className="text-[#8892B0]">revenue unlocked</span></span>
-              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">⚡</span> <span className="font-mono font-bold text-[#F0F4FF]"><AnimatedCounter target={247} /></span> <span className="text-[#8892B0]">joined today</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">🔥</span> <span className="font-mono font-bold text-[#F0F4FF]">5 Data Sources</span> <span className="text-[#8892B0]">aggregated</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">⚡</span> <span className="font-mono font-bold text-[#F0F4FF]">AI-Powered</span> <span className="text-[#8892B0]">lead scoring</span></span>
+              <span className="flex items-center gap-1.5"><span className="text-[#F59E0B]">💰</span> <span className="font-mono font-bold text-[#F0F4FF]">₹50/mo</span> <span className="text-[#8892B0]">starting price</span></span>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -152,9 +137,9 @@ export default function Landing() {
               </Link>
             </div>
             <p className="mt-4 text-xs text-[#8892B0] flex items-center justify-center gap-3 flex-wrap">
-              <span>⭐ 4.8/5 from 1,847 users</span>
               <span>🔒 Bank-grade security</span>
               <span>✓ No credit card for trial</span>
+              <span>✓ 60-day money-back guarantee</span>
             </p>
           </motion.div>
         </div>
@@ -284,7 +269,7 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              Join <span className="text-gradient">12,847</span> Indian Freelancers Winning
+              What Our <span className="text-gradient">Early Users</span> Are Saying
             </h2>
           </motion.div>
 
@@ -310,9 +295,9 @@ export default function Landing() {
           {/* Stats banner */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
             {[
-              { label: "Average rating", value: "4.8/5", sub: "1,847 reviews" },
-              { label: "Revenue unlocked", value: "₹142 Cr", sub: "total value" },
-              { label: "Would recommend", value: "94%", sub: "to a friend" },
+              { label: "Data sources", value: "5+", sub: "aggregated APIs" },
+              { label: "AI models", value: "Gemini", sub: "powered analysis" },
+              { label: "Money-back", value: "60 days", sub: "full guarantee" },
             ].map((s) => (
               <div key={s.label} className="glass-card p-4 text-center">
                 <p className="text-2xl font-bold font-mono text-gradient">{s.value}</p>

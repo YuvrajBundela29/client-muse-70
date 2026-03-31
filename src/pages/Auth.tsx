@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Mail, Lock, User, ArrowRight, Loader2, Gift } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2, Gift, ArrowLeft } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export default function Auth() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -22,6 +22,17 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (mode === "forgot") {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) toast.error(error.message);
+      else toast.success("Password reset link sent! Check your email.");
+      setLoading(false);
+      return;
+    }
+
     if (mode === "signup") {
       const { error } = await signUp(email, password, fullName);
       if (error) {
@@ -72,7 +83,7 @@ export default function Auth() {
             <span className="text-2xl font-bold text-gradient">AutoClient AI</span>
           </div>
           <p className="text-[#8892B0] text-sm">
-            {mode === "login" ? "Welcome back. Let's find clients." : "Start finding clients in 60 seconds."}
+            {mode === "login" ? "Welcome back. Let's find clients." : mode === "signup" ? "Start finding clients in 60 seconds." : "Reset your password"}
           </p>
         </div>
 
@@ -88,10 +99,12 @@ export default function Auth() {
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-11 glass-input" required />
             </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-11 glass-input" required minLength={6} />
-            </div>
+            {mode !== "forgot" && (
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-11 glass-input" required minLength={6} />
+              </div>
+            )}
             {mode === "signup" && (
               <div className="relative">
                 <Gift className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -100,18 +113,37 @@ export default function Auth() {
             )}
             <Button type="submit" className="w-full gap-2 h-11 bg-gradient-to-r from-[#5B5FEF] to-[#7C3AED] hover:brightness-110 shadow-glow" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-              {mode === "login" ? "Sign In" : "Create Account"}
+              {mode === "login" ? "Sign In" : mode === "signup" ? "Create Account" : "Send Reset Link"}
             </Button>
           </form>
 
-          <div className="mt-5 text-center">
-            <button
-              type="button"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              className="text-sm text-[#8892B0] hover:text-[#5B5FEF] transition-colors"
-            >
-              {mode === "login" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-            </button>
+          <div className="mt-5 text-center space-y-2">
+            {mode === "login" && (
+              <button
+                type="button"
+                onClick={() => setMode("forgot")}
+                className="block w-full text-sm text-[#8892B0] hover:text-[#5B5FEF] transition-colors"
+              >
+                Forgot your password?
+              </button>
+            )}
+            {mode === "forgot" ? (
+              <button
+                type="button"
+                onClick={() => setMode("login")}
+                className="text-sm text-[#8892B0] hover:text-[#5B5FEF] transition-colors flex items-center gap-1 mx-auto"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" /> Back to login
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                className="text-sm text-[#8892B0] hover:text-[#5B5FEF] transition-colors"
+              >
+                {mode === "login" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

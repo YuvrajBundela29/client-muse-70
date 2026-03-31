@@ -98,51 +98,86 @@ export default function Analytics() {
         ))}
       </motion.div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="glass-card p-5 rounded-2xl">
-          <h3 className="section-label mb-4">Leads Added Per Week</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={weeklyData}>
-              <defs>
-                <linearGradient id="leadsFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#5B5FEF" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#5B5FEF" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-              <XAxis dataKey="week" tick={{ fill: "#8892B0", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="leads" stroke="#5B5FEF" strokeWidth={2} fill="url(#leadsFill)" isAnimationActive animationDuration={600} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+      {stats.totalLeads === 0 && stats.totalSearches === 0 ? (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-20 text-center">
+          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <BarChart3 className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="mb-2 text-lg font-medium">No analytics data yet</h2>
+          <p className="mb-6 text-sm text-muted-foreground max-w-md mx-auto">
+            Run your first search and add leads to the pipeline to start seeing analytics here.
+          </p>
+          <a href="/search">
+            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+              <Search className="h-4 w-4" /> Find Your First Leads
+            </button>
+          </a>
+        </motion.div>
+      ) : (
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="glass-card p-5 rounded-2xl">
+            <h3 className="section-label mb-4">Leads Added Per Week</h3>
+            {weeklyData.every(d => d.leads === 0) ? (
+              <div className="flex items-center justify-center h-[250px] text-sm text-muted-foreground">
+                No lead data yet — run searches to populate this chart
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={weeklyData}>
+                  <defs>
+                    <linearGradient id="leadsFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#5B5FEF" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#5B5FEF" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+                  <XAxis dataKey="week" tick={{ fill: "#8892B0", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="leads" stroke="#5B5FEF" strokeWidth={2} fill="url(#leadsFill)" isAnimationActive animationDuration={600} />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
 
-        <div className="glass-card p-5 rounded-2xl">
-          <h3 className="section-label mb-4">Pipeline Distribution</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie data={pipelineData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" label={({ name }) => name} isAnimationActive animationDuration={800}>
-                {pipelineData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+          <div className="glass-card p-5 rounded-2xl">
+            <h3 className="section-label mb-4">Pipeline Distribution</h3>
+            {pipelineData.length === 0 ? (
+              <div className="flex items-center justify-center h-[250px] text-sm text-muted-foreground">
+                No pipeline data yet — add leads to your pipeline
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie data={pipelineData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" label={({ name }) => name} isAnimationActive animationDuration={800}>
+                    {pipelineData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
 
-        <div className="lg:col-span-2 glass-card p-5 rounded-2xl">
-          <h3 className="section-label mb-4">Leads by Industry</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={industryData}>
-              <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fill: "#8892B0", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="count" fill="#5B5FEF" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={600} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="lg:col-span-2 glass-card p-5 rounded-2xl">
+            <h3 className="section-label mb-4">Leads by Industry</h3>
+            {industryData.length === 0 ? (
+              <div className="flex items-center justify-center h-[250px] text-sm text-muted-foreground">
+                No industry data yet — discover leads across different niches
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={industryData}>
+                  <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+                  <XAxis dataKey="name" tick={{ fill: "#8892B0", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "#8892B0", fontSize: 11 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" fill="#5B5FEF" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={600} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

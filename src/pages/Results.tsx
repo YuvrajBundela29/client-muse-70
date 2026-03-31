@@ -6,13 +6,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fetchLeads } from "@/lib/lead-api";
 import { Lead, EnrichedLead } from "@/types/lead";
 import { enrichLead } from "@/lib/enrich-lead";
 import { LeadIntelCard } from "@/components/results/LeadIntelCard";
 import { LeadSkeleton } from "@/components/results/LeadSkeleton";
 import { toast } from "sonner";
 import { useSessionStore } from "@/lib/session-store";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 type SortKey = "match" | "recent" | "urgency";
 
@@ -31,7 +32,7 @@ function exportAllCSV(leads: EnrichedLead[]) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = "client-muse-intelligence-report.csv"; a.click();
+  a.href = url; a.download = "autoclient-intelligence-report.csv"; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -41,24 +42,53 @@ export default function Results() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("match");
   const { lastSearch } = useSessionStore();
+  const { user } = useAuth();
 
   const load = async () => {
     setLoading(true);
     try {
-      const data = await fetchLeads();
+      // First try to load results from the most recent search_history entry
+      if (user) {
+        const { data: historyEntry } = await supabase
+          .from("search_history")
+          .select("results_json")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (historyEntry?.results_json && Array.isArray(historyEntry.results_json) && historyEntry.results_json.length > 0) {
+          const rawLeads = historyEntry.results_json as unknown as Lead[];
+          setLeads(rawLeads.map(enrichLead));
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fallback: load from leads table filtered by last search
+      const { data, error } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("user_id", user?.id || "")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (error) throw new Error(error.message);
+
+      const allLeads = (data || []) as Lead[];
       const filtered = lastSearch
-        ? data.filter((l) => {
+        ? allLeads.filter((l) => {
             const matchIndustry = l.industry.toLowerCase().includes(lastSearch.industry.toLowerCase());
             const matchCity = l.city.toLowerCase().includes(lastSearch.location.toLowerCase());
             return matchIndustry || matchCity;
           })
-        : data;
+        : allLeads;
       setLeads(filtered.map(enrichLead));
     } catch (err: any) { toast.error(err.message); }
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [user]);
 
   const handleStatusChange = (id: string, status: Lead["status"]) => {
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
@@ -92,6 +122,11 @@ export default function Results() {
           </h1>
           <p className="text-sm text-muted-foreground font-mono">
             {filtered.length} {filtered.length === 1 ? "lead" : "leads"} analyzed
+            {lastSearch && (
+              <span className="ml-2 text-primary/70">
+                · {lastSearch.industry} in {lastSearch.location}
+              </span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
