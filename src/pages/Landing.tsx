@@ -348,7 +348,7 @@ export default function Landing() {
         <div className="text-center">
           <Link to="/upgrade">
             <Button size="lg" className="gap-2 bg-gradient-to-r from-[#5B5FEF] to-[#7C3AED] hover:brightness-110 shadow-glow">
-              See Full Pricing & Bonuses <ArrowRight className="h-5 w-5" />
+              See Full Pricing <ArrowRight className="h-5 w-5" />
             </Button>
           </Link>
           <p className="text-xs text-[#8892B0] mt-3">🛡️ 60-day money-back guarantee • Cancel anytime</p>
@@ -449,6 +449,7 @@ export default function Landing() {
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
           <span>Made with ❤️ for Indian Freelancers 🇮🇳</span>
         </div>
