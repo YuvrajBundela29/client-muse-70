@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { CommandPalette } from "@/components/shared/CommandPalette";
+import { LanguageToggle } from "@/components/shared/LanguageToggle";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
