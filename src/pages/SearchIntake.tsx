@@ -103,7 +103,7 @@ export default function SearchIntake() {
           location,
           service,
           result_count: leads.length,
-          results_json: leads,
+          results_json: leads as any,
         });
       }
 
