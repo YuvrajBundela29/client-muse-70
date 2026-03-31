@@ -15,10 +15,10 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 /* ── Testimonials ──────────────────────────────────────── */
 const TESTIMONIALS = [
-  { name: "Priya M.", city: "Mumbai", text: "Closed ₹3.2L deal in my first month. The Pro plan intelligence reports are insane.", revenue: "₹3,20,000", avatar: "PM" },
-  { name: "Rahul K.", city: "Pune", text: "Scaled from ₹30K/month to ₹2.1L/month in 4 months. This tool is an unfair advantage.", revenue: "₹2,10,000", avatar: "RK" },
-  { name: "Sneha T.", city: "Bangalore", text: "Found 5 clients in week 1. Now I'm booked for 3 months straight.", revenue: "₹1,45,000", avatar: "ST" },
-  { name: "Amit V.", city: "Delhi", text: "Was skeptical but closed my first client in 5 days. The ROI is unreal.", revenue: "₹85,000", avatar: "AV" },
+  { name: "Early User", city: "Web Designer", text: "The AI intelligence reports helped me understand exactly what to pitch. Much more efficient than manual research.", revenue: "Saved hours", avatar: "EU" },
+  { name: "Beta Tester", city: "Digital Marketer", text: "Searching across 5 data sources in one place is a massive time saver. Love the pipeline CRM.", revenue: "Time saved", avatar: "BT" },
+  { name: "Early Adopter", city: "SEO Consultant", text: "The personalized outreach messages are great starting points. Helps me focus on closing instead of writing.", revenue: "Better leads", avatar: "EA" },
+  { name: "Power User", city: "Freelancer", text: "Having leads auto-synced to the pipeline keeps everything organized. No more spreadsheet chaos.", revenue: "More organized", avatar: "PU" },
 ];
 
 /* ── Plans (INR + Credits) ─────────────────────────────── */
@@ -46,7 +46,7 @@ const plans = [
     ],
     cta: "Start Free Trial",
     popular: false,
-    roiNote: "Most users close ₹15K+ deals in week 1",
+    roiNote: null,
     dailyCost: null,
     bonuses: null,
   },
@@ -74,7 +74,7 @@ const plans = [
     ],
     cta: "Get Started — ₹50",
     popular: false,
-    roiNote: "Close ONE ₹5K gig → 100× ROI",
+    roiNote: "One client covers months of subscription",
     dailyCost: "₹1.6/day — literally the price of a candy 🍬",
     bonuses: null,
   },
@@ -103,7 +103,7 @@ const plans = [
     ],
     cta: "Get Starter — ₹99",
     popular: false,
-    roiNote: "Close ONE ₹10K project → paid for 100 months",
+    roiNote: "200 credits = up to 200 lead searches",
     dailyCost: "₹3.3/day — less than a cutting chai ☕",
     bonuses: null,
   },
@@ -130,7 +130,7 @@ const plans = [
     ],
     cta: "Join Pro — ₹299",
     popular: true,
-    roiNote: "Members average ₹1,24,000 extra in 6 months",
+    roiNote: "600 credits/mo + unlimited AI emails",
     dailyCost: "₹10/day — cost of a samosa, returns of a salary 💰",
     bonuses: null,
   },
@@ -157,7 +157,7 @@ const plans = [
     ],
     cta: "Go Elite — ₹799",
     popular: false,
-    roiNote: "Elite members average ₹8.7L additional revenue annually",
+    roiNote: "Unlimited everything — no limits ever",
     dailyCost: "₹26/day — less than a pizza for an empire 🍕",
     bonuses: null,
   },
@@ -175,7 +175,7 @@ const CREDIT_PACKS = [
 /* ── FAQ ───────────────────────────────────────────────── */
 const FAQ = [
   { q: "I'm not tech-savvy. Is this complicated?", a: "If you can use WhatsApp, you can use this. Average setup: 5 minutes. We have Hindi video tutorials and live support." },
-  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. Plus, we'll give you ₹500 for your time. Less than 2% ask for refunds." },
+  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. The tool helps you find and reach potential clients faster, but closing depends on your skills and offer." },
   { q: "How is this different from just Googling?", a: "Google: 2 hours for 10 outdated leads. AutoClient AI: 5 minutes for 50 verified leads with contact info and AI intelligence. That's 288× faster." },
   { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available data. Email accuracy: 94%. Phone accuracy: 87%. We verify everything." },
   { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel with one click. Keep unused credits for 90 days." },
@@ -210,44 +210,7 @@ function CountdownTimer() {
 const SIGNUP_NAMES = ["Priya R.", "Amit T.", "Sneha L.", "Vikram C.", "Kavita K.", "Rohan B.", "Neha J.", "Arjun S."];
 const SIGNUP_CITIES = ["Mumbai", "Delhi", "Bangalore", "Pune", "Hyderabad", "Chennai", "Kolkata", "Jaipur"];
 
-function LiveSignupPopup() {
-  const [show, setShow] = useState(false);
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-
-  useEffect(() => {
-    const trigger = () => {
-      setName(SIGNUP_NAMES[Math.floor(Math.random() * SIGNUP_NAMES.length)]);
-      setCity(SIGNUP_CITIES[Math.floor(Math.random() * SIGNUP_CITIES.length)]);
-      setShow(true);
-      setTimeout(() => setShow(false), 4000);
-    };
-    const interval = setInterval(trigger, 15000);
-    const initial = setTimeout(trigger, 8000);
-    return () => { clearInterval(interval); clearTimeout(initial); };
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          className="fixed bottom-20 left-4 z-[100] rounded-xl bg-card/95 backdrop-blur-lg border border-border p-3 flex items-center gap-3 max-w-[260px] shadow-lg"
-        >
-          <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center shrink-0">
-            <BadgeCheck className="h-4 w-4 text-success" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-foreground">{name} from {city} just upgraded</p>
-            <p className="text-[10px] text-muted-foreground">a few seconds ago</p>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
+/* Live signup popup removed — was showing fabricated notifications */
 
 /* ── Testimonial Carousel ──────────────────────────────── */
 function TestimonialCarousel() {
@@ -275,7 +238,7 @@ function TestimonialCarousel() {
             </div>
           </div>
           <p className="text-sm text-foreground/90 italic mb-2">"{t.text}"</p>
-          <p className="text-xs text-success font-mono font-bold">+{t.revenue} in new revenue</p>
+          <p className="text-xs text-primary font-mono font-bold">{t.revenue}</p>
         </motion.div>
       </AnimatePresence>
       <div className="flex justify-center gap-1.5 mt-4">
@@ -499,7 +462,7 @@ export default function Upgrade() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto pb-24">
-      <LiveSignupPopup />
+      {/* LiveSignupPopup removed */}
 
       {/* ── Launch Offer Banner ── */}
       <motion.div
@@ -522,10 +485,10 @@ export default function Upgrade() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <p className="section-label mb-2">Not a Cost. An Investment.</p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
-            Start at just <span className="text-primary">₹50/month</span> → Average Return: <span className="text-success">₹1,24,000</span> in 6 months
+            Start at just <span className="text-primary">₹50/month</span> — Find Clients Faster With AI
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground">
-            That's up to <span className="font-bold text-warning">2,480× ROI</span>. No hedge fund even comes close.
+            Spend less time searching, more time closing. Plans for every budget.
           </p>
         </motion.div>
 
@@ -546,12 +509,11 @@ export default function Upgrade() {
         </div>
       </div>
 
-      {/* ── Social proof bar ── */}
+      {/* ── Trust bar ── */}
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-muted-foreground mb-6">
-        <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,847+ Indian freelancers</span>
-        <span className="flex items-center gap-1"><Star className="h-3 w-3 text-warning" /> 4.8/5 from 1,847 reviews</span>
         <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> 60-day money-back guarantee</span>
         <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> Bank-grade security</span>
+        <span className="flex items-center gap-1"><Zap className="h-3 w-3 text-primary" /> 5 data sources aggregated</span>
       </div>
 
       {/* ── Value Comparison ── */}
@@ -753,10 +715,9 @@ export default function Upgrade() {
               <Target className="h-5 w-5 text-destructive" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">You're missing 43 qualified leads right now</p>
+              <p className="text-sm font-semibold">Upgrade to unlock all features</p>
               <p className="text-xs text-muted-foreground">
-                Free users miss <span className="text-destructive font-bold">87%</span> of the best opportunities.
-                Your competitors <span className="text-warning font-medium">ARE</span> using paid plans.
+                Free users have limited credits. Upgrade for more leads, AI emails, and analytics.
               </p>
             </div>
             <Button
@@ -784,10 +745,10 @@ export default function Upgrade() {
           </div>
           <h3 className="text-lg font-bold mb-2">60-Day Money-Back Guarantee</h3>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-2">
-            Close a client within 60 days, or we'll give you a <span className="font-bold text-foreground">full refund + ₹500</span> for wasting your time.
+            Try any paid plan risk-free. If you're not satisfied within 60 days, we'll give you a <span className="font-bold text-foreground">full refund</span>.
           </p>
           <p className="text-[11px] text-success font-medium">
-            Less than 2% request refunds — this system works.
+            No questions asked — we stand behind our product.
           </p>
         </div>
       </motion.div>
@@ -803,16 +764,16 @@ export default function Upgrade() {
           <div className="glass-card p-6 border-primary/15 inline-block">
             <p className="text-xs text-muted-foreground mb-1">
               <Lock className="h-3 w-3 inline -mt-0.5 mr-1" />
-              1,243 users locked in early adopter pricing
+              Early-access pricing available for a limited time
             </p>
             <p className="text-sm font-semibold mb-3">
-              Lock in <span className="text-primary">₹299/month forever</span> before it increases to ₹799
+              Lock in <span className="text-primary">current pricing</span> before prices increase
             </p>
             <Button
               onClick={() => handleUpgrade("pro", 299)}
               className="gap-2 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow"
             >
-              <Lock className="h-4 w-4" /> Lock In My Price
+              <Lock className="h-4 w-4" /> Get Pro Now
             </Button>
           </div>
         </motion.div>

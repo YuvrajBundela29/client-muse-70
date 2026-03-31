@@ -15,20 +15,20 @@ const painPoints = [
   {
     icon: Clock,
     title: "⏰ Time Wasted",
-    stat: "40 hours/month",
-    description: "Finding & researching leads manually = ₹20,000 in lost billable time",
+    stat: "Hours/week",
+    description: "Manually searching Google, LinkedIn, and directories for leads eats your billable time",
   },
   {
     icon: Target,
-    title: "💔 Opportunities Missed",
-    stat: "47 vs 8 leads",
-    description: "Your competitors found 47 leads while you found 8 = ₹3.2L in lost revenue",
+    title: "💔 Missed Opportunities",
+    stat: "Scattered data",
+    description: "Leads are spread across 5+ platforms. Without aggregation, you miss the best ones",
   },
   {
     icon: TrendingDown,
-    title: "📉 Conversion Rate",
-    stat: "2% vs 23%",
-    description: "Cold outreach: 2% response. AI-powered: 23%. You're working 11.5× harder",
+    title: "📉 Generic Outreach",
+    stat: "Low response",
+    description: "Copy-paste pitches get ignored. Personalized AI outreach gets replies",
   },
 ];
 
@@ -39,16 +39,16 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Priya M.", city: "Web Designer, Mumbai", text: "Closed ₹3.2L deal in my first month. I was skeptical. Then I found 5 clients in week 1. Now I'm booked for 3 months.", stars: 5 },
-  { name: "Rahul K.", city: "Digital Marketer, Pune", text: "From ₹30K/month to ₹1.8L/month in 90 days. The intelligence reports are insane. I know exactly what to say to win every pitch.", stars: 5 },
-  { name: "Sneha T.", city: "Social Media Manager, Bangalore", text: "The AI emails get me 5× more replies than my manual outreach. This tool paid for itself on day 3.", stars: 5 },
+  { name: "Early User", city: "Web Designer", text: "The AI-generated outreach messages saved me hours of writing cold emails. The intelligence reports gave me confidence going into pitches.", stars: 5 },
+  { name: "Beta Tester", city: "Digital Marketer", text: "Being able to search across multiple data sources in one place is a game changer. Much faster than manual Googling.", stars: 5 },
+  { name: "Early Adopter", city: "Social Media Manager", text: "The pipeline CRM keeps me organized. I can see all my leads in one place and track where each one is in my outreach process.", stars: 5 },
 ];
 
 const faq = [
   { q: "I'm not tech-savvy. Is this complicated?", a: "If you can use WhatsApp, you can use this. Average setup: 5 minutes. We have Hindi video tutorials and live support." },
-  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. Plus, we'll give you ₹500 for your time. Less than 2% ask for refunds." },
-  { q: "How is this different from just Googling?", a: "Google: 2 hours for 10 outdated leads. AutoClient AI: 5 minutes for 50 verified leads with contact info. That's 288× faster." },
-  { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available data. Email accuracy: 94%. Phone accuracy: 87%." },
+  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. We're confident in the value because the tool saves you hours of manual searching every week." },
+  { q: "How is this different from just Googling?", a: "We aggregate 5 data sources simultaneously and use AI to score, rank, and generate personalized outreach — saving you hours of manual work." },
+  { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available business data from search engines and job boards. Data quality depends on what's publicly available." },
   { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel with one click. Keep unused credits for 90 days." },
   { q: "What payment methods do you accept?", a: "UPI, Credit/Debit cards, Net Banking, Wallets. 100% secure. We never see your card details." },
 ];
@@ -104,11 +104,11 @@ export default function Landing() {
               Get 25 free credits — no card required
             </motion.div>
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl lg:text-7xl">
-              Indian Freelancers Are Making
+              Find Your Next Clients
               <br />
-              <span className="text-gradient">₹2.4 Lakhs Extra</span>
+              <span className="text-gradient">On Autopilot</span>
               <br />
-              This Month
+              With AI
             </h1>
             <p className="mb-10 text-lg text-[#8892B0] md:text-xl max-w-2xl mx-auto">
               While you're cold-calling 50 leads, AI is finding you
@@ -145,7 +145,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <LiveActivity />
+      {/* LiveActivity removed — was showing fabricated messages */}
 
       {/* ── LOSS AVERSION (Pain Points) ── */}
       <section className="container py-28">
@@ -269,8 +269,9 @@ export default function Landing() {
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mx-auto mb-12 max-w-lg text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-              What Our <span className="text-gradient">Early Users</span> Are Saying
+              What <span className="text-gradient">Early Users</span> Are Saying
             </h2>
+            <p className="text-xs text-[#8892B0] italic">* Illustrative examples based on early feedback</p>
           </motion.div>
 
           {/* Testimonial carousel */}
@@ -340,26 +341,18 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FOMO AMPLIFIER ── */}
-      <section className="border-y border-[rgba(255,255,255,0.06)] bg-gradient-to-br from-destructive/5 to-[#F59E0B]/5 py-20">
+      {/* ── CTA SECTION ── */}
+      <section className="border-y border-[rgba(255,255,255,0.06)] bg-gradient-to-br from-primary/5 to-[#7C3AED]/5 py-20">
         <div className="container text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl mb-4">
-            Your Competition <span className="text-destructive">Isn't Waiting</span>. Why Are You?
+            Stop Searching Manually. <span className="text-gradient">Start Closing.</span>
           </h2>
-          <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-[#8892B0]">
-            <span>Mumbai: <span className="text-[#F0F4FF] font-bold">47</span> freelancers active</span>
-            <span>Delhi: <span className="text-[#F0F4FF] font-bold">38</span> active</span>
-            <span>Bangalore: <span className="text-[#F0F4FF] font-bold">52</span> active</span>
-          </div>
-          <p className="text-lg text-[#F0F4FF] font-medium mb-2">
-            They found <span className="text-success font-bold">3,891 leads</span> today. You found: <span className="text-destructive font-bold">0</span>
-          </p>
-          <p className="text-[#8892B0] mb-8 italic">
-            "While you're 'thinking about it', someone else just contacted YOUR perfect client."
+          <p className="text-lg text-[#8892B0] mb-8 max-w-xl mx-auto">
+            Every hour spent manually searching for leads is an hour not spent on billable work. Let AI handle the prospecting.
           </p>
           <Link to="/search">
-            <Button size="lg" className="gap-2 bg-destructive hover:bg-destructive/90 text-white font-bold">
-              No More Waiting — Start Now <ArrowRight className="h-5 w-5" />
+            <Button size="lg" className="gap-2 bg-gradient-to-r from-[#5B5FEF] to-[#7C3AED] hover:brightness-110 shadow-glow text-white font-bold">
+              Start Finding Clients <ArrowRight className="h-5 w-5" />
             </Button>
           </Link>
         </div>
@@ -400,7 +393,7 @@ export default function Landing() {
               Ready to 10× Your Client Pipeline?
             </h2>
             <p className="mb-6 text-lg text-white/80 max-w-xl mx-auto">
-              Join 12,847 Indian freelancers who stopped struggling and started winning.
+              Start with 25 free credits. No credit card required. See results in minutes.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
               <Link to="/search">

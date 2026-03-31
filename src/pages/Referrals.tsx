@@ -16,10 +16,10 @@ interface Referral {
 }
 
 const MILESTONES = [
-  { count: 5, reward: "500 bonus credits", icon: "🎯" },
-  { count: 10, reward: "Free Pro for 3 months", icon: "⭐" },
-  { count: 25, reward: "Free Elite for 6 months", icon: "💎" },
-  { count: 50, reward: "Lifetime Elite + 10% rev share", icon: "👑" },
+  { count: 5, reward: "250 bonus credits", icon: "🎯" },
+  { count: 10, reward: "500 bonus credits", icon: "⭐" },
+  { count: 25, reward: "1,000 bonus credits + priority support", icon: "💎" },
+  { count: 50, reward: "2,500 bonus credits + feature requests priority", icon: "👑" },
 ];
 
 export default function Referrals() {
@@ -137,9 +137,9 @@ export default function Referrals() {
         <h3 className="text-sm font-semibold mb-3">How It Works</h3>
         <div className="space-y-3">
           {[
-            { step: "1", title: "Share your link", desc: "Friend signs up → they get 50 bonus credits" },
-            { step: "2", title: "Friend upgrades", desc: "Starter → 200 credits · Pro → 500 credits · Elite → ₹1,000 cash" },
-            { step: "3", title: "Hit milestones", desc: "Unlock free plans and lifetime rewards" },
+            { step: "1", title: "Share your code", desc: "Friend signs up → they get 50 bonus credits" },
+            { step: "2", title: "They start using it", desc: "You earn 50 credits per successful referral" },
+            { step: "3", title: "Hit milestones", desc: "Unlock bonus credits as you refer more friends" },
           ].map((s) => (
             <div key={s.step} className="flex gap-3 items-start">
               <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">{s.step}</div>
