@@ -341,26 +341,18 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FOMO AMPLIFIER ── */}
-      <section className="border-y border-[rgba(255,255,255,0.06)] bg-gradient-to-br from-destructive/5 to-[#F59E0B]/5 py-20">
+      {/* ── CTA SECTION ── */}
+      <section className="border-y border-[rgba(255,255,255,0.06)] bg-gradient-to-br from-primary/5 to-[#7C3AED]/5 py-20">
         <div className="container text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl mb-4">
-            Your Competition <span className="text-destructive">Isn't Waiting</span>. Why Are You?
+            Stop Searching Manually. <span className="text-gradient">Start Closing.</span>
           </h2>
-          <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-[#8892B0]">
-            <span>Mumbai: <span className="text-[#F0F4FF] font-bold">47</span> freelancers active</span>
-            <span>Delhi: <span className="text-[#F0F4FF] font-bold">38</span> active</span>
-            <span>Bangalore: <span className="text-[#F0F4FF] font-bold">52</span> active</span>
-          </div>
-          <p className="text-lg text-[#F0F4FF] font-medium mb-2">
-            They found <span className="text-success font-bold">3,891 leads</span> today. You found: <span className="text-destructive font-bold">0</span>
-          </p>
-          <p className="text-[#8892B0] mb-8 italic">
-            "While you're 'thinking about it', someone else just contacted YOUR perfect client."
+          <p className="text-lg text-[#8892B0] mb-8 max-w-xl mx-auto">
+            Every hour spent manually searching for leads is an hour not spent on billable work. Let AI handle the prospecting.
           </p>
           <Link to="/search">
-            <Button size="lg" className="gap-2 bg-destructive hover:bg-destructive/90 text-white font-bold">
-              No More Waiting — Start Now <ArrowRight className="h-5 w-5" />
+            <Button size="lg" className="gap-2 bg-gradient-to-r from-[#5B5FEF] to-[#7C3AED] hover:brightness-110 shadow-glow text-white font-bold">
+              Start Finding Clients <ArrowRight className="h-5 w-5" />
             </Button>
           </Link>
         </div>
