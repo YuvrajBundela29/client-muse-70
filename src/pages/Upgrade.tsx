@@ -409,10 +409,10 @@ export default function Upgrade() {
   const planLevels: Record<string, number> = { trial: 0, free: 0, micro: 1, starter: 2, pro: 3, elite: 4, agency: 5 };
   const userLevel = planLevels[currentPlan] || 0;
 
+
   const handleUpgrade = (tier: string, price: number) => {
-    const targetLevel = planLevels[tier] || 0;
-    if (targetLevel <= userLevel) {
-      toast.info("You already have this plan or higher!");
+    if (tier === currentPlan) {
+      toast.info("You're already on this plan!");
       return;
     }
     if (price === 0) {
@@ -439,6 +439,7 @@ export default function Upgrade() {
       },
     });
   };
+
 
   const handleCreditPurchase = (credits: number, price: number) => {
     setProcessing(`credits-${credits}`);
