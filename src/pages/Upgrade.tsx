@@ -764,16 +764,16 @@ export default function Upgrade() {
           <div className="glass-card p-6 border-primary/15 inline-block">
             <p className="text-xs text-muted-foreground mb-1">
               <Lock className="h-3 w-3 inline -mt-0.5 mr-1" />
-              1,243 users locked in early adopter pricing
+              Early-access pricing available for a limited time
             </p>
             <p className="text-sm font-semibold mb-3">
-              Lock in <span className="text-primary">₹299/month forever</span> before it increases to ₹799
+              Lock in <span className="text-primary">current pricing</span> before prices increase
             </p>
             <Button
               onClick={() => handleUpgrade("pro", 299)}
               className="gap-2 bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow"
             >
-              <Lock className="h-4 w-4" /> Lock In My Price
+              <Lock className="h-4 w-4" /> Get Pro Now
             </Button>
           </div>
         </motion.div>
