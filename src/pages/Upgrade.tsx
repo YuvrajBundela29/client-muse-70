@@ -509,12 +509,11 @@ export default function Upgrade() {
         </div>
       </div>
 
-      {/* ── Social proof bar ── */}
+      {/* ── Trust bar ── */}
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[11px] text-muted-foreground mb-6">
-        <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,847+ Indian freelancers</span>
-        <span className="flex items-center gap-1"><Star className="h-3 w-3 text-warning" /> 4.8/5 from 1,847 reviews</span>
         <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> 60-day money-back guarantee</span>
         <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> Bank-grade security</span>
+        <span className="flex items-center gap-1"><Zap className="h-3 w-3 text-primary" /> 5 data sources aggregated</span>
       </div>
 
       {/* ── Value Comparison ── */}
