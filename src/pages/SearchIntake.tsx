@@ -317,8 +317,8 @@ export default function SearchIntake() {
           {/* Trust badges */}
           <div className="mt-6 flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
             <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> Bank-level encryption</span>
-            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 99.9% uptime</span>
-            <span className="flex items-center gap-1"><Users className="h-3 w-3" /> 2,400+ users</span>
+            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> Results in under 2 min</span>
+            <span className="flex items-center gap-1"><Zap className="h-3 w-3" /> 5 data sources</span>
           </div>
         </div>
       </div>
