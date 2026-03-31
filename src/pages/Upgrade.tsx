@@ -745,10 +745,10 @@ export default function Upgrade() {
           </div>
           <h3 className="text-lg font-bold mb-2">60-Day Money-Back Guarantee</h3>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-2">
-            Close a client within 60 days, or we'll give you a <span className="font-bold text-foreground">full refund + ₹500</span> for wasting your time.
+            Try any paid plan risk-free. If you're not satisfied within 60 days, we'll give you a <span className="font-bold text-foreground">full refund</span>.
           </p>
           <p className="text-[11px] text-success font-medium">
-            Less than 2% request refunds — this system works.
+            No questions asked — we stand behind our product.
           </p>
         </div>
       </motion.div>
