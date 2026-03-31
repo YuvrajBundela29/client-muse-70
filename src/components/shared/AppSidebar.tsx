@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Search, LayoutDashboard, Clock, GitBranch,
-  LogOut, BarChart3, Settings, Zap, Gift, Crown, Diamond,
+  LogOut, BarChart3, Settings, Zap, Gift, Crown, Diamond, ShieldCheck,
 } from "lucide-react";
 import logoWhite from "@/assets/logo-white.png";
 import { NavLink } from "@/components/NavLink";
