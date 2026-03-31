@@ -145,7 +145,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <LiveActivity />
+      {/* LiveActivity removed — was showing fabricated messages */}
 
       {/* ── LOSS AVERSION (Pain Points) ── */}
       <section className="container py-28">
