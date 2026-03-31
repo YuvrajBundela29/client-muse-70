@@ -9,6 +9,7 @@ export const CREDIT_COSTS = {
   ai_email: 2,
   intelligence_report: 3,
   contact_unlock: 5,
+  classify_reply: 2,
 } as const;
 
 export type CreditAction = keyof typeof CREDIT_COSTS;
@@ -47,29 +48,29 @@ export function useCredits() {
         return false;
       }
 
-      const newBalance = credits - cost;
-      const { error } = await supabase
-        .from("profiles")
-        .update({ credits_remaining: newBalance })
-        .eq("id", user.id);
+      // Server-side credit deduction
+      const { data, error } = await supabase.functions.invoke("deduct-credits", {
+        body: { action },
+      });
 
       if (error) {
         toast.error("Failed to deduct credits");
         return false;
       }
 
-      setCredits(newBalance);
+      if (!data?.success) {
+        if (data?.error === "Insufficient credits") {
+          toast.error(`Not enough credits. You need ${cost} credits for this action.`, {
+            action: { label: "Buy Credits", onClick: () => window.location.href = "/upgrade" },
+          });
+          setCredits(data?.credits_remaining ?? 0);
+        } else {
+          toast.error(data?.error || "Failed to deduct credits");
+        }
+        return false;
+      }
 
-      // Log transaction
-      await supabase.from("transactions").insert({
-        user_id: user.id,
-        type: "credit_usage",
-        amount_inr: 0,
-        credits: -cost,
-        description: `Used ${cost} credit${cost > 1 ? "s" : ""} for ${action.replace(/_/g, " ")}`,
-        status: "success",
-      });
-
+      setCredits(data.credits_remaining);
       return true;
     },
     [user, credits]
