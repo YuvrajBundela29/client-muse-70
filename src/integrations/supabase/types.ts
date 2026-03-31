@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          user_id: string | null
+          variant: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          user_id?: string | null
+          variant: string
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          user_id?: string | null
+          variant?: string
+        }
+        Relationships: []
+      }
       client_activity: {
         Row: {
           activity_type: string
@@ -90,6 +114,85 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: true
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_portal_links: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          lead_id: string
+          message: string | null
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          lead_id: string
+          message?: string | null
+          token?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          lead_id?: string
+          message?: string | null
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_portal_links_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          interest_level: string | null
+          message: string
+          portal_link_id: string
+          respondent_email: string | null
+          respondent_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interest_level?: string | null
+          message: string
+          portal_link_id: string
+          respondent_email?: string | null
+          respondent_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interest_level?: string | null
+          message?: string
+          portal_link_id?: string
+          respondent_email?: string | null
+          respondent_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_responses_portal_link_id_fkey"
+            columns: ["portal_link_id"]
+            isOneToOne: false
+            referencedRelation: "client_portal_links"
             referencedColumns: ["id"]
           },
         ]
@@ -428,6 +531,39 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          name: string
+          rating: number | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          name: string
+          rating?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          name?: string
+          rating?: number | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount_inr: number
@@ -463,6 +599,24 @@ export type Database = {
           razorpay_payment_id?: string | null
           status?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -511,10 +665,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -641,6 +801,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
