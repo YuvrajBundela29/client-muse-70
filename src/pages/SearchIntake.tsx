@@ -123,7 +123,7 @@ export default function SearchIntake() {
           <div className="flex items-center gap-3">
             <LiveActivityDot />
             <span className="text-[11px] text-muted-foreground font-mono">
-              <LiveCounter /> businesses indexed
+              Multi-source AI search
             </span>
           </div>
           <Link to="/settings" className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary transition-colors font-mono px-3 py-1.5 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
