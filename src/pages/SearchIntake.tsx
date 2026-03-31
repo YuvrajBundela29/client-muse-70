@@ -34,14 +34,7 @@ const PRESETS = [
   { label: "🚗 Car Dealers in Delhi", i: "Car Dealerships", l: "Delhi", s: "Google Ads", color: "from-amber-500/20 to-yellow-500/20" },
 ];
 
-function LiveCounter() {
-  const [count, setCount] = useState(47293);
-  useEffect(() => {
-    const interval = setInterval(() => setCount((c) => c + Math.floor(Math.random() * 3) + 1), 2000);
-    return () => clearInterval(interval);
-  }, []);
-  return <span className="text-success font-mono font-bold">{count.toLocaleString()}</span>;
-}
+/* LiveCounter removed — was showing fabricated numbers */
 
 function LiveActivityDot() {
   return (
