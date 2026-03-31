@@ -238,7 +238,7 @@ function TestimonialCarousel() {
             </div>
           </div>
           <p className="text-sm text-foreground/90 italic mb-2">"{t.text}"</p>
-          <p className="text-xs text-success font-mono font-bold">+{t.revenue} in new revenue</p>
+          <p className="text-xs text-primary font-mono font-bold">{t.revenue}</p>
         </motion.div>
       </AnimatePresence>
       <div className="flex justify-center gap-1.5 mt-4">
