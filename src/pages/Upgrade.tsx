@@ -38,9 +38,9 @@ const plans = [
     colorBg: "rgba(136, 146, 176, 0.08)",
     features: [
       { text: "25 one-time credits", highlight: true },
-      { text: "Search up to 5 leads", highlight: false },
-      { text: "1 full AI intelligence report", highlight: false },
-      { text: "3-stage pipeline board", highlight: false },
+      { text: "AI-powered lead search", highlight: false },
+      { text: "AI intelligence reports", highlight: false },
+      { text: "Pipeline board", highlight: false },
       { text: "Basic analytics", highlight: false },
       { text: "Email support", highlight: false },
     ],
