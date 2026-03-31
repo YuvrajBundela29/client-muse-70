@@ -54,31 +54,33 @@ export default function ClientPortal() {
       .select("id, message, is_active, user_id, lead_id")
       .eq("token", token)
       .eq("is_active", true)
-      .single();
+      .single() as any;
 
     if (error || !link) {
       setLoading(false);
       return;
     }
 
+    const linkData = link as any;
+
     // Get freelancer info
     const { data: profile } = await supabase
       .from("profiles")
       .select("full_name, service")
-      .eq("id", link.user_id)
+      .eq("id", linkData.user_id)
       .single();
 
     // Get lead info
     const { data: lead } = await supabase
       .from("leads")
       .select("business_name, industry, city, recommended_service, website_problem, growth_opportunity")
-      .eq("id", link.lead_id)
+      .eq("id", linkData.lead_id)
       .single();
 
     setPortal({
-      id: link.id,
-      message: link.message,
-      is_active: link.is_active,
+      id: linkData.id,
+      message: linkData.message,
+      is_active: linkData.is_active,
       freelancer_name: profile?.full_name || "A Freelancer",
       freelancer_service: profile?.service || null,
       lead_name: lead?.business_name || "Your Business",
