@@ -210,44 +210,7 @@ function CountdownTimer() {
 const SIGNUP_NAMES = ["Priya R.", "Amit T.", "Sneha L.", "Vikram C.", "Kavita K.", "Rohan B.", "Neha J.", "Arjun S."];
 const SIGNUP_CITIES = ["Mumbai", "Delhi", "Bangalore", "Pune", "Hyderabad", "Chennai", "Kolkata", "Jaipur"];
 
-function LiveSignupPopup() {
-  const [show, setShow] = useState(false);
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-
-  useEffect(() => {
-    const trigger = () => {
-      setName(SIGNUP_NAMES[Math.floor(Math.random() * SIGNUP_NAMES.length)]);
-      setCity(SIGNUP_CITIES[Math.floor(Math.random() * SIGNUP_CITIES.length)]);
-      setShow(true);
-      setTimeout(() => setShow(false), 4000);
-    };
-    const interval = setInterval(trigger, 15000);
-    const initial = setTimeout(trigger, 8000);
-    return () => { clearInterval(interval); clearTimeout(initial); };
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          className="fixed bottom-20 left-4 z-[100] rounded-xl bg-card/95 backdrop-blur-lg border border-border p-3 flex items-center gap-3 max-w-[260px] shadow-lg"
-        >
-          <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center shrink-0">
-            <BadgeCheck className="h-4 w-4 text-success" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-foreground">{name} from {city} just upgraded</p>
-            <p className="text-[10px] text-muted-foreground">a few seconds ago</p>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
+/* Live signup popup removed — was showing fabricated notifications */
 
 /* ── Testimonial Carousel ──────────────────────────────── */
 function TestimonialCarousel() {
