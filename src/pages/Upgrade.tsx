@@ -634,21 +634,21 @@ export default function Upgrade() {
 
                   <Button
                     className={`w-full text-xs h-10 ${
-                      planLevels[plan.tier] <= userLevel
-                        ? "opacity-50 cursor-not-allowed"
+                      plan.tier === currentPlan
+                        ? "border-success/40 bg-success/10 text-success"
                         : plan.popular
                         ? "bg-gradient-to-r from-primary to-glow-violet hover:brightness-110 shadow-glow font-bold"
                         : plan.tier === "elite"
                         ? "bg-gradient-to-r from-glow-cyan/80 to-success hover:brightness-110"
                         : "glass-input hover:border-primary/30"
                     }`}
-                    variant={plan.popular || plan.tier === "elite" ? "default" : "outline"}
-                    disabled={planLevels[plan.tier] <= userLevel || processing === plan.tier}
+                    variant={plan.tier === currentPlan ? "outline" : plan.popular || plan.tier === "elite" ? "default" : "outline"}
+                    disabled={plan.tier === currentPlan || processing === plan.tier}
                     onClick={() => handleUpgrade(plan.tier, billing === "annual" ? plan.annualPrice : plan.monthlyPrice)}
                   >
                     {processing === plan.tier
                       ? "Processing..."
-                      : planLevels[plan.tier] <= userLevel
+                      : plan.tier === currentPlan
                       ? "✓ Current Plan"
                       : plan.cta}
                   </Button>
