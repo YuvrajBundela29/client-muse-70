@@ -220,10 +220,10 @@ export default function SearchIntake() {
               </Button>
             </form>
 
-            {/* Competitor indicator */}
+            {/* Search tip */}
             <div className="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/70">
-              <Users className="h-3 w-3" />
-              <span>23 freelancers searched this niche today</span>
+              <Zap className="h-3 w-3" />
+              <span>Searches across 5 data sources simultaneously</span>
             </div>
 
             {/* Progress */}
