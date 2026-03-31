@@ -61,6 +61,8 @@ export default function Admin() {
     loadData();
   }, [isAuthorized]);
 
+  if (!isAuthorized) return <Navigate to="/dashboard" replace />;
+
   const loadData = async () => {
     setLoading(true);
     try {
