@@ -449,6 +449,7 @@ export default function Landing() {
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
           <span>Made with ❤️ for Indian Freelancers 🇮🇳</span>
         </div>
