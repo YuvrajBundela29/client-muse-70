@@ -175,7 +175,7 @@ const CREDIT_PACKS = [
 /* ── FAQ ───────────────────────────────────────────────── */
 const FAQ = [
   { q: "I'm not tech-savvy. Is this complicated?", a: "If you can use WhatsApp, you can use this. Average setup: 5 minutes. We have Hindi video tutorials and live support." },
-  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. Plus, we'll give you ₹500 for your time. Less than 2% ask for refunds." },
+  { q: "What if I don't get any clients?", a: "We offer a 60-day money-back guarantee. The tool helps you find and reach potential clients faster, but closing depends on your skills and offer." },
   { q: "How is this different from just Googling?", a: "Google: 2 hours for 10 outdated leads. AutoClient AI: 5 minutes for 50 verified leads with contact info and AI intelligence. That's 288× faster." },
   { q: "Is the data accurate and legal?", a: "100% legal. We aggregate publicly available data. Email accuracy: 94%. Phone accuracy: 87%. We verify everything." },
   { q: "Can I cancel anytime?", a: "Yes. No contracts. Cancel with one click. Keep unused credits for 90 days." },
