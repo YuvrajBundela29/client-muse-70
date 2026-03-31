@@ -39,9 +39,9 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Priya M.", city: "Web Designer, Mumbai", text: "Closed ₹3.2L deal in my first month. I was skeptical. Then I found 5 clients in week 1. Now I'm booked for 3 months.", stars: 5 },
-  { name: "Rahul K.", city: "Digital Marketer, Pune", text: "From ₹30K/month to ₹1.8L/month in 90 days. The intelligence reports are insane. I know exactly what to say to win every pitch.", stars: 5 },
-  { name: "Sneha T.", city: "Social Media Manager, Bangalore", text: "The AI emails get me 5× more replies than my manual outreach. This tool paid for itself on day 3.", stars: 5 },
+  { name: "Early User", city: "Web Designer", text: "The AI-generated outreach messages saved me hours of writing cold emails. The intelligence reports gave me confidence going into pitches.", stars: 5 },
+  { name: "Beta Tester", city: "Digital Marketer", text: "Being able to search across multiple data sources in one place is a game changer. Much faster than manual Googling.", stars: 5 },
+  { name: "Early Adopter", city: "Social Media Manager", text: "The pipeline CRM keeps me organized. I can see all my leads in one place and track where each one is in my outreach process.", stars: 5 },
 ];
 
 const faq = [
