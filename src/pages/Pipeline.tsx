@@ -81,7 +81,7 @@ export default function Pipeline() {
   const repliedCount = entries.filter(e => ["replied", "call_booked"].includes(e.pipeline_status)).length;
 
   return (
-    <div className="p-4 lg:p-6 max-w-5xl mx-auto">
+    <div className="p-3 sm:p-4 lg:p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

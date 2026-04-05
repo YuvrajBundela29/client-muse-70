@@ -113,7 +113,7 @@ export default function Finder() {
       <OnboardingTooltip />
       <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
 
-      <div className="container py-6">
+      <div className="container px-3 sm:px-4 py-4 sm:py-6">
         {/* Quick search + presets */}
         <div className="mb-5">
           <div className="relative mb-3">
@@ -149,7 +149,7 @@ export default function Finder() {
           {/* Results */}
           <div className="flex-1 min-w-0">
             {/* Sort bar */}
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">Sort by:</span>
@@ -175,7 +175,7 @@ export default function Finder() {
               <EmptyState />
             ) : (
               <>
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
                   {paginated.map((contact) => (
                     <ContactCard
                       key={contact.id}

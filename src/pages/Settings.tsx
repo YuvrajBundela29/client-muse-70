@@ -144,14 +144,14 @@ export default function Settings() {
   const isPaid = ["micro", "starter", "pro", "elite", "agency"].includes(plan);
 
   return (
-    <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-2">
         <SettingsIcon className="h-5 w-5 text-primary" />
         <h1 className="page-title">Settings</h1>
       </div>
 
       <Tabs defaultValue="profile">
-        <TabsList className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-full p-1 flex-wrap">
+        <TabsList className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-xl sm:rounded-full p-1 flex-wrap h-auto gap-1">
           <TabsTrigger value="profile" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Profile</TabsTrigger>
           <TabsTrigger value="account" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Account</TabsTrigger>
           <TabsTrigger value="subscription" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm">Subscription</TabsTrigger>

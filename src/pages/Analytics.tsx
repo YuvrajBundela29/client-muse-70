@@ -74,7 +74,7 @@ export default function Analytics() {
   ];
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
+    <div className="p-3 sm:p-6 lg:p-8 space-y-6 max-w-[1200px] mx-auto">
       <div className="flex items-center gap-2">
         <Activity className="h-5 w-5 text-primary" />
         <h1 className="page-title">Analytics</h1>
