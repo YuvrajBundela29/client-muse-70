@@ -15,7 +15,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-12 flex items-center border-b border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.8)] backdrop-blur-[20px] px-4 shrink-0 sticky top-0 z-40">
+          <header className="h-12 flex items-center border-b border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.8)] backdrop-blur-[20px] px-2 sm:px-4 shrink-0 sticky top-0 z-40">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-3">
               <LanguageToggle />

@@ -115,7 +115,7 @@ export default function Dashboard() {
   const potentialClients = useAnimatedCounter(47293, 2000);
 
   return (
-    <div className="p-6 lg:p-8 max-w-[1200px] mx-auto">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-[1200px] mx-auto">
       {/* Success Stories Ticker */}
       <SuccessTicker />
 
@@ -163,7 +163,7 @@ export default function Dashboard() {
           </div>
 
           {/* ROI Metrics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
             {ROI_METRICS.map((m, i) => (
               <motion.div
                 key={m.label}

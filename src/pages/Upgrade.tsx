@@ -462,7 +462,7 @@ export default function Upgrade() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto pb-24">
+    <div className="p-3 sm:p-6 lg:p-8 max-w-[1400px] mx-auto pb-24">
       {/* LiveSignupPopup removed */}
 
       {/* ── Launch Offer Banner ── */}
@@ -485,7 +485,7 @@ export default function Upgrade() {
       <div className="text-center mb-8">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <p className="section-label mb-2">Not a Cost. An Investment.</p>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
+          <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
             Start at just <span className="text-primary">₹50/month</span> — Find Clients Faster With AI
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground">
@@ -534,7 +534,7 @@ export default function Upgrade() {
       </div>
 
       {/* ── Pricing Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-10">
         {plans.map((plan, i) => {
           const displayPrice = billing === "annual" ? plan.annualPrice : plan.monthlyPrice;
           const displayOriginal = plan.originalMonthly;
@@ -674,7 +674,7 @@ export default function Upgrade() {
       <div className="mb-10">
         <h3 className="text-lg font-semibold mb-1 text-center">Pay-As-You-Go Credits</h3>
         <p className="text-xs text-muted-foreground text-center mb-4">Don't want a subscription? Buy credits directly — insanely cheap.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
           {CREDIT_PACKS.map((pack) => (
             <motion.div
               key={pack.credits}
