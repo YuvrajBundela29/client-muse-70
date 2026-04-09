@@ -1,3 +1,4 @@
+import { RainbowMatrixShader } from "@/components/ui/rainbow-matrix-shader";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -134,6 +135,7 @@ export default function Landing() {
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden">
+        <RainbowMatrixShader />
         <div className="absolute inset-0 mesh-gradient" />
         <div className="absolute inset-0 grid-pattern" />
         <div className="absolute top-20 left-1/4 w-64 h-64 bg-[#5B5FEF]/8 rounded-full blur-[100px] animate-float" />

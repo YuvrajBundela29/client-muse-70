@@ -10,10 +10,13 @@ import { Lead, EnrichedLead } from "@/types/lead";
 import { enrichLead } from "@/lib/enrich-lead";
 import { LeadIntelCard } from "@/components/results/LeadIntelCard";
 import { LeadSkeleton } from "@/components/results/LeadSkeleton";
+import { ContactStats } from "@/components/results/ContactStats";
 import { toast } from "sonner";
 import { useSessionStore } from "@/lib/session-store";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+
+type ContactFilter = "all" | "website" | "email" | "phone" | "whatsapp";
 
 type SortKey = "match" | "recent" | "urgency";
 
@@ -41,6 +44,7 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("match");
+  const [contactFilter, setContactFilter] = useState<ContactFilter>("all");
   const { lastSearch } = useSessionStore();
   const { user } = useAuth();
 
@@ -99,6 +103,14 @@ export default function Results() {
       if (!search.trim()) return true;
       const q = search.toLowerCase();
       return l.business_name.toLowerCase().includes(q) || l.industry.toLowerCase().includes(q) || l.city.toLowerCase().includes(q);
+    })
+    .filter((l) => {
+      if (contactFilter === "all") return true;
+      if (contactFilter === "website") return !!l.website;
+      if (contactFilter === "email") return !!l.email;
+      if (contactFilter === "phone") return !!l.phone;
+      if (contactFilter === "whatsapp") return !!l.phone;
+      return true;
     })
     .sort((a, b) => {
       if (sort === "match") return b.confidence_score - a.confidence_score;
@@ -160,6 +172,10 @@ export default function Results() {
           </Button>
         </div>
       </div>
+
+      {!loading && leads.length > 0 && (
+        <ContactStats leads={leads} onFilter={setContactFilter} activeFilter={contactFilter} />
+      )}
 
       {loading ? (
         <div className="grid gap-5 md:grid-cols-2">
