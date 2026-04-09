@@ -25,14 +25,31 @@ const STATUS_MESSAGES = [
   "Ranking by conversion probability...",
 ];
 
-const PRESETS = [
+const ALL_PRESETS = [
   { label: "🏋️ Gyms in NYC", i: "Gyms", l: "New York", s: "Website Design", color: "from-orange-500/20 to-red-500/20" },
   { label: "🍕 Restaurants in London", i: "Restaurants", l: "London", s: "Social Media Marketing", color: "from-green-500/20 to-emerald-500/20" },
   { label: "🏠 Realtors in Dubai", i: "Real Estate Agents", l: "Dubai", s: "SEO", color: "from-blue-500/20 to-cyan-500/20" },
   { label: "💇 Salons in LA", i: "Hair Salons", l: "Los Angeles", s: "Google Ads", color: "from-pink-500/20 to-purple-500/20" },
   { label: "🦷 Dentists in Mumbai", i: "Dentists", l: "Mumbai", s: "Website Design", color: "from-teal-500/20 to-cyan-500/20" },
   { label: "🚗 Car Dealers in Delhi", i: "Car Dealerships", l: "Delhi", s: "Google Ads", color: "from-amber-500/20 to-yellow-500/20" },
+  { label: "🧘 Yoga Studios in Bali", i: "Yoga Studios", l: "Bali", s: "Social Media Marketing", color: "from-violet-500/20 to-fuchsia-500/20" },
+  { label: "☕ Cafés in Toronto", i: "Cafes", l: "Toronto", s: "Website Design", color: "from-amber-500/20 to-orange-500/20" },
+  { label: "🏥 Clinics in Singapore", i: "Medical Clinics", l: "Singapore", s: "SEO", color: "from-sky-500/20 to-blue-500/20" },
+  { label: "🛒 E-commerce in Berlin", i: "E-commerce Stores", l: "Berlin", s: "Google Ads", color: "from-lime-500/20 to-green-500/20" },
+  { label: "📸 Photographers in Paris", i: "Photography Studios", l: "Paris", s: "Website Design", color: "from-rose-500/20 to-pink-500/20" },
+  { label: "🏗️ Contractors in Sydney", i: "Construction Companies", l: "Sydney", s: "SEO", color: "from-stone-500/20 to-amber-500/20" },
+  { label: "🐾 Pet Shops in Austin", i: "Pet Stores", l: "Austin", s: "Social Media Marketing", color: "from-yellow-500/20 to-lime-500/20" },
+  { label: "🎓 Tutors in Bangalore", i: "Tutoring Services", l: "Bangalore", s: "Google Ads", color: "from-indigo-500/20 to-violet-500/20" },
+  { label: "💼 Law Firms in Chicago", i: "Law Firms", l: "Chicago", s: "SEO", color: "from-slate-500/20 to-gray-500/20" },
+  { label: "🏨 Hotels in Lisbon", i: "Hotels", l: "Lisbon", s: "Website Design", color: "from-cyan-500/20 to-teal-500/20" },
+  { label: "🎨 Design Agencies in SF", i: "Design Agencies", l: "San Francisco", s: "Social Media Marketing", color: "from-fuchsia-500/20 to-purple-500/20" },
+  { label: "🏪 Retail Shops in Tokyo", i: "Retail Stores", l: "Tokyo", s: "Google Ads", color: "from-red-500/20 to-rose-500/20" },
 ];
+
+function pickRandomPresets(count: number) {
+  const shuffled = [...ALL_PRESETS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
 
 /* LiveCounter removed — was showing fabricated numbers */
 
