@@ -127,7 +127,7 @@ export default function SearchIntake() {
     }
   }
 
-  function applyPreset(p: typeof PRESETS[0]) {
+  function applyPreset(p: typeof ALL_PRESETS[0]) {
     setIndustry(p.i);
     setLocation(p.l);
     setService(p.s);
@@ -297,7 +297,7 @@ export default function SearchIntake() {
               Quick Start — Try a Preset
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {PRESETS.map((p) => (
+              {presets.map((p) => (
                 <button
                   key={p.label}
                   type="button"
