@@ -68,6 +68,7 @@ export default function SearchIntake() {
   const { lastSearch, setLastSearch, specialization, addSearchHistory } = useSessionStore();
   const { canAfford, deductCredits, credits } = useCredits();
   const [industry, setIndustry] = useState(searchParams.get("industry") || lastSearch?.industry || "");
+  const [presets] = useState(() => pickRandomPresets(6));
   const [location, setLocation] = useState(searchParams.get("location") || lastSearch?.location || "");
   const [service, setService] = useState(searchParams.get("service") || lastSearch?.service || "");
   const [step, setStep] = useState<SearchStep>("idle");
