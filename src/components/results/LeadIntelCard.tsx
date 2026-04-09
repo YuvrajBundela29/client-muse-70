@@ -224,12 +224,16 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
               <Globe className="h-3 w-3" /> Website
             </a>
           )}
-          {lead.email && (
-            <a href={`mailto:${lead.email}`}
-              className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
-              <Mail className="h-3 w-3" /> {lead.email}
-            </a>
-          )}
+          {lead.email && (() => {
+            const subject = encodeURIComponent(`Helping ${lead.business_name} grow online`);
+            const body = encodeURIComponent(lead.outreach_professional || lead.outreach_message || "");
+            return (
+              <a href={`mailto:${lead.email}?subject=${subject}&body=${body}`}
+                className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2.5 py-1 text-[11px] text-primary hover:bg-primary/10 transition-colors font-medium">
+                <Mail className="h-3 w-3" /> {lead.email}
+              </a>
+            );
+          })()}
           {lead.phone && (
             <a href={`tel:${lead.phone}`}
               className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors">
