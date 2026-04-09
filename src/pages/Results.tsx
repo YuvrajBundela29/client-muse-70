@@ -173,6 +173,10 @@ export default function Results() {
         </div>
       </div>
 
+      {!loading && leads.length > 0 && (
+        <ContactStats leads={leads} onFilter={setContactFilter} activeFilter={contactFilter} />
+      )}
+
       {loading ? (
         <div className="grid gap-5 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => <LeadSkeleton key={i} />)}
