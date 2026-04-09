@@ -246,7 +246,7 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
               <Instagram className="h-3 w-3" /> Instagram
             </a>
           )}
-          <WhatsAppButton phone={lead.phone} businessName={lead.business_name} />
+          {lead.phone && <WhatsAppButton phone={lead.phone} businessName={lead.business_name} />}
         </div>
 
         {/* Action buttons */}
