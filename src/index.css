@@ -186,6 +186,81 @@
   66% { transform: translate(-15px, 10px); }
 }
 
+/* ========== Paid tier "Neon Aurora" effects (scaled by tier) ========== */
+@keyframes tier-shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes tier-pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsl(238 75% 64% / 0.25), 0 0 40px hsl(166 72% 45% / 0.15); }
+  50% { box-shadow: 0 0 30px hsl(238 75% 64% / 0.45), 0 0 60px hsl(166 72% 45% / 0.3); }
+}
+
+.tier-aura-1 { box-shadow: 0 0 12px hsl(238 75% 64% / 0.12); }
+.tier-aura-2 { box-shadow: 0 0 16px hsl(238 75% 64% / 0.2), 0 0 32px hsl(166 72% 45% / 0.08); }
+.tier-aura-3 {
+  box-shadow: 0 0 20px hsl(238 75% 64% / 0.3), 0 0 40px hsl(166 72% 45% / 0.15);
+  animation: tier-pulse-glow 3.5s ease-in-out infinite;
+}
+.tier-aura-4 {
+  box-shadow: 0 0 24px hsl(238 75% 64% / 0.4), 0 0 60px hsl(166 72% 45% / 0.25), 0 0 90px hsl(260 80% 60% / 0.18);
+  animation: tier-pulse-glow 2.5s ease-in-out infinite;
+}
+
+.tier-border-elite {
+  position: relative;
+  background-clip: padding-box;
+}
+.tier-border-elite::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--angle, 0deg),
+    hsl(238 75% 64%), hsl(166 72% 45%), hsl(260 80% 60%),
+    hsl(238 75% 64%));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rotate-gradient 4s linear infinite;
+  pointer-events: none;
+}
+
+.tier-badge-pro {
+  background: linear-gradient(120deg, hsl(238 75% 64% / 0.2), hsl(260 80% 60% / 0.2));
+  color: hsl(220 40% 96%);
+  border: 1px solid hsl(238 75% 64% / 0.45);
+  box-shadow: 0 0 12px hsl(238 75% 64% / 0.35);
+}
+
+.tier-badge-elite {
+  background: linear-gradient(120deg,
+    hsl(238 75% 64% / 0.25),
+    hsl(166 72% 45% / 0.25),
+    hsl(260 80% 60% / 0.25));
+  background-size: 200% 200%;
+  color: hsl(220 40% 98%);
+  border: 1px solid hsl(166 72% 45% / 0.55);
+  box-shadow: 0 0 16px hsl(238 75% 64% / 0.4), 0 0 32px hsl(166 72% 45% / 0.2);
+  animation: tier-shimmer 4s ease-in-out infinite;
+}
+
+.tier-text-elite {
+  background-size: 200% 200%;
+  animation: tier-shimmer 5s ease-in-out infinite;
+}
+
+/* Tier-scoped hover lift for cards */
+.tier-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.tier-lift:hover {
+  transform: translateY(-2px);
+}
+
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
