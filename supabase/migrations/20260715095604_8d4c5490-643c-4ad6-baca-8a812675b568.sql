@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can insert responses" ON public.client_responses;

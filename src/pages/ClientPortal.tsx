@@ -49,47 +49,12 @@ export default function ClientPortal() {
   }, [token]);
 
   const loadPortal = async () => {
-    const { data: link, error } = await supabase
-      .from("client_portal_links" as any)
-      .select("id, message, is_active, user_id, lead_id")
-      .eq("token", token)
-      .eq("is_active", true)
-      .single() as any;
-
-    if (error || !link) {
+    const { data, error } = await (supabase as any).rpc("get_portal_by_token", { _token: token });
+    if (error || !data) {
       setLoading(false);
       return;
     }
-
-    const linkData = link as any;
-
-    // Get freelancer info
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, service")
-      .eq("id", linkData.user_id)
-      .single();
-
-    // Get lead info
-    const { data: lead } = await supabase
-      .from("leads")
-      .select("business_name, industry, city, recommended_service, website_problem, growth_opportunity")
-      .eq("id", linkData.lead_id)
-      .single();
-
-    setPortal({
-      id: linkData.id,
-      message: linkData.message,
-      is_active: linkData.is_active,
-      freelancer_name: profile?.full_name || "A Freelancer",
-      freelancer_service: profile?.service || null,
-      lead_name: lead?.business_name || "Your Business",
-      lead_industry: lead?.industry || "",
-      lead_city: lead?.city || "",
-      recommended_service: lead?.recommended_service || null,
-      website_problem: lead?.website_problem || null,
-      growth_opportunity: lead?.growth_opportunity || null,
-    });
+    setPortal(data as PortalData);
     setLoading(false);
   };
 
@@ -104,10 +69,13 @@ export default function ClientPortal() {
 
     setSending(true);
     try {
-      const { error } = await supabase.from("client_responses" as any).insert({
-        portal_link_id: portal!.id,
-        ...parsed.data,
-      } as any);
+      const { error } = await (supabase as any).rpc("submit_client_response", {
+        _token: token,
+        _respondent_name: parsed.data.respondent_name,
+        _respondent_email: parsed.data.respondent_email,
+        _message: parsed.data.message,
+        _interest_level: parsed.data.interest_level,
+      });
       if (error) throw error;
       setSubmitted(true);
       toast.success("Response sent successfully!");
