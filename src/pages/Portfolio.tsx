@@ -29,34 +29,24 @@ export default function Portfolio() {
   }, [id]);
 
   const loadPortfolio = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("full_name, email, industry, service, country, avatar_url, plan, created_at")
-      .eq("id", id)
-      .eq("onboarding_complete", true)
-      .single();
-
+    const { data, error } = await (supabase as any).rpc("get_public_portfolio", { _user_id: id });
     if (error || !data) {
       setNotFound(true);
       setLoading(false);
       return;
     }
-
-    setProfile(data as PortfolioData);
-
-    // Get public stats
-    const { count: leadCount } = await supabase
-      .from("leads")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", id);
-
-    const { count: closedCount } = await supabase
-      .from("client_pipeline")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", id)
-      .eq("pipeline_status", "closed");
-
-    setStats({ leads: leadCount || 0, closed: closedCount || 0 });
+    const p = data as any;
+    setProfile({
+      full_name: p.full_name,
+      email: null,
+      industry: p.industry,
+      service: p.service,
+      country: p.country,
+      avatar_url: p.avatar_url,
+      plan: p.plan,
+      created_at: p.created_at,
+    });
+    setStats({ leads: p.leads_count || 0, closed: p.closed_count || 0 });
     setLoading(false);
   };
 
