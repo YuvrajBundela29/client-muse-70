@@ -48,17 +48,24 @@ function UserAvatar({ email }: { email: string }) {
 }
 
 function PlanBadge({ plan }: { plan: string }) {
-  if (plan === "elite") return (
-    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">
-      <Diamond className="h-2.5 w-2.5" /> Elite
+  const map: Record<string, { label: string; cls: string; icon: any }> = {
+    micro:        { label: "Starter Lite", cls: "bg-primary/10 text-primary border border-primary/25", icon: Crown },
+    starter_lite: { label: "Starter Lite", cls: "bg-primary/10 text-primary border border-primary/25", icon: Crown },
+    starter:      { label: "Starter",      cls: "bg-primary/15 text-primary border border-primary/35", icon: Crown },
+    solo:         { label: "Starter",      cls: "bg-primary/15 text-primary border border-primary/35", icon: Crown },
+    professional: { label: "Pro",          cls: "tier-badge-pro",   icon: Crown },
+    pro:          { label: "Pro",          cls: "tier-badge-pro",   icon: Crown },
+    elite:        { label: "Elite",        cls: "tier-badge-elite", icon: Diamond },
+    agency:       { label: "Elite",        cls: "tier-badge-elite", icon: Diamond },
+  };
+  const cfg = map[plan];
+  if (!cfg) return null;
+  const Icon = cfg.icon;
+  return (
+    <span className={`flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${cfg.cls}`}>
+      <Icon className="h-2.5 w-2.5" /> {cfg.label}
     </span>
   );
-  if (plan === "pro") return (
-    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">
-      <Crown className="h-2.5 w-2.5" /> Pro
-    </span>
-  );
-  return null;
 }
 
 export function AppSidebar() {
@@ -159,7 +166,12 @@ export function AppSidebar() {
         {!collapsed && user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg w-full hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+              <button className={`flex items-center gap-2.5 px-2 py-1.5 rounded-lg w-full hover:bg-[rgba(255,255,255,0.04)] transition-colors ${
+                plan === "elite" || plan === "agency" ? "tier-aura-4" :
+                plan === "pro" || plan === "professional" ? "tier-aura-3" :
+                plan === "starter" || plan === "solo" ? "tier-aura-2" :
+                plan === "micro" || plan === "starter_lite" ? "tier-aura-1" : ""
+              }`}>
                 <UserAvatar email={user.email || ""} />
                 <div className="min-w-0 text-left flex-1">
                   <div className="flex items-center gap-2">
