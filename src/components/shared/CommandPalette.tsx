@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/command";
 import {
   Search, LayoutDashboard, Clock, GitBranch,
-  BarChart3, Settings, Zap,
+  BarChart3, Settings, Zap, Crown,
 } from "lucide-react";
 
 const pages = [
@@ -15,7 +15,7 @@ const pages = [
   { name: "Search History", url: "/history", icon: Clock },
   { name: "Analytics", url: "/analytics", icon: BarChart3 },
   { name: "Settings", url: "/settings", icon: Settings },
-  { name: "Upgrade Plan", url: "/upgrade", icon: Zap },
+  { name: "Subscription", url: "/upgrade", icon: Crown },
 ];
 
 export function CommandPalette() {

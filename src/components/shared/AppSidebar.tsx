@@ -27,6 +27,7 @@ const mainItems = [
   { title: "Search History", url: "/history", icon: Clock },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Referrals", url: "/referrals", icon: Gift },
+  { title: "Subscription", url: "/upgrade", icon: Crown },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Admin", url: "/admin", icon: ShieldCheck, adminOnly: true },
 ];
