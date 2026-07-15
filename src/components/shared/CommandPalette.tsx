@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/command";
 import {
   Search, LayoutDashboard, Clock, GitBranch,
-  BarChart3, Settings, Zap,
+  BarChart3, Settings, Zap, Crown,
 } from "lucide-react";
 
 const pages = [
