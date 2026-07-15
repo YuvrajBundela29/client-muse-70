@@ -665,12 +665,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_portal_by_token: { Args: { _token: string }; Returns: Json }
+      get_public_portfolio: { Args: { _user_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      submit_client_response: {
+        Args: {
+          _interest_level: string
+          _message: string
+          _respondent_email: string
+          _respondent_name: string
+          _token: string
+        }
+        Returns: Json
       }
     }
     Enums: {
