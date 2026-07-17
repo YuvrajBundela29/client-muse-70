@@ -156,7 +156,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-3 border-t border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.95)]">
+      <SidebarFooter className={`border-t border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.95)] ${collapsed ? "p-1.5" : "p-3"}`}>
         {!isPaid && (
           <NavLink
             to="/upgrade"
