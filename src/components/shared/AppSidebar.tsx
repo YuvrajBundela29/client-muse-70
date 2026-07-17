@@ -158,10 +158,13 @@ export function AppSidebar() {
         {!isPaid && (
           <NavLink
             to="/upgrade"
-            className="relative flex items-center gap-2 px-3 py-2.5 text-sm rounded-xl bg-[rgba(91,95,239,0.1)] text-primary hover:bg-[rgba(91,95,239,0.18)] transition-all duration-300 border border-primary/20 mb-3 font-medium overflow-hidden gradient-border"
+            title={collapsed ? "Upgrade to Pro" : undefined}
+            className={`relative flex items-center rounded-xl bg-[rgba(91,95,239,0.1)] text-primary hover:bg-[rgba(91,95,239,0.18)] transition-all duration-300 border border-primary/20 mb-3 font-medium overflow-hidden gradient-border ${
+              collapsed ? "justify-center px-0 py-2.5" : "gap-2 px-3 py-2.5 text-sm"
+            }`}
             activeClassName=""
           >
-            <Zap className="h-4 w-4" />
+            <Zap className="h-4 w-4 shrink-0" />
             {!collapsed && "Upgrade to Pro"}
           </NavLink>
         )}
