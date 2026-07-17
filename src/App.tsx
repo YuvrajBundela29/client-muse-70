@@ -10,6 +10,7 @@ import { DashboardLayout } from "@/components/shared/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SearchIntake from "./pages/SearchIntake";
@@ -54,6 +55,7 @@ const App = () => (
                 <Route path="/" element={<Landing />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/login" element={<Navigate to="/auth" replace />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/contact" element={<Contact />} />
