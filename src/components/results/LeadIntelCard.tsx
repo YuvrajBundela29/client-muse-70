@@ -75,7 +75,7 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      className="group relative rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-card-hover)] hover:border-primary/40"
+      className="group relative rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-card-hover)] hover:border-primary/40 overflow-hidden min-w-0"
     >
       {/* CLASSIFIED ribbon */}
       <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-primary/90 rounded-md text-[9px] font-bold text-primary-foreground uppercase tracking-wider flex items-center gap-1">
@@ -92,7 +92,7 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
         lead.urgency === "high" ? "bg-destructive" : lead.urgency === "medium" ? "bg-[hsl(var(--warning))]" : "bg-muted-foreground/30"
       }`} />
 
-      <div className="p-5 pl-6 pt-6">
+      <div className="p-4 sm:p-5 pl-5 sm:pl-6 pt-6">
         {/* Top row: name + score + save */}
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
@@ -229,8 +229,8 @@ export function LeadIntelCard({ lead, index, onStatusChange }: LeadIntelCardProp
             const body = encodeURIComponent(lead.outreach_professional || lead.outreach_message || "");
             return (
               <a href={`mailto:${lead.email}?subject=${subject}&body=${body}`}
-                className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2.5 py-1 text-[11px] text-primary hover:bg-primary/10 transition-colors font-medium">
-                <Mail className="h-3 w-3" /> {lead.email}
+                className="inline-flex max-w-full items-center gap-1 rounded-full border border-primary/40 bg-primary/5 px-2.5 py-1 text-[11px] text-primary hover:bg-primary/10 transition-colors font-medium">
+                <Mail className="h-3 w-3 shrink-0" /> <span className="truncate">{lead.email}</span>
               </a>
             );
           })()}
