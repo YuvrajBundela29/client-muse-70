@@ -89,10 +89,10 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent className="bg-[rgba(10,15,30,0.95)] backdrop-blur-[20px] border-r border-[rgba(255,255,255,0.06)]">
         {/* Logo */}
-        <div className={`flex items-center px-4 py-5 ${collapsed ? "justify-center" : ""}`}>
+        <div className={`flex items-center py-5 ${collapsed ? "justify-center px-0" : "px-4"}`}>
           {collapsed ? (
             <div className="relative">
-              <img src={logoWhite} alt="AutoClient AI" className="h-7 w-7 shrink-0" />
+              <img src={logoWhite} alt="AutoClient AI" className="h-6 w-6 shrink-0" />
               <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full" />
             </div>
           ) : (
@@ -107,11 +107,13 @@ export function AppSidebar() {
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="section-label px-4">
-            Navigation
-          </SidebarGroupLabel>
+          {!collapsed && (
+            <SidebarGroupLabel className="section-label px-4">
+              Navigation
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
-            <SidebarMenu className="px-2 space-y-0.5">
+            <SidebarMenu className={`space-y-0.5 ${collapsed ? "px-1.5" : "px-2"}`}>
               {mainItems.filter(item => !(item as any).adminOnly || isAdmin).map((item) => {
                 const isActive = location.pathname === item.url || location.pathname.startsWith(item.url + "/");
                 return (
@@ -154,7 +156,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-3 border-t border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.95)]">
+      <SidebarFooter className={`border-t border-[rgba(255,255,255,0.06)] bg-[rgba(10,15,30,0.95)] ${collapsed ? "p-1.5" : "p-3"}`}>
         {!isPaid && (
           <NavLink
             to="/upgrade"
