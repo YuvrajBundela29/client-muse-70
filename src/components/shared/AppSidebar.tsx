@@ -120,21 +120,24 @@ export function AppSidebar() {
                       <NavLink
                         to={item.url}
                         end={item.url === "/dashboard"}
-                        className={`relative rounded-lg px-3 py-2 text-sm transition-all duration-150 ${
+                        title={collapsed ? item.title : undefined}
+                        className={`relative rounded-lg py-2 text-sm transition-all duration-150 ${
+                          collapsed ? "px-0 justify-center" : "px-3"
+                        } ${
                           isActive
-                            ? "bg-[rgba(91,95,239,0.15)] text-foreground font-medium border-l-2 border-primary"
+                            ? `bg-[rgba(91,95,239,0.15)] text-foreground font-medium ${collapsed ? "" : "border-l-2 border-primary"}`
                             : "text-muted-foreground hover:text-foreground hover:bg-[rgba(255,255,255,0.04)]"
                         }`}
                         activeClassName=""
                       >
-                        {isActive && (
+                        {isActive && !collapsed && (
                           <motion.div
                             layoutId="sidebar-active"
                             className="absolute left-0 top-0 bottom-0 w-[2px] bg-primary rounded-r-full"
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                           />
                         )}
-                        <item.icon className={`mr-2.5 h-4 w-4 ${isActive ? "text-primary" : ""}`} />
+                        <item.icon className={`h-4 w-4 shrink-0 ${collapsed ? "" : "mr-2.5"} ${isActive ? "text-primary" : ""}`} />
                         {!collapsed && (
                           <span className="flex-1">{item.title}</span>
                         )}
